@@ -1,0 +1,103 @@
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware-Komponenten Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hardware-Komponenten Test</h1>
+    <form id="hardware-test">
+        <div class="question">
+            <label>1. Welche Komponente ist das "Gehirn" des Computers?</label>
+            <input type="radio" id="q1a" name="q1" value="CPU">
+            <label for="q1a">CPU</label><br>
+            <input type="radio" id="q1b" name="q1" value="RAM">
+            <label for="q1b">RAM</label><br>
+            <input type="radio" id="q1c" name="q1" value="Festplatte">
+            <label for="q1c">Festplatte</label>
+        </div>
+        <div class="question">
+            <label>2. Welche Komponente speichert dauerhaft Daten?</label>
+            <input type="radio" id="q2a" name="q2" value="RAM">
+            <label for="q2a">RAM</label><br>
+            <input type="radio" id="q2b" name="q2" value="Festplatte">
+            <label for="q2b">Festplatte</label><br>
+            <input type="radio" id="q2c" name="q2" value="Grafikkarte">
+            <label for="q2c">Grafikkarte</label>
+        </div>
+        <div class="question">
+            <label>3. Welche Komponente sorgt für die grafische Darstellung auf dem Monitor?</label>
+            <input type="radio" id="q3a" name="q3" value="Netzteil">
+            <label for="q3a">Netzteil</label><br>
+            <input type="radio" id="q3b" name="q3" value="Grafikkarte">
+            <label for="q3b">Grafikkarte</label><br>
+            <input type="radio" id="q3c" name="q3" value="CPU">
+            <label for="q3c">CPU</label>
+        </div>
+        <div class="question">
+            <label>4. Welche Komponente ist für die Kühlung der CPU verantwortlich?</label>
+            <input type="radio" id="q4a" name="q4" value="Kühlkörper">
+            <label for="q4a">Kühlkörper</label><br>
+            <input type="radio" id="q4b" name="q4" value="Netzteil">
+            <label for="q4b">Netzteil</label><br>
+            <input type="radio" id="q4c" name="q4" value="RAM">
+            <label for="q4c">RAM</label>
+        </div>
+        <div class="question">
+            <label>5. Welche Komponente versorgt den Computer mit Strom?</label>
+            <input type="radio" id="q5a" name="q5" value="Festplatte">
+            <label for="q5a">Festplatte</label><br>
+            <input type="radio" id="q5b" name="q5" value="Netzteil">
+            <label for="q5b">Netzteil</label><br>
+            <input type="radio" id="q5c" name="q5" value="Grafikkarte">
+            <label for="q5c">Grafikkarte</label>
+        </div>
+        <button type="button" onclick="submitTest()">Test abschicken</button>
+    </form>
+
+    <script>
+        const correctAnswers = {
+            q1: 'CPU',
+            q2: 'Festplatte',
+            q3: 'Grafikkarte',
+            q4: 'Kühlkörper',
+            q5: 'Netzteil'
+        };
+
+        function submitTest() {
+            const form = document.getElementById('hardware-test');
+            const formData = new FormData(form);
+            let output = '<h2>Ihre Antworten:</h2><ul>';
+            let score = 0;
+
+            formData.forEach((value, key) => {
+                const isCorrect = value === correctAnswers[key];
+                if (isCorrect) {
+                    score++;
+                }
+                output += `<li><strong>${key}:</strong> ${value} - ${isCorrect ? 'Richtig' : 'Falsch'}</li>`;
+            });
+
+            output += `</ul><h3>Ihre Punktzahl: ${score} von 5</h3>`;
+            document.body.innerHTML = output;
+        }
+    </script>
+</body>
+</html>
+
