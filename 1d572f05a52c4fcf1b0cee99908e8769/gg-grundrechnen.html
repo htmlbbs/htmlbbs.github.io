@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gefragt – Gejagt: Rechen-Quiz (A2)</title>
+  <style>
+    :root{
+      --bg: #0f172a;        /* slate-900 */
+      --card: #111827;      /* gray-900 */
+      --ink: #e5e7eb;       /* gray-200 */
+      --ink-dim:#cbd5e1;    /* slate-300 */
+      --accent:#22c55e;     /* green-500 */
+      --accent-2:#38bdf8;   /* sky-400 */
+      --danger:#ef4444;     /* red-500 */
+      --muted:#1f2937;      /* gray-800 */
+      --focus:#fbbf24;      /* amber-400 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, #1e293b 0%, var(--bg) 60%);
+      color: var(--ink);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .app{width:100%; max-width:720px; padding:16px}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    h1{font-size: clamp(1.4rem, 3.8vw, 2rem); margin: 0 0 8px}
+    h2{font-size: clamp(1.1rem, 3.2vw, 1.5rem); margin: 10px 0}
+    p{line-height:1.5; color: var(--ink-dim)}
+    .rules{display:grid; gap:8px; margin:14px 0}
+    .rule{background: var(--muted); border-radius:12px; padding:10px}
+
+    .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      appearance:none; border:none; border-radius:14px; padding:14px 16px;
+      background:linear-gradient(180deg, var(--accent-2), #0284c7);
+      color:white; font-weight:700; font-size:1rem; letter-spacing:0.2px;
+      box-shadow:0 8px 20px rgba(56,189,248,.35);
+    }
+    button.secondary{background:linear-gradient(180deg, #64748b, #334155); box-shadow:none}
+    button.danger{background:linear-gradient(180deg, var(--danger), #b91c1c)}
+    button:disabled{opacity:.6}
+
+    .hud{display:flex; gap:12px; align-items:center; justify-content:space-between; margin:12px 0}
+    .badge{background:#0b1020; border:1px solid rgba(255,255,255,.1); padding:8px 12px; border-radius:999px; font-weight:700}
+    .timer{font-variant-numeric: tabular-nums; font-size:1.2rem}
+
+    .question{background: var(--card); border-radius:14px; padding:14px; margin:10px 0; border:1px solid rgba(255,255,255,.06)}
+    .q-text{font-size: clamp(1.25rem, 5vw, 1.6rem); font-weight:800; letter-spacing:.3px}
+
+    .answer-row{display:flex; gap:10px; margin-top:12px}
+    input[type="number"], input[type="text"]{
+      flex:1; padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,.1);
+      background:#0b1020; color:var(--ink); font-size:1.1rem;
+    }
+
+    .choices{display:grid; gap:10px; margin-top:10px}
+    .choice{
+      background: #0b1020; border:1px solid rgba(255,255,255,.12); border-radius:12px;
+      padding:14px; text-align:left; font-weight:700;
+    }
+
+    .feedback{min-height:28px; margin-top:8px}
+    .right{color: #22c55e; font-weight:800}
+    .wrong{color: #f97316; font-weight:800}
+
+    .sr-only{position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden}
+
+    .summary{display:grid; gap:8px}
+
+    footer{opacity:.7; margin-top:14px; font-size:.9rem}
+  </style>
+</head>
+<body>
+  <main class="app" id="app" aria-live="polite">
+    <div class="card" id="screen-intro">
+      <h1>Gefragt – Gejagt: Rechen‑Quiz</h1>
+      <p>Trainiere die <strong>Grundrechenarten</strong>. Einfaches Deutsch (A2). Für BES Klasse 1.</p>
+      <div class="rules">
+        <div class="rule"><strong>Runde 1</strong> · 60 Sekunden. Viele <em>leichte</em> Fragen. Antworte schnell.</div>
+        <div class="rule"><strong>Runde 2</strong> · <em>Schwerer</em>. Mehrfachauswahl (A, B, C, D).</div>
+        <div class="rule"><strong>Runde 3</strong> · 60 Sekunden. Wieder offene Fragen.</div>
+      </div>
+      <div class="controls">
+        <button id="btn-start">Spiel starten</button>
+        <button id="btn-how" class="secondary">Hinweise</button>
+      </div>
+      <details style="margin-top:10px">
+        <summary>Barrierefreiheit</summary>
+        <p>Große Tasten. Klare Sprache. Screenreader‑Hinweise sind aktiv.</p>
+      </details>
+      <footer>Erstellt für Mobilgeräte. Tippe auf <em>Spiel starten</em>.</footer>
+    </div>
+
+    <div class="card" id="screen-quiz" hidden>
+      <div class="hud">
+        <div class="badge">Runde: <span id="hud-round">1</span>/3</div>
+        <div class="badge">Punkte: <span id="hud-score">0</span></div>
+        <div class="badge timer" id="hud-timer">60</div>
+      </div>
+
+      <div class="question">
+        <div class="q-text" id="q-text">Frage…</div>
+        <div id="answer-open" class="answer-row">
+          <input id="open-input" type="number" inputmode="numeric" placeholder="Deine Zahl" aria-label="Antwort eingeben"/>
+          <button id="btn-send">OK</button>
+        </div>
+        <div id="answer-mc" class="choices" hidden>
+          <!-- choices inserted here -->
+        </div>
+        <div class="feedback" id="feedback" aria-live="assertive"></div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-skip" class="secondary">Überspringen</button>
+        <button id="btn-stop" class="danger">Beenden</button>
+      </div>
+    </div>
+
+    <div class="card" id="screen-summary" hidden>
+      <h2>Ergebnis</h2>
+      <div class="summary">
+        <div><strong>Gesamtpunkte:</strong> <span id="sum-score">0</span></div>
+        <div><strong>Runde 1:</strong> <span id="sum-r1">0</span> Punkte</div>
+        <div><strong>Runde 2:</strong> <span id="sum-r2">0</span> Punkte</div>
+        <div><strong>Runde 3:</strong> <span id="sum-r3">0</span> Punkte</div>
+      </div>
+      <div class="controls">
+        <button id="btn-again">Nochmal spielen</button>
+        <button id="btn-home" class="secondary">Zur Startseite</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // --- Hilfsfunktionen zur Aufgabenerzeugung (A2-geeignet) ---
+    function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min }
+
+    function makeEasy(){
+      // leichte Aufgaben: + und - bis 20, * bis 5, / nur mit glatten Ergebnissen bis 5
+      const t = randInt(1,4);
+      if(t===1){
+        const a = randInt(0,20), b=randInt(0,20);
+        return {text:`${a} + ${b} = ?`, answer:(a+b)}
+      }
+      if(t===2){
+        const a = randInt(0,20), b=randInt(0,20); const big=Math.max(a,b), small=Math.min(a,b);
+        return {text:`${big} − ${small} = ?`, answer:(big-small)}
+      }
+      if(t===3){
+        const a = randInt(0,5), b=randInt(0,5);
+        return {text:`${a} · ${b} = ?`, answer:(a*b)}
+      }
+      // t===4
+      const b = randInt(1,5), ans = randInt(0,5), a = b*ans;
+      return {text:`${a} ÷ ${b} = ?`, answer:ans}
+    }
+
+    function makeHard(){
+      // schwerere Aufgaben: + / - bis 100, * bis 10, / bis 10 mit glatten Ergebnissen
+      const t = randInt(1,4);
+      if(t===1){
+        const a = randInt(10,100), b=randInt(10,100);
+        return {text:`${a} + ${b} = ?`, answer:(a+b)}
+      }
+      if(t===2){
+        const a = randInt(10,100), b=randInt(0,90); const big=Math.max(a,b), small=Math.min(a,b);
+        return {text:`${big} − ${small} = ?`, answer:(big-small)}
+      }
+      if(t===3){
+        const a = randInt(2,10), b=randInt(2,10);
+        return {text:`${a} · ${b} = ?`, answer:(a*b)}
+      }
+      const b = randInt(2,10), ans = randInt(1,10), a=b*ans;
+      return {text:`${a} ÷ ${b} = ?`, answer:ans}
+    }
+
+    function makeMC(fromHard=false){
+      const q = fromHard ? makeHard() : makeEasy();
+      // 4 Optionen, eine korrekt
+      const options = new Set([q.answer]);
+      while(options.size<4){
+        const delta = randInt(1,7)* (Math.random()<.5?-1:1);
+        options.add(q.answer + delta);
+      }
+      const arr = Array.from(options).sort(()=>Math.random()-.5);
+      return { text:q.text, answer:q.answer, choices:arr };
+    }
+
+    // --- Spielzustand ---
+    const state = {
+      round: 1,
+      score: 0,
+      r1: 0, r2:0, r3:0,
+      timer: 60,
+      intervalId: null,
+      current: null,
+      mcMode: false,
+      r2QuestionsLeft: 8
+    }
+
+    // --- DOM Referenzen ---
+    const intro = document.getElementById('screen-intro');
+    const quiz = document.getElementById('screen-quiz');
+    const summary = document.getElementById('screen-summary');
+    const qText = document.getElementById('q-text');
+    const openInput = document.getElementById('open-input');
+    const btnSend = document.getElementById('btn-send');
+    const answerOpen = document.getElementById('answer-open');
+    const answerMC = document.getElementById('answer-mc');
+    const feedback = document.getElementById('feedback');
+
+    const hudRound = document.getElementById('hud-round');
+    const hudScore = document.getElementById('hud-score');
+    const hudTimer = document.getElementById('hud-timer');
+
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-how').addEventListener('click', ()=>{
+      alert('So geht es:\nRunde 1: 60 Sekunden. Antworte schnell in das Feld und tippe OK.\nRunde 2: Wähle A, B, C oder D. 8 Fragen.\nRunde 3: 60 Sekunden. Wieder offene Fragen.');
+    });
+    document.getElementById('btn-skip').addEventListener('click', nextQuestion);
+    document.getElementById('btn-stop').addEventListener('click', finishGame);
+    document.getElementById('btn-again').addEventListener('click', ()=>{ reset(); startGame(); });
+    document.getElementById('btn-home').addEventListener('click', ()=>{ show(intro); hide(quiz); hide(summary); reset(); });
+
+    btnSend.addEventListener('click', ()=>{ submitOpen(); });
+    openInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ submitOpen(); }});
+
+    function show(el){ el.hidden=false }
+    function hide(el){ el.hidden=true }
+
+    function reset(){
+      clearInterval(state.intervalId);
+      state.round=1; state.score=0; state.r1=0; state.r2=0; state.r3=0; state.timer=60; state.r2QuestionsLeft=8;
+      state.current=null; state.mcMode=false; hudUpdate(); feedback.textContent='';
+    }
+
+    function startGame(){
+      reset();
+      hide(intro); hide(summary); show(quiz);
+      startRound(1);
+    }
+
+    function startRound(n){
+      state.round = n; hudUpdate();
+      if(n===1){
+        state.timer = 60; state.mcMode=false; answerOpen.hidden=false; answerMC.hidden=true; tickStart();
+        state.current = makeEasy(); renderQuestion();
+      } else if(n===2){
+        clearInterval(state.intervalId); hudTimer.textContent='—';
+        state.mcMode=true; answerOpen.hidden=true; answerMC.hidden=false; state.r2QuestionsLeft=8;
+        state.current = makeMC(true); renderQuestion();
+      } else if(n===3){
+        state.timer = 60; state.mcMode=false; answerOpen.hidden=false; answerMC.hidden=true; tickStart();
+        state.current = makeHard(); renderQuestion();
+      }
+    }
+
+    function tickStart(){
+      hudTimer.textContent = state.timer;
+      clearInterval(state.intervalId);
+      state.intervalId = setInterval(()=>{
+        state.timer--; hudTimer.textContent = state.timer;
+        if(state.timer<=0){
+          clearInterval(state.intervalId);
+          if(state.round===1){ state.r1 = state.score; startRound(2); return; }
+          if(state.round===3){ state.r3 = state.score - state.r1 - state.r2; return finishGame(); }
+        }
+      }, 1000);
+    }
+
+    function renderQuestion(){
+      qText.textContent = state.current.text;
+      feedback.textContent='';
+      if(!state.mcMode){
+        openInput.value=''; openInput.focus();
+      } else {
+        // render MC choices
+        answerMC.innerHTML='';
+        state.current.choices.forEach((val, idx)=>{
+          const btn = document.createElement('button');
+          btn.className='choice';
+          btn.setAttribute('data-val', val);
+          btn.innerHTML = `<strong>${['A','B','C','D'][idx]}.</strong> ${val}`;
+          btn.addEventListener('click', ()=>{
+            if(Number(val)===Number(state.current.answer)) correct(); else wrong();
+          });
+          answerMC.appendChild(btn);
+        });
+      }
+    }
+
+    function submitOpen(){
+      const val = Number(openInput.value);
+      if(openInput.value.trim()===''){ feedback.textContent='Bitte Zahl eingeben.'; return; }
+      if(Number(val)===Number(state.current.answer)) correct(); else wrong(true);
+    }
+
+    function correct(){
+      state.score++; hudUpdate();
+      feedback.innerHTML = '<span class="right">Richtig!</span>';
+      setTimeout(()=> nextQuestion(), 300);
+    }
+
+    function wrong(fromOpen=false){
+      const msg = `Leider falsch. Richtig: ${state.current.answer}`;
+      feedback.innerHTML = `<span class="wrong">${msg}</span>`;
+      setTimeout(()=> nextQuestion(), fromOpen? 550: 450);
+    }
+
+    function nextQuestion(){
+      if(state.round===1){
+        state.current = makeEasy(); renderQuestion(); return;
+      }
+      if(state.round===2){
+        state.r2QuestionsLeft--;
+        if(state.r2QuestionsLeft<=0){
+          state.r2 = state.score - state.r1; // Punkte in Runde 2
+          startRound(3); return;
+        }
+        state.current = makeMC(true); renderQuestion(); return;
+      }
+      if(state.round===3){
+        state.current = makeHard(); renderQuestion(); return;
+      }
+    }
+
+    function hudUpdate(){
+      hudRound.textContent = state.round;
+      hudScore.textContent = state.score;
+      if(state.round!==2) hudTimer.textContent = state.timer;
+    }
+
+    function finishGame(){
+      clearInterval(state.intervalId);
+      hide(quiz); show(summary);
+      state.r2 = state.r2 || (state.score - state.r1); // falls direkt beendet
+      if(state.round===3){ state.r3 = state.r3 || (state.score - state.r1 - state.r2); }
+      document.getElementById('sum-score').textContent = state.score;
+      document.getElementById('sum-r1').textContent = state.r1;
+      document.getElementById('sum-r2').textContent = state.r2;
+      document.getElementById('sum-r3').textContent = Math.max(0, state.score - state.r1 - state.r2);
+    }
+
+    // Sanfte Fokus-Markierung für Tastaturbedienung
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Tab'){
+        document.body.style.outline='4px solid var(--focus)';
+        setTimeout(()=>{ document.body.style.outline='none' }, 600);
+      }
+    });
+  </script>
+</body>
+</html>

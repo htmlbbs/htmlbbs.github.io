@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview: Vorgehen bei Sportbefreiung / Teilnahme</title>
+  <style>
+    :root { --maxw: 880px; }
+    html { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.45; }
+    body { margin: 0; background: #f6f7fb; color: #222; }
+    header, main, footer { max-width: var(--maxw); margin: 0 auto; padding: 1rem; }
+    header { padding-top: 2rem; }
+    h1 { font-size: 1.35rem; margin: 0 0 .5rem; }
+    .card { background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 22px rgba(0,0,0,.06); }
+    .q { font-weight: 600; margin-bottom: .5rem; }
+    .btns { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-top: .5rem; }
+    button { border: 1px solid #d7d7dd; background: #fff; border-radius: 10px; padding: .75rem 1rem; cursor: pointer; font-weight: 600; }
+    button:hover { background: #f0f2f7; }
+    button.primary { border-color: #335cff; }
+    .nav { display: flex; gap: .5rem; margin-top: .75rem; }
+    .hint { font-size: .95rem; color: #444; }
+    .note { padding: .75rem 1rem; border-left: 4px solid #335cff; background: #eef2ff; border-radius: 6px; }
+    .warning { padding: .75rem 1rem; border-left: 4px solid #cc2b2b; background: #fff1f1; border-radius: 6px; }
+    .result { font-size: 1.05rem; }
+    details { margin-top: .5rem; }
+    footer { color: #666; font-size: .9rem; padding-bottom: 3rem; }
+    .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9rem; color: #555; }
+    .chips { display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .25rem; }
+    .chip { border: 1px dashed #cfd3e1; border-radius: 999px; padding: .15rem .6rem; font-size: .82rem; }
+    @media (prefers-color-scheme: dark) {
+      body { background:#0f1115; color:#e8e8ea; }
+      .card { background:#171a21; box-shadow: none; }
+      button { background:#1c2030; border-color:#2a3147; color:#e8e8ea; }
+      button:hover { background:#23293c; }
+      .hint { color:#cfd3e1; }
+      .note { background:#19203a; border-left-color:#6e8bff; }
+      .warning { background:#2a1b1b; border-left-color:#ff6b6b; }
+      footer { color:#aab0c0; }
+      .chip { border-color:#3a4058; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Interview: Vorgehen bei Teilnahme / Befreiung im Fach Sport</h1>
+    <p class="hint">Diese Seite fragt keine persönlichen Daten ab und speichert nichts. Beantworte einfach die Fragen Schritt für Schritt.</p>
+  </header>
+
+  <main>
+    <section id="app" class="card" aria-live="polite"></section>
+
+    <section class="card" style="margin-top:1rem">
+      <details>
+        <summary><strong>Hinweise & Leitplanken (aus dem Schaubild)</strong></summary>
+        <ul>
+          <li><strong>Alternative Teilnahme</strong> hat Vorrang: Einbindung in den Unterricht, Ersatzleistungen, Lernort in Absprache.</li>
+          <li><strong>Ärztliche Bescheinigung</strong> ist einzufordern, wenn Dauer/Art dies erfordern.</li>
+          <li><strong>Befreiung von Anwesenheit</strong> nur in seltenen Fällen (z.&nbsp;B. anderer Lernort, Kälte, langes Sitzen) – <em>Folgen kommunizieren!</em></li>
+          <li>Bei <strong>Freistellung</strong> Minderjähriger: Aufsichtspflicht beachten (Info an Erziehungsberechtigte).</li>
+          <li>Bei Attestzeiträumen &gt; 3&nbsp;Monate: <strong>formloser Antrag an das RLSB</strong> (mit Begründung). Zeugnis: „befreit“.</li>
+          <li>Bis ca. 2–4&nbsp;Wochen: zunächst Entscheidung der <strong>Lehrkraft</strong>, danach ggf. <strong>Schulleitung</strong>; ggf. Vermerk „kann nicht beurteilt werden“.</li>
+          <li>Zeugnis-Bemerkung bei alternativer Teilnahme: „Die Note im Fach Sport basiert auf alternativen Teilnahmemöglichkeiten.“</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="chips" aria-label="Datenschutz">
+      <span class="chip">Keine Cookies</span>
+      <span class="chip">Keine Formulare mit Personenbezug</span>
+      <span class="chip">Alles lokal im Browser</span>
+    </div>
+  </footer>
+
+  <script>
+    // Ein schlanker, rein lokaler Entscheidungsbaum
+    const $ = sel => document.querySelector(sel);
+    const app = $('#app');
+
+    // Jeder "Screen" ist entweder eine Frage (type: 'q') oder ein Ergebnis (type: 'r')
+    // Pfade orientieren sich am bereitgestellten Schaubild.
+    const nodes = {
+      start: {
+        type: 'q',
+        text: 'Nimmt die/der SuS aktiv am Sportunterricht teil? (auch teilaktive Teilnahme)',
+        options: [
+          { label: 'Ja', next: 'sorgfalt' },
+          { label: 'Nein', next: 'attest_vorhanden' }
+        ]
+      },
+
+      // — Linke Seite (aktive/teilaktive Teilnahme) —
+      sorgfalt: {
+        type: 'q',
+        text: 'Liegt eine Verletzung oder Erkrankung vor?',
+        hint: 'Sorgfaltspflicht beachten; ggf. teilaktive Teilnahme.',
+        options: [
+          { label: 'Ja', next: 'alt_teilnahme' },
+          { label: 'Nein', next: 'alt_teilnahme' }
+        ]
+      },
+      alt_teilnahme: {
+        type: 'q',
+        text: 'Gibt es eine Möglichkeit der alternativen Teilnahme?',
+        options: [
+          { label: 'Ja', next: 'ergebnis_alt_teilnahme' },
+          { label: 'Nein', next: 'freistellung_mehr_als_3m' }
+        ]
+      },
+      ergebnis_alt_teilnahme: {
+        type: 'r',
+        title: 'Ergebnis: Teilnahme & Ersatzleistungen',
+        bullets: [
+          'Einbindung in den Unterricht (auch teilaktiv) und Leistungsfeststellung durch Ersatzleistungen.',
+          'Zeugnisbemerkung: „Die Note im Fach Sport basiert auf alternativen Teilnahmemöglichkeiten.“'
+        ],
+        tail: 'Bei Minderjährigen Aufsicht wahren.'
+      },
+      freistellung_mehr_als_3m: {
+        type: 'q',
+        text: 'Geht es um eine Freistellung (Abwesenheit) und umfasst der Attestzeitraum mehr als 3 Monate?',
+        options: [
+          { label: 'Ja', next: 'ergebnis_rlsb' },
+          { label: 'Nein', next: 'ergebnis_lehrkraft_schulleitung' }
+        ]
+      },
+      ergebnis_rlsb: {
+        type: 'r',
+        title: 'Ergebnis: Antrag an das RLSB',
+        bullets: [
+          'Formloser Antrag an das jeweils zuständige RLSB (mit Begründung).',
+          'Zeugnis: „befreit“ (gemäß Vorgaben).'
+        ],
+        tail: 'Bei Freistellung Minderjähriger: Aufsichtspflicht/Information an Erziehungsberechtigte.'
+      },
+      ergebnis_lehrkraft_schulleitung: {
+        type: 'r',
+        title: 'Ergebnis: Entscheidung durch Lehrkraft / Schulleitung',
+        bullets: [
+          'Zeitraum bis ca. 2–4 Wochen: Entscheidung der Lehrkraft; danach ggf. Schulleitung.',
+          'Gegebenenfalls Vermerk: „kann nicht beurteilt werden“.'
+        ],
+        tail: 'Befreiung von Anwesenheit nur in seltenen Fällen; Folgen kommunizieren.'
+      },
+
+      // — Rechte Seite (keine aktive Teilnahme) —
+      attest_vorhanden: {
+        type: 'q',
+        text: 'Liegt eine ärztliche Bescheinigung vor?',
+        options: [
+          { label: 'Ja', next: 'alt_teilnahme' }, // versucht erst Einbindung
+          { label: 'Nein', next: 'attest_erforderlich' }
+        ]
+      },
+      attest_erforderlich: {
+        type: 'q',
+        text: 'Erfordern Dauer und Art der Einschränkung eine ärztliche Bescheinigung?',
+        options: [
+          { label: 'Ja – Bescheinigung einfordern', next: 'ergebnis_attest_einfordern' },
+          { label: 'Nein – Entscheidung Lehrkraft', next: 'ergebnis_lehrkraft_alt' }
+        ]
+      },
+      ergebnis_attest_einfordern: {
+        type: 'r',
+        title: 'Ergebnis: Ärztliche Bescheinigung einfordern',
+        bullets: [
+          'Bescheinigung nachfordern und anschließend über Einbindung/alternative Teilnahme entscheiden.',
+          'Bis zur Entscheidung möglichst pädagogische Einbindung (z. B. Beobachtungsauftrag, Assistenz, Theorie).'
+        ],
+        tail: 'Befreiung von Anwesenheit nur ausnahmsweise.'
+      },
+      ergebnis_lehrkraft_alt: {
+        type: 'r',
+        title: 'Ergebnis: Entscheidung durch Lehrkraft',
+        bullets: [
+          'In Absprache: Einbindung in den Unterricht oder alternative Teilnahme / Aufgaben.',
+          'Nur in seltenen Fällen Befreiung von Anwesenheit (z. B. anderer Lernort, Kälte, langes Sitzen).'
+        ],
+        tail: 'Über Folgen informieren; Aufsichtspflicht beachten.'
+      }
+    };
+
+    const trail = []; // für "Zurück" und Pfad-Anzeige ohne Personenbezug
+
+    function renderNode(key) {
+      const n = nodes[key];
+      if (!n) return;
+
+      const pathHtml = trail.length
+        ? `<div class="path" aria-label="bisherige Entscheidungen">Pfad: ${trail.join(' → ')}</div>`
+        : '';
+
+      if (n.type === 'q') {
+        app.innerHTML = `
+          <div class="q" role="heading" aria-level="2">${n.text}</div>
+          ${n.hint ? `<p class="hint">${n.hint}</p>` : ''}
+          <div class="btns">
+            ${n.options.map((o, i) =>
+              `<button class="primary" data-next="${o.next}" data-label="${o.label}">${o.label}</button>`
+            ).join('')}
+          </div>
+          <div class="nav">
+            ${trail.length ? '<button id="backBtn">Zurück</button>' : ''}
+            <button id="restartBtn" title="Interview neu starten">Neu starten</button>
+          </div>
+          ${pathHtml}
+        `;
+        app.querySelectorAll('button[data-next]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const lbl = e.currentTarget.getAttribute('data-label');
+            trail.push(lbl);
+            renderNode(e.currentTarget.getAttribute('data-next'));
+          });
+        });
+      } else if (n.type === 'r') {
+        app.innerHTML = `
+          <div class="result">
+            <h2 style="margin-top:0">${n.title}</h2>
+            <ul>${n.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+            ${n.tail ? `<p class="note">${n.tail}</p>` : ''}
+            <p class="warning"><strong>Wichtig:</strong> Befreiung von Anwesenheit bleibt die Ausnahme; nach Möglichkeit alternative Teilnahme sicherstellen.</p>
+          </div>
+          <div class="nav">
+            ${trail.length ? '<button id="backBtn">Zurück</button>' : ''}
+            <button id="restartBtn">Neu starten</button>
+          </div>
+          ${pathHtml}
+        `;
+      }
+
+      const back = $('#backBtn');
+      if (back) {
+        back.onclick = () => {
+          trail.pop(); // letzte Entscheidung entfernen
+          // Finde vorherigen "Frage"-Knoten aus dem Pfad erneut
+          // Einfachheit: kompletten Verlauf verwerfen und neu von start bis vorletzten Schritt laufen.
+          const replay = [...trail];
+          trail.length = 0;
+          let cur = 'start';
+          for (const lbl of replay) {
+            const n = nodes[cur];
+            const opt = n.options.find(o => o.label === lbl);
+            if (!opt) break;
+            trail.push(lbl);
+            cur = opt.next;
+          }
+          renderNode(cur);
+        };
+      }
+      $('#restartBtn').onclick = () => { trail.length = 0; renderNode('start'); };
+    }
+
+    renderNode('start');
+  </script>
+</body>
+</html>
