@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Übung: Aufsichtspflicht in der Kita</title>
+  <style>
+    :root{
+      --bg:#0b1020;/* tiefes Nachtblau */
+      --card:#111836;/* abgedunkeltes Blau */
+      --ink:#eef2ff;/* sehr hell */
+      --muted:#c8d0ff;/* Pastell */
+      --accent:#7aa2ff;/* Akzent blau */
+      --good:#51d48a;
+      --warn:#ffcf66;
+      --bad:#ff7a7a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% 0%, #11183a 0%, var(--bg) 60%);
+      color:var(--ink);
+    }
+    header{
+      padding:24px 20px 8px; max-width:1100px; margin:0 auto;
+    }
+    h1{margin:0 0 6px; font-size:clamp(20px, 3.2vw, 34px); letter-spacing:.2px}
+    p.lead{margin:0; color:var(--muted)}
+    .wrap{max-width:1100px; margin:16px auto; padding:0 20px 40px}
+    .board{display:grid; grid-template-columns: 1.1fr .9fr; gap:18px}
+    @media (max-width: 900px){.board{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.28);}
+    .card h2{margin:0; font-size:18px; letter-spacing:.3px}
+    .card .hd{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.06)}
+    .card .bd{padding:16px}
+    .situation{font-size:18px; line-height:1.5}
+    .muted{color:var(--muted)}
+    textarea{width:100%; min-height:160px; resize:vertical; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0e1430; color:var(--ink); padding:12px 14px; font-size:16px}
+    .controls{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+    button{appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer; transition:transform .04s ease, opacity .2s ease, background .2s ease;}
+    button:active{transform:translateY(1px)}
+    .btn{background:#1b2452; color:var(--ink); border:1px solid rgba(255,255,255,.1)}
+    .btn:hover{background:#24306e}
+    .btn-accent{background:linear-gradient(180deg, var(--accent), #587fe6); color:#06102a}
+    .btn-good{background:linear-gradient(180deg, var(--good), #35b873); color:#052013}
+    .btn-warn{background:linear-gradient(180deg, var(--warn), #f2b542); color:#1f1300}
+    .btn-bad{background:linear-gradient(180deg, var(--bad), #e65b5b); color:#1f0000}
+    .solution{background:#0d132d; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px 14px; margin-top:14px; display:none}
+    .solution pre{white-space:pre-wrap; margin:0; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+    .stats{display:grid; grid-template-columns: repeat(4, 1fr); gap:10px}
+    .stat{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px}
+    .stat .label{color:var(--muted); font-size:12px}
+    .stat .value{font-size:22px; font-weight:800}
+    .progress{height:8px; border-radius:999px; background:#0f1535; overflow:hidden; border:1px solid rgba(255,255,255,.1); margin-top:8px}
+    .bar{height:100%; width:0}
+    .bar.good{background:var(--good)}
+    .bar.warn{background:var(--warn)}
+    .bar.bad{background:var(--bad)}
+    .mini{font-size:12px; color:var(--muted); margin-top:6px}
+    .foot{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:8px}
+    .pill{padding:6px 10px; border-radius:999px; background:#0d1330; border:1px solid rgba(255,255,255,.1); color:#cdd5ff; font-size:12px}
+    .ghost{opacity:.7}
+    .flex{display:flex; gap:10px; flex-wrap:wrap}
+    /* Neu: Bewertungsbuttons erst nach Auswertung anzeigen */
+    .mark-buttons{display:none; gap:10px;}
+    .mark-buttons.show{display:flex;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Aufsichtspflicht in der Kita – Trainingsmodus</h1>
+    <p class="lead">Lies eine zufällige Situation, notiere deine Stichworte und <b>werte anschließend selbst aus</b>. Deine Statistik läuft mit.</p>
+  </header>
+  <div class="wrap">
+    <div class="board">
+      <section class="card">
+        <div class="hd">
+          <h2>Situation</h2>
+          <button id="btn-new" class="btn">Zufällige neue Situation ⟳</button>
+        </div>
+        <div class="bd">
+          <div id="situation" class="situation"></div>
+          <div class="mini" id="hintIndex"></div>
+          <div class="foot">
+            <span class="pill" id="tag"></span>
+            <span class="pill ghost">Beachte: Kinderschutz, Dokumentation &amp; Kommunikation</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <h2>Deine Stichworte</h2>
+          <button id="btn-clear" class="btn">Eingabe leeren</button>
+        </div>
+        <div class="bd">
+          <label class="muted">Wie würdest du handeln? (Stichworte, jeweils durch Komma trennen)</label>
+          <textarea id="notes" placeholder="z.B.: Situation sichern, Gruppe im Blick, Kollegin informieren, Erste Hilfe, Notruf 112, Eltern/Leitung informieren, dokumentieren…"></textarea>
+          <div class="controls">
+            <button id="btn-eval" class="btn-accent">Auswerten ✅</button>
+            <div id="mark-buttons" class="mark-buttons">
+              <button id="btn-correct" class="btn-good">Richtig</button>
+              <button id="btn-partial" class="btn-warn">Teilweise</button>
+              <button id="btn-wrong" class="btn-bad">Falsch</button>
+            </div>
+          </div>
+          <div class="solution" id="solution">
+            <div class="muted" style="margin-bottom:6px">Muster-Lösung (Stichworte):</div>
+            <pre id="solutionText"></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:18px">
+      <div class="hd">
+        <h2>Deine Statistik</h2>
+        <div class="flex">
+          <button id="btn-reset" class="btn">Statistik zurücksetzen</button>
+          <span class="pill" id="lastResult">Noch keine Bewertung</span>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="stats">
+          <div class="stat"><div class="label">Gesamt</div><div id="st-total" class="value">0</div></div>
+          <div class="stat"><div class="label">Richtig</div><div id="st-good" class="value">0</div><div class="progress"><div class="bar good" id="bar-good"></div></div></div>
+          <div class="stat"><div class="label">Teilweise</div><div id="st-partial" class="value">0</div><div class="progress"><div class="bar warn" id="bar-warn"></div></div></div>
+          <div class="stat"><div class="label">Falsch</div><div id="st-bad" class="value">0</div><div class="progress"><div class="bar bad" id="bar-bad"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <p class="mini">Hinweis: Die Lösungen sind als <b>Stichworte</b> formuliert. In der Praxis immer nach Träger-/Einrichtungs- und Landesvorgaben handeln.</p>
+  </div>
+
+<script>
+// 50 realistische Situationen + Lösungen (Stichworte)
+const ITEMS = [
+  {
+    tag: "Außenbereich",
+    q: "Auf dem Außengelände klettert ein Kind auf die Spitze des Klettergerüsts, obwohl es noch nie dort oben war. Unten spielen weitere Kinder wild Fang.",
+    a: ["Gefahreneinschätzung", "Abstand/Absicherung", "Kind ruhig anleiten beim Abstieg", "Gruppe bündeln/aufteilen", "Aufsichtsschlüssel einhalten", "Kletterregeln erinnern", "Dokumentation bei Beinahe-Unfall"]
+  },
+  {
+    tag: "Abholsituation",
+    q: "Eine unbekannte Person möchte ein Kind früher abholen und behauptet, von den Eltern geschickt worden zu sein.",
+    a: ["Identität prüfen", "Abholberechtigung Liste/Kita-App", "Eltern telefonisch rückversichern", "Kind nicht herausgeben", "Leitung informieren", "Vorkommnis dokumentieren"]
+  },
+  {
+    tag: "Allergie/Anaphylaxie",
+    q: "Beim Frühstück reagiert ein Kind mit Nussallergie plötzlich mit Atemnot und Hautausschlag.",
+    a: ["Ruhe bewahren", "Notfallplan Allergie", "Adrenalin-Autoinjektor anwenden (falls verordnet)", "Notruf 112", "Erste Hilfe/Monitoring", "Eltern/Leitung informieren", "Unfall-/Notfallprotokoll"]
+  },
+  {
+    tag: "Toilette/Intimsphäre",
+    q: "Ein Kind (3) hat sich eingenässt und ist beschämt, mehrere Kinder schauen zu und kichern.",
+    a: ["Würde wahren/abschirmen", "saubere Kleidung/Hygienehilfe", "Handschuhe/Handhygiene", "Dokumentation (falls wiederholt)", "Eltern sensibel informieren", "Präventionsregeln Körperschema"]
+  },
+  {
+    tag: "Ausflug",
+    q: "Auf dem Weg zum Spielplatz bleibt ein Kind stehen und schaut in ein Schaufenster, die Gruppe geht weiter und es droht Anschluss zu verlieren.",
+    a: ["Gruppenübersicht zählen", "Kollegin abstimmen", "kurz stoppen/Gruppe sammeln", "Kind zurückholen/Hand geben", "Laufwege/Stopppunkte vorher klären", "Nachbesprechung"]
+  },
+  {
+    tag: "Streit/Übergriff",
+    q: "Zwei Kinder schubsen sich auf der Matte, eines droht mit der Faust. Andere feuern an.",
+    a: ["Deeskalierend dazwischengehen", "körperliche Trennung", "Gefahr beenden", "Gefühle benennen/Regeln erinnern", "Einzelgespräch", "Dokumentation bei Verletzung", "Eltern informieren je nach Schwere"]
+  },
+  {
+    tag: "Verschlucken",
+    q: "Beim Mittagessen hustet ein Kind stark, greift sich an den Hals und wird panisch.",
+    a: ["Anzeichen prüfen", "Husten ermutigen", "falls Atemnot: 5 Rückenstöße / Bauchstöße nach Leitlinie", "Notruf 112 bei Bedarf", "Gruppe absichern (Kollegin)", "Eltern/Leitung informieren", "Dokumentation"]
+  },
+  {
+    tag: "Schlafraum",
+    q: "Im Ruheraum schläft ein Kind in Bauchlage, obwohl es ein erhöhtes Risiko hat (Hinweis im Aufnahmebogen).",
+    a: ["Sichere Schlafumgebung prüfen", "Bauchlage korrigieren (Schonend)", "Regelmäßige Sichtkontrolle", "Dokumentation", "Team erinnern an Vereinbarung"]
+  },
+  {
+    tag: "Medikamentengabe",
+    q: "Ein Kind bringt ein Fieberzäpfchen mit und die Eltern bitten spontan um Gabe in der Kita.",
+    a: ["Schriftliche Anordnung prüfen", "Keine spontane Gabe ohne Verordnung", "Leitung informieren", "Dokumentation", "Eltern über Verfahren aufklären"]
+  },
+  {
+    tag: "Fluchtweg",
+    q: "Ein Kind öffnet neugierig die Ausgangstür zum Hof, weitere Kinder folgen Richtung Tor.",
+    a: ["Türe sofort sichern", "Kinder zurückholen/sammeln", "Zählkontrolle", "Sicherungsmaßnahmen (Türsummer/Klingel) prüfen", "Gefahrengespräch mit Kindern", "Dokumentation/Leitung"]
+  },
+  {
+    tag: "Werkbank/Basteln",
+    q: "Beim Werken mit Holz greifen Kinder ohne Schutzbrille zu Feilen, Späne fliegen.",
+    a: ["Tätigkeit pausieren", "PSA (Brille/Schürze) anlegen", "Regeln erklären", "Kleingruppenarbeit/Aufsichtsschlüssel", "Arbeitsplatz sichern", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Hochbett/Innenraum",
+    q: "Ein Kind springt vom oberen Podest in eine Kissenlandschaft, andere wollen nachmachen.",
+    a: ["Sofort stoppen", "Sicherheitsregeln wiederholen", "Podest ggf. sperren", "Alternativangebot schaffen", "Aufbau prüfen (Sturzgefahr)", "Dokumentation bei Vorfall"]
+  },
+  {
+    tag: "Abholung geteiltes Sorgerecht",
+    q: "Ein Elternteil mit geteiltem Sorgerecht will das Kind entgegen der vereinbarten Tage mitnehmen und wirkt aufgebracht.",
+    a: ["Ruhig bleiben", "Absprachen/Umgangsregel prüfen", "Kind schützen – nicht herausgeben", "Leitung hinzuziehen", "Eltern telefonische Klärung", "Dokumentation/Vorkommnisprotokoll"]
+  },
+  {
+    tag: "Wetter/Hitze",
+    q: "Sommerlicher Ausflug – mehrere Kinder ohne Kopfbedeckung, Sonnencreme unklar.",
+    a: ["Ausflug verschieben/Anpassen", "Schatten/Innenräume nutzen", "Sonnenschutz organisieren (Einverständnis)", "Wasser anbieten", "Elternkommunikation", "Dokumentation"]
+  },
+  {
+    tag: "Nässe/Unfallgefahr",
+    q: "Nach dem Wischen ist der Flur nass, Kinder rennen zur Garderobe.",
+    a: ["Bereich absperren/kennzeichnen", "Kinder anhalten/führen", "Alternative Wege", "Rutschgefahr beseitigen", "Hauswirtschaft informieren", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Tierkontakt",
+    q: "Im Garten taucht ein fremder Hund am Zaun auf, Kinder wollen ihn streicheln.",
+    a: ["Abstand halten lassen", "Hund nicht füttern/streicheln", "Kinder sammeln", "Gefahr erklären", "Besitzer/Ordnungsamt bei Wiederholung", "Dokumentation"]
+  },
+  {
+    tag: "Bau-Ecke/Kleinteile",
+    q: "Ein U3-Kind steckt kleine Bausteine in den Mund.",
+    a: ["Sofort entnehmen (vorsichtig)", "Material an Altersgruppe anpassen", "Bereich reinigen", "Aufsicht intensivieren", "Elternhinweis bei wiederholtem Verhalten", "Dokumentation"]
+  },
+  {
+    tag: "Waldausflug",
+    q: "Bei der Waldpädagogik ist plötzlich ein Kind nicht mehr in Sichtweite.",
+    a: ["Sofortige Zählkontrolle", "Ruf-/Pfeifsignal", "Kollegin sammelt Gruppe", "Suchradius systematisch abgehen", "Notruf 112 wenn ungelöst", "Eltern/Leitung informieren", "Vorfall dokumentieren"]
+  },
+  {
+    tag: "Körperliche Symptome",
+    q: "Ein Kind klagt über starke Bauchschmerzen und wird blass/schlapp.",
+    a: ["Ruhe/Beobachtung", "Basisparameter soweit möglich", "Eltern kontaktieren Abholung/Arzt", "Notruf 112 bei Verschlechterung", "Dokumentation", "Infektionsschutz beachten"]
+  },
+  {
+    tag: "Digitale Medien",
+    q: "Ein Kind zeigt auf einem mitgebrachten Handy ein ungeeignetes Video anderen Kindern.",
+    a: ["Sofort beenden", "Handy sicherstellen (Konzept!)", "Gespräch über Medienregeln", "Eltern informieren", "Dokumentation/Vorfall"]
+  },
+  {
+    tag: "Gefahrstoff",
+    q: "Putzmittel steht offen im Bad, Kinder nähern sich neugierig.",
+    a: ["Sofort sichern/wegschließen", "Raum lüften bei Dämpfen", "Kinder fernhalten", "Gefahr unterbinden", "Hauswirtschaft/Leitung informieren", "Gefährdungsbeurteilung prüfen", "Dokumentation"]
+  },
+  {
+    tag: "Wasser/Matschbecken",
+    q: "Am Planschbecken trinken Kinder aus dem Wasser und schubsen sich hinein.",
+    a: ["Klare Regeln Wasserbereich", "Ständige Sichtnähe", "Wasser austauschen/hygienisch", "Schubsen sofort stoppen", "Handtücher/Wechselkleidung", "Dokumentation bei Vorfall"]
+  },
+  {
+    tag: "Fahrzeuge/Laufrad",
+    q: "Im Hof fahren Kinder Laufrad, eines ohne Helm rast auf die Treppe zu.",
+    a: ["Gefahrenstelle sichern/Absperren", "Kind anhalten/umlenken", "Helmregel klären", "Fahrbereich definieren", "Aufsicht anpassen", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Bastelkleber/Allergie",
+    q: "Nach Basteln mit Latexhandschuhen zeigt ein Kind Hautrötungen.",
+    a: ["Material absetzen", "Haut reinigen/kühlen", "Allergie abklären (Bogen)", "Eltern informieren", "Latexfreie Alternativen", "Dokumentation"]
+  },
+  {
+    tag: "Kletterbaum",
+    q: "Im Park klettert ein Kind höher als abgesprochen und der Ast wirkt instabil.",
+    a: ["Kind ruhig zurücklotsen", "Sicherheitsabstand nach unten", "Klettergrenzen erklären", "Baum prüfen/nicht nutzen", "Kleingruppenaufsicht", "Dokumentation"]
+  },
+  {
+    tag: "Straßenüberquerung",
+    q: "Auf dem Weg zur Bücherei drängt ein Kind an der Ampel nach vorne auf den Bordstein.",
+    a: ["Stopplinie markieren", "Seil/Partnerprinzip", "nur grün & Blickkontakt", "Zählen vor/nach Querung", "Rollen im Team klar", "Nachbesprechung"]
+  },
+  {
+    tag: "Werkzeug/Messer",
+    q: "Beim Obstschneiden fuchtelt ein Kind mit dem Küchenmesser herum.",
+    a: ["Sofort sicheres Ablegen anleiten", "Regeln wiederholen", "Sitzplätze/Abstand prüfen", "Nur kindgerechte Messer", "Kleingruppe", "Dokumentation bei Vorfall"]
+  },
+  {
+    tag: "Einschlussgefahr",
+    q: "Ein Kind krabbelt in den Materialschrank und zieht die Tür zu.",
+    a: ["Tür sofort öffnen/sichern", "Kind beruhigen", "Schrank zukünftig sichern (Kindersicherung)", "Regeln erklären", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Feueralarm",
+    q: "Während des Bastelns löst der Feueralarm aus.",
+    a: ["Sofortige Evakuation nach Plan", "Zählkontrolle am Sammelplatz", "Notfallmappe mitnehmen", "Keine Rückkehr bis Freigabe", "Eltern/Leitung Info", "Ereignis dokumentieren"]
+  },
+  {
+    tag: "Schaukelbereich",
+    q: "Kinder laufen durch den Schaukelbereich, ein Kind schaukelt hoch.",
+    a: ["Bereich räumen", "Sicherheitszonen erklären/markieren", "Einzelbetrieb/Kleingruppe", "Aufsichtspunkt anpassen", "Dokumentation bei Beinahe-Kollision"]
+  },
+  {
+    tag: "Wickeln allein?",
+    q: "Du bist allein mit 12 Kindern; ein U2-Kind braucht dringend Wickeln.",
+    a: ["Aufsicht priorisieren", "Tür offen/Sichtkontakt", "Material vorbereiten", "Gruppe beschäftigen (Tischaktivität)", "Unterstützung anfordern wenn möglich", "Dokumentation Betreuungsschlüssel"]
+  },
+  {
+    tag: "Blut/Infektionsschutz",
+    q: "Ein Kind stürzt und blutet am Knie, andere Kinder wollen helfen und fassen an.",
+    a: ["Handschuhe an", "Kinder auf Abstand", "Wunde reinigen/versorgen", "Material entsorgen", "Eltern/Unfallbogen", "Fläche reinigen/Desinfektion"]
+  },
+  {
+    tag: "Schnee/Eisklumpen",
+    q: "Im Winter werfen Kinder harte Eisklumpen.",
+    a: ["Stoppen und Regeln erklären", "Alternativspiel anbieten", "Gefahrenbereich räumen", "Aufsichtspunkte anpassen", "Dokumentation bei Vorfall"]
+  },
+  {
+    tag: "Glasflasche",
+    q: "Ein Kind bringt eine Glasflasche mit in die Turnhalle.",
+    a: ["Glas sofort einsammeln", "Sichere Aufbewahrung/Ersetzen", "Regel erklären", "Hallenfläche prüfen (Scherben)", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Bienen/Wespen",
+    q: "Beim Vesper nähern sich viele Wespen, Kinder fuchteln herum.",
+    a: ["Ruhe bewahren", "Süßes abdecken", "In Innenraum/Schatten verlagern", "Stiche versorgen/Allergie beachten", "Vorfall dokumentieren", "Eltern informieren bei Stich"]
+  },
+  {
+    tag: "Schlüssel/Schmuck",
+    q: "Ein Kind hat einen Schlüsselbund um den Hals beim Klettern.",
+    a: ["Sofort abnehmen", "Strangulationsgefahr erklären", "Sichere Aufbewahrung", "Kletterregeln anpassen", "Dokumentation Hinweis an Eltern"]
+  },
+  {
+    tag: "Räume wechseln",
+    q: "Beim Wechsel vom Gruppenraum in den Garten fehlt nachher ein Kind bei der Zählkontrolle.",
+    a: ["Übergabe-/Zählverfahren anwenden", "Sofort Rückweg prüfen", "Räume systematisch absuchen", "Kollegin informiert", "Dokumentation/Nachbesprechung", "Türen sichern"]
+  },
+  {
+    tag: "Falsche Kleidung",
+    q: "Regenbeginn: mehrere Kinder ohne passende Kleidung sind durchnässt und frieren.",
+    a: ["In Innenraum wechseln", "Wechselkleidung/Leihsachen", "Nasse Kleidung wechseln", "Eltern informieren an Abholung", "Materialliste aktualisieren", "Dokumentation"]
+  },
+  {
+    tag: "Hochbeet/Werkzeug",
+    q: "Beim Gärtnern liegen Harken mit Zinken nach oben.",
+    a: ["Arbeit unterbrechen", "Werkzeug sicher ablegen", "Regeln erklären", "Kleingruppe/Aufsicht", "Dokumentation Beinahe-Unfall"]
+  },
+  {
+    tag: "Fenster/Trittschemel",
+    q: "Ein Kind stellt einen Hocker ans Fenster und klettert hoch.",
+    a: ["Hocker wegnehmen", "Fenstersicherung prüfen", "Kind runterbegleiten", "Regeln erklären", "Möblierung anpassen", "Dokumentation"]
+  },
+  {
+    tag: "Essen/Religiöse Vorgaben",
+    q: "Ein Kind soll probieren, darf aber aus religiösen Gründen bestimmte Speisen nicht essen.",
+    a: ["Respekt der Vorgaben", "Essensplan/Allergieliste prüfen", "Alternative anbieten", "Team informieren", "Dokumentation"]
+  },
+  {
+    tag: "Besucher im Haus",
+    q: "Eine unbekannte Person steht plötzlich im Gruppenraum und fotografiert.",
+    a: ["Sofort ansprechen/stoppen", "Hausordnung erklären", "Leitung hinzuziehen", "Person begleiten/ausweisen lassen", "Kinder schützen", "Vorfall dokumentieren"]
+  },
+  {
+    tag: "Scherenlauf",
+    q: "Ein Kind läuft mit offener Schere durch den Raum.",
+    a: ["Anhalten lassen", "Schere sicher tragen zeigen", "Sitzplatzarbeit", "Materialorganisation prüfen", "Dokumentation bei Beinahe-Verletzung"]
+  },
+  {
+    tag: "Treppenhaus",
+    q: "Kinder rennen die Treppe hoch, Geländer wird beklettert.",
+    a: ["Stoppen/Sammeln", "Einzel- oder Partnerlauf", "Geländerregeln", "Aufsichtspunkte oben/unten", "Rutschfestes Schuhwerk prüfen", "Dokumentation"]
+  },
+  {
+    tag: "Sandkiste/Verdecken",
+    q: "Kinder vergraben Spielzeug tief im Sand, andere buddeln mit Kraft nah am Rand.",
+    a: ["Gefahr erklären", "Abstand halten", "Werkzeuge anpassen", "Regeln für Sandbereich", "Nach Spiel Abdeckung prüfen", "Dokumentation bei Streit/Unfall"]
+  },
+  {
+    tag: "Rollen-/Körpergrenzen",
+    q: "Im Rollenspiel drängt ein Kind ein anderes zum Umarmen/Küssen.",
+    a: ["Sofort Grenzen setzen", "Körperregeln/Konsens", "Kind schützen", "Gespräch in Ruhe", "Elterninfo je nach Schwere", "Dokumentation/Kinderschutz beachten"]
+  },
+  {
+    tag: "Schmuck/Ohrringe",
+    q: "Beim Turnen trägt ein Kind große Ohrringe.",
+    a: ["Schmuck abkleben/abnehmen", "Elternregelung erinnern", "Alternative Teilnahme", "Sicherheitsrisiko erklären", "Dokumentation Hinweis"]
+  },
+  {
+    tag: "Baugerüst neben Kita",
+    q: "Vor der Kita steht ein Baugerüst, Kinder sammeln sich neugierig nahe am Zaun.",
+    a: ["Sicherheitsabstand markieren", "Fenster/Zaun schließen", "Kontakt zu Baufirma/Leitung", "Lärm-/Staubschutz", "Außenaufsicht anpassen", "Dokumentation"]
+  },
+  {
+    tag: "Nadel/Spitze Gegenstände",
+    q: "Auf dem Weg liegt eine Spritze im Gebüsch, Kinder zeigen darauf.",
+    a: ["Kinder fernhalten/absichern", "Nicht selbst anfassen", "Stadt/Hausmeister informieren", "Fundstelle markieren/merken", "Dokumentation/Elterninfo"]
+  },
+  {
+    tag: "U3 Schlafsack",
+    q: "Ein U1-Kind schläft ohne Schlafsack mit Decke über Kopf.",
+    a: ["Decke entfernen", "Schlafsack nutzen", "Sicht-/Atemwege frei", "Regelmäßige Kontrolle", "Dokumentation und Teamhinweis"]
+  },
+  {
+    tag: "Mobbing/Verhöhnen",
+    q: "Eine Gruppe macht sich wiederholt über die Sprache eines Kindes lustig.",
+    a: ["Sofort stoppen", "Schutz und Stärkung des betroffenen Kindes", "Gespräch/Regeln in Gruppe", "Eltern beider Seiten informieren", "Dokumentation/Teamabsprachen"]
+  },
+  {
+    tag: "Schlüssel verloren",
+    q: "Beim Ausflug stellst du fest: der Gruppenschlüssel fehlt.",
+    a: ["Gruppe sichern/zusammenhalten", "Schlüsselweg prüfen", "Kollegin informieren/Unterstützung", "Einrichtungsleitung/Hausmeister", "Schließanlage bewerten (Sicherheit)", "Dokumentation Vorfall"]
+  },
+  {
+    tag: "Elternkonflikt vor Kind",
+    q: "Bei der Abholung streiten Eltern laut und aggressiv vor dem Kind.",
+    a: ["Kind schützen/wegführen", "deeskalieren", "Leitung hinzuziehen", "keine Parteinahme", "Dokumentation/Kinderschutz prüfen", "bei Gefährdung Polizei"]
+  },
+  {
+    tag: "Körpertemperatur/Infekt",
+    q: "Ein Kind wirkt fiebrig und schläft ständig ein, keine Medikamentenvereinbarung vorhanden.",
+    a: ["Beobachten/Temperatur prüfen laut Konzept", "Eltern anrufen zur Abholung", "keine Gabe ohne Vereinbarung", "Ruheplatz/Flüssigkeit", "Dokumentation"]
+  },
+  {
+    tag: "Kletterseil/Schlinge",
+    q: "Auf dem Spielplatz bildet ein Seil eine Schlinge in Kopfhöhe.",
+    a: ["Bereich sperren", "Seil entfernen/sichern", "Kinder fernhalten", "Gefahr erklären", "Dokumentation/Träger informieren"]
+  },
+  {
+    tag: "Straßenfest/Trubel",
+    q: "Vor der Kita findet spontan ein Straßenfest statt; viele fremde Menschen an der Tür.",
+    a: ["Zutrittskontrolle verstärken", "Tür geschlossen halten", "Kinder im Hausbereich halten", "Abholregeln strikt prüfen", "Leitung informieren", "Dokumentation"]
+  },
+  {
+    tag: "Hustenanfall/Asthma",
+    q: "Ein Kind mit bekanntem Asthma bekommt beim Rennen stark Luftnot, Inhalator ist im Rucksack.",
+    a: ["Belastung sofort stoppen", "Sitz aufrecht/beruhigen", "Inhalator nach Plan helfen", "Besserung prüfen", "Eltern/Leitung informieren", "112 bei Nichtbesserung", "Dokumentation"]
+  },
+  {
+    tag: "Werkraum/Cutter",
+    q: "Ältere Kinder möchten mit Cuttermessern arbeiten (Projekt).",
+    a: ["Gefährdungsbeurteilung", "Nur mit Schutz und Anleitung", "Kleingruppe/1:1-Begleitung", "Sicher lagern/abgeben", "Dokumentation/Elterninfo"]
+  },
+  {
+    tag: "Kita-Schließzeit",
+    q: "Kurz vor Schließzeit wurde ein Kind noch nicht abgeholt; Telefon der Eltern geht nicht.",
+    a: ["Leitung informieren", "Notfallkontakte anrufen", "Betreuung sicherstellen (nie allein lassen)", "Träger/Vorgehen laut Konzept", "Dokumentation Vorfall"]
+  },
+  {
+    tag: "Wickelplatz offen",
+    q: "Wickelbereich ist unbesetzt, aber offen – Kinder klettern auf die Treppe zum Tisch.",
+    a: ["Bereich sofort schließen", "Kinder wegführen", "Sicherungen prüfen", "Regel: nie unbesetzt offen", "Dokumentation"]
+  }
+];
+
+// --- State & helpers ---
+let currentIndex = -1;
+const $ = sel => document.querySelector(sel);
+const els = {
+  situation: $('#situation'),
+  hintIndex: $('#hintIndex'),
+  tag: $('#tag'),
+  notes: $('#notes'),
+  solution: $('#solution'),
+  solutionText: $('#solutionText'),
+  lastResult: $('#lastResult'),
+  st: { total: $('#st-total'), good: $('#st-good'), partial: $('#st-partial'), bad: $('#st-bad') },
+  bar: { good: $('#bar-good'), warn: $('#bar-warn'), bad: $('#bar-bad') },
+  btn: { new: $('#btn-new'), clear: $('#btn-clear'), eval: $('#btn-eval'), correct: $('#btn-correct'), partial: $('#btn-partial'), wrong: $('#btn-wrong'), reset: $('#btn-reset') },
+  markBox: $('#mark-buttons')
+};
+
+const STORAGE_KEY = 'kita-aufsicht-training-v1';
+
+const loadStats = () => {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {total:0, good:0, partial:0, bad:0}; }
+  catch { return {total:0, good:0, partial:0, bad:0}; }
+};
+const saveStats = (s) => localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+let stats = loadStats();
+
+function pickRandomIndex(){
+  if (ITEMS.length <= 1) return 0;
+  let idx;
+  do { idx = Math.floor(Math.random()*ITEMS.length); } while (idx === currentIndex);
+  return idx;
+}
+
+function renderStats(){
+  els.st.total.textContent = stats.total;
+  els.st.good.textContent = stats.good;
+  els.st.partial.textContent = stats.partial;
+  els.st.bad.textContent = stats.bad;
+  const denom = Math.max(1, stats.total);
+  els.bar.good.style.width = (100*stats.good/denom)+"%";
+  els.bar.warn.style.width = (100*stats.partial/denom)+"%";
+  els.bar.bad.style.width = (100*stats.bad/denom)+"%";
+}
+
+function showItem(idx){
+  const it = ITEMS[idx];
+  currentIndex = idx;
+  els.situation.textContent = it.q;
+  els.hintIndex.textContent = `Fall ${(idx+1).toString().padStart(2,'0')} von ${ITEMS.length}`;
+  els.tag.textContent = `Thema: ${it.tag}`;
+  els.notes.value = '';
+  els.solution.style.display = 'none';
+  els.markBox.classList.remove('show'); // Bewertungsbuttons ausblenden
+  els.lastResult.textContent = 'Noch keine Bewertung';
+}
+
+function evaluate(){
+  // Musterlösung zeigen – danach erscheinen die Bewertungsbuttons
+  const it = ITEMS[currentIndex];
+  const lines = it.a.map((s)=>`• ${s}`).join("\n");
+  els.solutionText.textContent = lines;
+  els.solution.style.display = 'block';
+  els.markBox.classList.add('show'); // Bewertungsbuttons einblenden
+}
+
+function mark(kind){
+  stats.total += 1;
+  if (kind==='good') stats.good += 1;
+  if (kind==='partial') stats.partial += 1;
+  if (kind==='bad') stats.bad += 1;
+  saveStats(stats);
+  renderStats();
+  if (kind==='good') els.lastResult.textContent = 'Bewertung: Richtig ✅';
+  if (kind==='partial') els.lastResult.textContent = 'Bewertung: Teilweise ⚠️';
+  if (kind==='bad') els.lastResult.textContent = 'Bewertung: Falsch ❌';
+  els.markBox.classList.remove('show'); // nach Bewertung wieder ausblenden
+}
+
+function resetStats(){
+  stats = {total:0, good:0, partial:0, bad:0};
+  saveStats(stats);
+  renderStats();
+  els.lastResult.textContent = 'Statistik zurückgesetzt';
+}
+
+// --- Wire up ---
+els.btn.new.addEventListener('click', ()=> showItem(pickRandomIndex()));
+els.btn.clear.addEventListener('click', ()=> els.notes.value='');
+els.btn.eval.addEventListener('click', evaluate);
+els.btn.correct.addEventListener('click', ()=> mark('good'));
+els.btn.partial.addEventListener('click', ()=> mark('partial'));
+els.btn.wrong.addEventListener('click', ()=> mark('bad'));
+els.btn.reset.addEventListener('click', resetStats);
+
+// Start
+renderStats();
+showItem(pickRandomIndex());
+</script>
+</body>
+</html>

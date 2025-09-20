@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bistro Kasse – Wechselgeld (POS mit Ziffernblock, ohne Beleg)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#121417;
+      --device:#1f242b;
+      --panel:#0f1317;
+      --key:#2a313a;
+      --key-hover:#343c47;
+      --text:#e6edf3;
+      --muted:#9aa4b2;
+      --line:#2c3540;
+      --tile:#1b2128;
+      --tile-active:#173621;
+      --badge:#2fb573;
+      --warn:#ff4d4d;
+      --lcd-border:#26303a;
+      --accent:#54c167;
+      --danger:#e35d5d;
+    }
+    *{box-sizing:border-box}
+    html,body{height:90%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 0%, #0e1114, #0a0d10 70%);
+      color:var(--text);
+      font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial;
+    }
+    .pos{ max-width:1200px; margin:24px auto; padding:16px; }
+    .device{
+      background:linear-gradient(#242a31, #1a2026);
+      border:1px solid #2a3038;
+      border-radius:22px;
+      box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03);
+      padding:18px;
+      zoom: 0.90;
+    }
+    .brand{ text-align:center; color:var(--muted); letter-spacing:.12em; font-weight:600; margin-bottom:10px; text-transform:uppercase; opacity:.9; }
+    .layout{ display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; align-items:start; }
+    @media (max-width: 980px){ .layout{ grid-template-columns: 1fr; } }
+
+    /* Left: product tiles */
+    .tiles{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; }
+    .tiles h2{ margin:0 0 10px; font-size:18px; color:#cdd6e1; font-weight:600; }
+    .grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+    @media (max-width: 680px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+    .tile{
+      background:var(--tile);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 10px 12px;
+      min-height:96px;
+      display:flex; gap:10px; flex-direction:column; justify-content:space-between;
+      cursor:pointer; transition:transform .05s ease, background .2s ease, border-color .2s ease;
+      position:relative; user-select:none;
+    }
+    .tile:hover{ background:var(--key-hover); transform:translateY(-1px) }
+    .tile.active{ background:var(--tile-active); border-color:#2a5a36; }
+    .title{ font-weight:600; }
+    .price{ color:var(--muted); font-weight:500; font-size:14px; }
+    .qtyRow{ display:flex; gap:8px; align-items:center; }
+    .qtyBtn{
+      background:var(--key);
+      border:1px solid var(--line);
+      color:var(--text);
+      width:34px; height:34px; border-radius:10px; line-height:1; font-size:18px;
+      display:inline-flex; align-items:center; justify-content:center;
+    }
+    .qtyBtn:hover{ background:var(--key-hover) }
+    .qtyInput{
+      width:48px; text-align:right; padding:6px 8px; border-radius:10px;
+      background:#0d1216; border:1px solid var(--line); color:var(--text); font-weight:600;
+    }
+    .badge{
+      position:absolute; top:8px; right:8px; background:var(--badge); color:#07240f; font-weight:800;
+      border-radius:999px; min-width:24px; height:24px; padding:0 6px; display:flex; align-items:center; justify-content:center;
+      font-size:13px; box-shadow:0 2px 0 rgba(0,0,0,.2); display:none;
+    }
+    .tile.active .badge{ display:flex; }
+
+    /* Right */
+    .right{ display:grid; grid-template-rows: auto auto auto; gap:12px; }
+    .lcds{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    .lcd{
+      background:linear-gradient(#0c1116, #0a0f13);
+      border:1px solid var(--lcd-border);
+      border-radius:12px; padding:10px 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04), inset 0 -1px 0 rgba(0,0,0,.4);
+      display:flex; justify-content:space-between; align-items:baseline;
+      font-variant-numeric: tabular-nums;
+    }
+    .lcd label{ color:#93a1b2; font-size:13px; }
+    .lcd .val{ font-size:24px; font-weight:800; letter-spacing:.5px; }
+    .lcd.warn .val{ color:var(--warn); }
+    .lcd.ok .val{ color:#88e596; }
+
+    /* Keypads */
+    .keypads{ display:grid; gap:10px; }
+    .keys{
+      background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:10px;
+      display:grid; gap:10px;
+    }
+    .keys.grid3{ grid-template-columns: repeat(3, 1fr); }
+    .keys.grid4{ grid-template-columns: repeat(4, 1fr); }
+    .key{
+      background:var(--key); border:1px solid var(--line); border-radius:12px; color:var(--text);
+      height:56px; font-size:18px; font-weight:800; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; user-select:none;
+    }
+    .key:hover{ background:var(--key-hover) }
+    .key.accent{ background:linear-gradient(#54c167,#3e9a50); border-color:#2b6f3a; color:#07240f; }
+    .key.danger{ background:linear-gradient(#f06d6d,#c24f4f); border-color:#a63f3f; color:#fff; }
+
+    .footerNote{ color:var(--muted); font-size:13px; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="pos">
+    <div class="device">
+      <div class="brand">Bistro Kasse</div>
+      <div class="layout">
+        <!-- LEFT: Product tiles -->
+        <section class="tiles">
+          <h2>Waren</h2>
+          <div class="grid" id="tileGrid"></div>
+        </section>
+
+        <!-- RIGHT: Displays + keypad (ohne Beleg) -->
+        <section class="right">
+          <div class="lcds">
+            <div class="lcd" id="lcd-sum"><label>Summe</label><div class="val" id="sumOut">0,00&nbsp;€</div></div>
+            <div class="lcd" id="lcd-paid"><label>Bezahlt mit</label><div class="val" id="paidOut">0,00&nbsp;€</div></div>
+            <div class="lcd" id="lcd-change"><label>Differenz (Wechselgeld)</label><div class="val" id="diffOut">0,00&nbsp;€</div></div>
+          </div>
+
+          <div class="keypads">
+            <!-- Numeric keypad -->
+            <div class="keys grid3" id="numPad">
+              <div class="key k" data-k="7">7</div>
+              <div class="key k" data-k="8">8</div>
+              <div class="key k" data-k="9">9</div>
+              <div class="key k" data-k="4">4</div>
+              <div class="key k" data-k="5">5</div>
+              <div class="key k" data-k="6">6</div>
+              <div class="key k" data-k="1">1</div>
+              <div class="key k" data-k="2">2</div>
+              <div class="key k" data-k="3">3</div>
+              <div class="key k" data-k="0">0</div>
+              <div class="key k" data-k="00">00</div>
+              <div class="key k" data-k=",">,</div>
+            </div>
+
+            <!-- Action keys -->
+            <div class="keys grid4">
+              <div class="key danger" id="keyClear">C</div>
+              <div class="key" id="keyBack">⌫</div>
+              <div class="key" id="keyExact">EXAKT</div>
+              <div class="key accent" id="keyNeu">NEU</div>
+            </div>
+          </div>
+
+          <div class="footerNote">Tippe auf eine Ware, um die Menge zu erhöhen. Mit +/− an der Ware anpassen. Betrag über den Ziffernblock eingeben (Komma für Cent). „EXAKT“ setzt den Betrag auf die aktuelle Summe.</div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Daten ----------
+    const PRODUCTS = [
+      {name:'Belegtes Brötchen', price:1.50},
+      {name:'Brötchen mit Ei', price:1.80},
+      {name:'Croissant', price:1.20},
+      {name:'Hefegebäck', price:0.95},
+      {name:'Schoko-Keks', price:0.85},
+      {name:'Kaffee', price:0.70},
+      {name:'Pappbecher', price:0.25},
+      {name:'Pizzastück', price:2.45},
+      {name:'Pizza vegetarisch', price:2.20},
+      {name:'Großer Nudelsalat', price:1.90},
+      {name:'Nudelsalat vegetarisch', price:1.65},
+      {name:'Laugenbrezel', price:1.30},
+      {name:'Obstquark', price:0.50},
+      {name:'Fruchtjoghurt', price:0.45},
+    ];
+
+    // ---------- Utils ----------
+    const fmt = new Intl.NumberFormat('de-DE',{style:'currency', currency:'EUR', maximumFractionDigits:2});
+    const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+
+    // ---------- State ----------
+    const state = {
+      qty: Array(PRODUCTS.length).fill(0),
+      paidStr: '0' // '12,50' etc.
+    };
+
+    // ---------- DOM ----------
+    const grid = document.getElementById('tileGrid');
+    const sumOut = document.getElementById('sumOut');
+    const paidOut = document.getElementById('paidOut');
+    const diffOut = document.getElementById('diffOut');
+    const changeLCD = document.getElementById('lcd-change');
+
+    // ---------- Build tiles ----------
+    PRODUCTS.forEach((p, i) => {
+      const t = document.createElement('div');
+      t.className = 'tile';
+      t.dataset.index = String(i);
+      t.innerHTML = `
+        <div class="title">${p.name}</div>
+        <div class="price">${fmt.format(p.price)}</div>
+        <div class="qtyRow">
+          <button class="qtyBtn" data-act="dec" aria-label="${p.name} verringern">−</button>
+          <input class="qtyInput" type="number" min="0" max="10" value="0" inputmode="numeric" aria-label="Menge ${p.name}">
+          <button class="qtyBtn" data-act="inc" aria-label="${p.name} erhöhen">+</button>
+        </div>
+        <div class="badge">0</div>
+      `;
+      grid.appendChild(t);
+    });
+    const tiles = Array.from(document.querySelectorAll('.tile'));
+
+    // ---------- Payment helpers ----------
+    function paidNumber(){
+      const s = state.paidStr.replace(/\./g,'').replace(',','.');
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+    function updatePaidDisplay(){
+      paidOut.textContent = fmt.format(paidNumber());
+    }
+
+    function inputPaid(k){
+      let s = state.paidStr;
+      const hasComma = s.includes(',');
+      const decimals = hasComma ? s.length - s.indexOf(',') - 1 : 0;
+
+      if (k === 'C'){ state.paidStr = '0'; updatePaidDisplay(); recalc(); return; }
+      if (k === '⌫'){
+        s = s.slice(0, -1);
+        if (s === '' || s === '-') s = '0';
+        if (s === ',') s = '0';
+        state.paidStr = s;
+        updatePaidDisplay(); recalc(); return;
+      }
+      if (k === ','){
+        if (!hasComma) { state.paidStr = s + ','; updatePaidDisplay(); recalc(); }
+        return;
+      }
+      if (k === '00'){
+        if (hasComma){
+          if (decimals === 0) s += '00';
+          else if (decimals === 1) s += '0';
+        } else {
+          if (s !== '0') s += '00';
+        }
+        state.paidStr = s;
+        updatePaidDisplay(); recalc(); return;
+      }
+      if (/^\d$/.test(k)){
+        if (hasComma && decimals >= 2) return;
+        if (s === '0') s = k; else s += k;
+        state.paidStr = s;
+        updatePaidDisplay(); recalc(); return;
+      }
+    }
+
+    // ---------- Calc ----------
+    function recalc(){
+      let sum = 0;
+      state.qty.forEach((q, idx) => { sum += q * PRODUCTS[idx].price; });
+      const paid = paidNumber();
+      const diff = paid - sum;
+      sumOut.textContent = fmt.format(sum);
+      updatePaidDisplay();
+      diffOut.textContent = fmt.format(diff);
+      changeLCD.classList.toggle('warn', diff < 0);
+      changeLCD.classList.toggle('ok', diff >= 0);
+    }
+
+    // ---------- Qty change ----------
+    function changeQty(index, delta){
+      const newQ = clamp(state.qty[index] + delta, 0, 10);
+      state.qty[index] = newQ;
+      const tile = tiles[index];
+      const input = tile.querySelector('.qtyInput');
+      const badge = tile.querySelector('.badge');
+      input.value = String(newQ);
+      badge.textContent = String(newQ);
+      tile.classList.toggle('active', newQ > 0);
+      recalc();
+    }
+
+    // ---------- Events ----------
+    // Tiles
+    tiles.forEach((tile, idx) => {
+      tile.addEventListener('click', (e) => {
+        if (e.target.closest('.qtyBtn') || e.target.closest('.qtyInput')) return;
+        changeQty(idx, +1);
+      });
+      tile.querySelectorAll('.qtyBtn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const act = btn.dataset.act;
+          changeQty(idx, act === 'inc' ? +1 : -1);
+        });
+      });
+      const inp = tile.querySelector('.qtyInput');
+      inp.addEventListener('input', () => {
+        const v = clamp(parseInt(inp.value || '0', 10), 0, 10);
+        if (String(v) !== inp.value) inp.value = String(v);
+        state.qty[idx] = v;
+        tile.classList.toggle('active', v > 0);
+        tile.querySelector('.badge').textContent = String(v);
+        recalc();
+      });
+      inp.addEventListener('click', e => e.stopPropagation());
+    });
+
+    // Keypad
+    document.getElementById('numPad').addEventListener('click', (e) => {
+      const k = e.target.closest('.k');
+      if (!k) return;
+      inputPaid(k.dataset.k);
+    });
+    document.getElementById('keyBack').addEventListener('click', () => inputPaid('⌫'));
+    document.getElementById('keyClear').addEventListener('click', () => inputPaid('C'));
+    document.getElementById('keyExact').addEventListener('click', () => {
+      let sum = 0;
+      state.qty.forEach((q, idx) => { sum += q * PRODUCTS[idx].price; });
+      state.paidStr = sum.toFixed(2).replace('.', ',');
+      recalc();
+    });
+    document.getElementById('keyNeu').addEventListener('click', () => {
+      state.qty = state.qty.map(() => 0);
+      state.paidStr = '0';
+      tiles.forEach((t, i) => {
+        t.classList.remove('active');
+        t.querySelector('.qtyInput').value = '0';
+        t.querySelector('.badge').textContent = '0';
+      });
+      recalc();
+    });
+
+    // Init
+    recalc();
+  </script>
+</body>
+</html>
