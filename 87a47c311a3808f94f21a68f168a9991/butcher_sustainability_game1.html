@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Butcher Sustainability Trainer – All Levels</title>
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: url('https://i.imgur.com/yourIllustrativeButcher.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #222; /* Dark text for better visibility on light parts */
+}
+.overlay {
+    background: rgba(255,255,255,0.85);
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.title { font-size: 2.5rem; text-align:center; margin-bottom:1rem; }
+.description { font-size: 1.2rem; text-align:center; margin-bottom:2rem; }
+.level-btn { font-size: 1.2rem; margin:0.5rem; padding:12px 25px; border-radius:12px; border:none; cursor:pointer; background:#c33; color:white; transition: transform 0.2s; }
+.level-btn:hover { transform: scale(1.05); background:#e55; }
+textarea { width:100%; height:80px; margin-top:10px; }
+#solution,#rating{margin-top:20px; display:none;}
+.language-help { background:#e0f7ff; padding:10px; border-radius:8px; margin-bottom:10px; display:none; }
+.emoji { position:absolute; font-size:2rem; pointer-events:none; }
+.situation-box { margin-top:20px; font-weight:bold; }
+.stats-box { margin-top:15px; font-weight:bold; }
+</style>
+</head>
+<body>
+<div class="overlay">
+    <div class="title">🌱 Butcher Sustainability Trainer</div>
+    <div class="description">Select a level below to practice sustainable actions in the butcher trade. Each level adapts situations and language help to your proficiency.</div>
+    <div style="text-align:center; margin-bottom:2rem;">
+        <button class="level-btn" onclick="setLevel('A1')">🟢 Level 1: A1–A2</button>
+        <button class="level-btn" onclick="setLevel('B1')">🟡 Level 2: B1</button>
+        <button class="level-btn" onclick="setLevel('B2')">🔵 Level 3: B2–C1</button>
+        <button class="level-btn" onclick="setLevel('C2')">🔴 Level 4: Native</button>
+    </div>
+    <div id="languageHelp" class="language-help"></div>
+    <div class="situation-box" id="situation"></div>
+    <textarea id="answer" placeholder="Write your notes here..."></textarea><br>
+    <button onclick="evaluateAnswer()">Evaluate</button>
+    <div id="solution"></div>
+    <div id="rating">
+        <button onclick="rate('correct')">Correct</button>
+        <button onclick="rate('partial')">Partly correct</button>
+        <button onclick="rate('wrong')">Wrong</button>
+    </div>
+    <div class="stats-box" id="stats"></div>
+</div>
+<script>
+const levels = {
+    A1: {
+        name:'Level 1 – A1–A2',
+        situations:[
+            {text:'Lights are on in an empty room.', solution:'Turn off lights when leaving.'},
+            {text:'Customer asks for a plastic bag.', solution:'Offer paper or reusable bag.'},
+            {text:'Fridge door stays open too long.', solution:'Close quickly to save energy.'},
+            {text:'Water is running.', solution:'Turn off tap to save water.'},
+            {text:'Old posters are thrown away.', solution:'Recycle paper.'}
+        ],
+        help:`<ul>
+<li>Use less … (plastic / water / energy)</li>
+<li>Buy local … (meat / products / food)</li>
+<li>Don’t waste … (food / paper / meat)</li>
+<li>Reuse … (boxes / bags)</li>
+<li>Check … (temperature / machines)</li>
+<li>Talk to … (customers / boss) about … (recycling / saving energy)</li>
+</ul>`
+    },
+    B1: {
+        name:'Level 2 – B1',
+        situations:[
+            {text:'Delivery truck engine runs while unloading.', solution:'Ask driver to turn off engine to reduce emissions.'},
+            {text:'Sausages made in too large quantities.', solution:'Plan production to avoid waste.'},
+            {text:'Plastic trays are used.', solution:'Switch to washable trays.'},
+            {text:'Old machines use too much electricity.', solution:'Replace with energy-efficient models.'},
+            {text:'Receipts printed even if customer doesn’t want.', solution:'Ask before printing.'}
+        ],
+        help:`<ul>
+<li>Reduce ___ because it wastes energy.</li>
+<li>Use ___ instead of ___.</li>
+<li>Buy from ___ to support local farms.</li>
+<li>Plan ___ better to avoid waste.</li>
+<li>Tell customers about ___</li>
+<li>Check if ___ can be recycled</li>
+<li>Choose ___ to save resources</li>
+</ul>`
+    },
+    B2: {
+        name:'Level 3 – B2–C1',
+        situations:[
+            {text:'Unsold meat thrown away weekly.', solution:'Donate or repurpose for processed products.'},
+            {text:'Energy costs rising.', solution:'Invest in LED lights and optimize cooling.'},
+            {text:'Colleagues use disposable cups.', solution:'Provide reusable cups.'},
+            {text:'Marketing hides sustainability info.', solution:'Ensure transparent communication.'},
+            {text:'Suppliers paid unfairly.', solution:'Negotiate fair prices and support local sourcing.'}
+        ],
+        help:`<ul>
+<li>Implement ___ to minimize environmental impact.</li>
+<li>Raise awareness among ___ about ___</li>
+<li>Replace ___ with sustainable alternative</li>
+<li>Optimize ___ to reduce waste/emissions/costs</li>
+<li>Ensure ___ is sourced locally and ethically</li>
+<li>Review ___ regularly</li>
+</ul>`
+    },
+    C2: {
+        name:'Level 4 – Native',
+        situations:[
+            {text:'Client insists on imported meat breaking policy.', solution:'Negotiate alternatives or refuse compromise.'},
+            {text:'Asked to label imported meat as local.', solution:'Refuse, push for transparency.'},
+            {text:'Investor wants automation cutting jobs.', solution:'Offer retraining, avoid layoffs.'},
+            {text:'Marketing hides carbon footprint.', solution:'Demand honest reporting and reduction.'},
+            {text:'Suppliers have weak labor standards.', solution:'Audit suppliers and ensure fair labor practices.'}
+        ],
+        help:`<ul>
+<li>Introduce a system to track and reduce waste</li>
+<li>Encourage reusable containers</li>
+<li>Align sourcing with ethical suppliers</li>
+<li>Invest in energy-efficient refrigeration</li>
+<li>Foster sustainability culture among staff</li>
+</ul>`
+    }
+};
+
+let currentLevel = null;
+let currentIndex = 0;
+let stats = { total:0, correct:0, partial:0, wrong:0 };
+
+function setLevel(levelKey){
+    currentLevel = levels[levelKey];
+    document.getElementById('languageHelp').innerHTML=currentLevel.help;
+    newSituation();
+    updateStats();
+}
+
+function newSituation(){
+    currentIndex=Math.floor(Math.random()*currentLevel.situations.length);
+    document.getElementById('situation').innerHTML='<b>Situation:</b> '+currentLevel.situations[currentIndex].text;
+    document.getElementById('solution').style.display='none';
+    document.getElementById('rating').style.display='none';
+    document.getElementById('answer').value='';
+}
+
+function evaluateAnswer(){
+    document.getElementById('solution').innerHTML='<b>Suggested action:</b> '+currentLevel.situations[currentIndex].solution;
+    document.getElementById('solution').style.display='block';
+    document.getElementById('rating').style.display='block';
+}
+
+function rate(type){
+    stats.total++; stats[type]++; updateStats();
+    if(type==='correct'){launchEmojis();}
+    newSituation();
+}
+
+function updateStats(){
+    document.getElementById('stats').innerHTML=`Answered: ${stats.total} | Correct: ${stats.correct} | Partly: ${stats.partial} | Wrong: ${stats.wrong}`;
+}
+
+function launchEmojis(){
+    const emojis=['🥩','🧠','🌱','🥇','🍖'];
+    for(let i=0;i<10;i++){
+        let e=document.createElement('div'); e.className='emoji'; e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+        document.body.appendChild(e);
+        e.style.left=Math.random()*window.innerWidth+'px'; e.style.top='0px';
+        let fall=setInterval(()=>{
+            let top=parseInt(e.style.top);
+            if(top>window.innerHeight){e.remove(); clearInterval(fall);} else{ e.style.top=top+5+'px';}
+        },20);
+    }
+}
+</script>
+</body>
+</html>
