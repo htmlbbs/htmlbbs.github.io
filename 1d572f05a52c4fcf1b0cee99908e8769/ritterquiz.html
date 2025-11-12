@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quizduell · BBS Ritterplan (HTML)</title>
+  <style>
+    :root{
+      --bg: #f1f7ff;          /* helles Blau */
+      --card: #ffffff;
+      --blue-900:#0f2b5c;     /* dunkles Blau für Text */
+      --blue-700:#254b8a;
+      --sky-200:#cfe6ff;
+      --sky-300:#b2d7ff;
+      --green:#16a34a;        /* grün für korrekt */
+      --green-dark:#15803d;
+      --red:#dc2626;          /* rot für falsch gewählt */
+      --muted:#5577a8;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;
+      background:var(--bg); color:var(--blue-900);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:720px;margin:0 auto;padding:16px 16px 120px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}
+    h1{font-size:18px;margin:0;font-weight:700}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+    .card{background:var(--card);border:1px solid var(--sky-200);border-radius:var(--radius);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    .card .content{padding:12px}
+    .label{font-size:12px;color:var(--blue-700)}
+    .score{font-size:24px;font-weight:800}
+
+    .progress{height:8px;background:#e6f0ff;border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;background:linear-gradient(90deg,#66b3ff,#4094ff);width:0%}
+    .row{display:flex;align-items:center;justify-content:space-between}
+
+    .badge{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;background:#e8f3ff;border:1px solid var(--sky-200);color:var(--blue-900)}
+
+    .panel{background:var(--card);border:1px solid var(--sky-200);border-radius:var(--radius);padding:16px}
+    .title{font-size:16px;font-weight:700;margin:6px 0 2px}
+
+    .answers{display:grid;gap:8px}
+    .btn{display:flex;gap:12px;align-items:flex-start;justify-content:flex-start;width:100%;padding:12px 14px;border:1px solid var(--sky-300);border-radius:12px;background:#fff;color:var(--blue-900);text-align:left;cursor:pointer}
+    .btn:disabled{opacity:.9;cursor:default}
+    .btn .letter{font-weight:800;min-width:20px}
+    .btn.correct{background:var(--green);border-color:var(--green-dark);color:#fff}
+    .btn.wrong{background:#ffecec;border-color:#ffc7c7;color:#8a1f1f}
+
+    .row-gap{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+    .primary{background:#1677ff;color:#fff;border-color:#1368db}
+    .outline{background:#fff;color:var(--blue-900)}
+
+    .pill{border-radius:999px;padding:8px 14px;border:1px solid var(--sky-300);background:#fff;color:var(--blue-900);cursor:pointer}
+    .pill:disabled{opacity:.4;cursor:not-allowed}
+
+    .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    footer{font-size:10px;color:var(--blue-700);text-align:center;margin-top:24px}
+
+    @media (min-width: 420px){
+      .container{max-width:480px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="row" style="gap:8px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 21V7l8-4v14" stroke="#0f2b5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h1>Quizduell · BBS Ritterplan</h1>
+      </div>
+      <button id="btn-restart" class="pill">Neu</button>
+    </header>
+
+    <div class="grid2">
+      <div class="card"><div class="content"><div class="label">Du</div><div class="score" id="you-score">0</div></div></div>
+      <div class="card"><div class="content"><div class="label">Gegner</div><div class="score" id="opp-score">0</div></div></div>
+    </div>
+
+    <div class="progress" aria-label="Fortschritt"><div id="progressbar"></div></div>
+    <div class="row" style="margin-top:6px">
+      <div class="label" id="progress-text">Frage 1 / 12</div>
+      <div class="label" id="progress-pct">0%</div>
+    </div>
+
+    <div id="stage"></div>
+
+    <footer>
+      Quellen: Inhalte frei zusammengefasst aus öffentlichen Seiten der BBS Ritterplan. Dieses Quiz ist inoffiziell.
+    </footer>
+  </div>
+
+  <script>
+    // ------------------- Datenbasis -------------------
+    const RAW_QUESTIONS = [
+      {category:"Allgemein", text:"Unter welcher Adresse befindet sich die BBS Ritterplan?", answers:["Ritterplan 6, 37073 Göttingen","Berliner Straße 1, 37083 Göttingen","Weender Landstraße 3, 37077 Göttingen","Ritterstraße 6, 37073 Göttingen"], correctIndex:0, source:"Kontakt/Adresse"},
+      {category:"Allgemein", text:"Welche neue Schulform wird auf der Startseite beworben?", answers:["Berufsfachschule Bewegungspädagogik","Berufsfachschule Mechatronik","Berufsfachschule Informatik","Berufsfachschule Mediengestaltung"], correctIndex:0, source:"Startseite"},
+      {category:"Allgemein", text:"Wann findet der Beratungsnachmittag 2026 statt?", answers:["Donnerstag, 05.02.2026 (15–18 Uhr)","Montag, 09.02.2026 (14–17 Uhr)","Freitag, 13.02.2026 (16–19 Uhr)","Dienstag, 03.02.2026 (15–18 Uhr)"], correctIndex:0, source:"Startseite/Termine"},
+      {category:"Sozialpädagogik", text:"Welcher Bildungsgang gehört zum Bereich Sozialpädagogik?", answers:["Fachschule Heilerziehungspflege","Fachschule Maschinenbau","Fachschule Elektrotechnik","Fachschule KFZ-Mechatronik"], correctIndex:0, source:"Sozialpädagogik"},
+      {category:"Sozialpädagogik", text:"Welcher BG-Schwerpunkt bereitet u. a. auf Erzieher*in vor?", answers:["BG Sozialpädagogik","BG Technik","BG Wirtschaft","BG Informatik"], correctIndex:0, source:"BG Sozialpädagogik"},
+      {category:"Sozialpädagogik", text:"Welche Inhalte sind typisch für Sozialpädagogik?", answers:["Pädagogik/Psychologie","Thermodynamik","Baustatik","Organische Chemie II"], correctIndex:0, source:"Sozialpädagogik/Übersicht"},
+      {category:"Hauswirtschaft", text:"Was trifft laut Seite auf den Beruf Hauswirtschafter*in zu?", answers:["Vielseitig, kreativ und offen für viele Berufswege","Beschränkt sich nur auf Küchenarbeiten","Nur als duales Studium möglich","Voraussetzung: abgeschlossenes Hochschulstudium"], correctIndex:0, source:"Hauswirtschaft"},
+      {category:"Hauswirtschaft", text:"Welche Tätigkeit gehört NICHT primär zur Hauswirtschaft?", answers:["Programmierung von SPS-Steuerungen","Speiseplanung","Textil- und Raumreinigung","Gästebetreuung"], correctIndex:0, source:"Hauswirtschaft"},
+      {category:"Hauswirtschaft", text:"Welche Schulform ist im Bereich Ernährung/Hauswirtschaft anzutreffen?", answers:["Berufsfachschule","Technikerschule Maschinenbau","Berufliches Gymnasium Technik","Fachoberschule Informatik"], correctIndex:0, source:"Hauswirtschaft/Schulformen"},
+      {category:"Körperpflege", text:"Welche Ausbildungsmöglichkeit wird im Bereich Körperpflege genannt?", answers:["Friseur*in","Medienkaufleute","Industriemechaniker*in","Bäcker*in"], correctIndex:0, source:"Körperpflege"},
+      {category:"Körperpflege", text:"Was gehört typischerweise zur Ausbildung Körperpflege?", answers:["Haar- und Hautpflege","Schweißen von Stahlträgern","Lathe/CNC-Grundlagen","Vektoranalysis"], correctIndex:0, source:"Körperpflege/Inhalte"},
+      {category:"Körperpflege", text:"Welche Kund*innen-Kompetenz ist betont?", answers:["Beratung und Serviceorientierung","Finanzprüfung nach HGB","Netzplanung (IT)","Vermessungswesen"], correctIndex:0, source:"Körperpflege/Profil"},
+      {category:"Schulleben", text:"An welchem Datum fand der Europatag (Erasmus+) statt?", answers:["08. Juni","01. Mai","03. Oktober","24. Dezember"], correctIndex:0, source:"Erasmus+/Europatag"},
+      {category:"Schulleben", text:"Welche Schulform wird auf der Stundenplan-Seite erwähnt?", answers:["Sprachförderklasse","Technikerschule Maschinenbau","Berufliches Gymnasium Technik","Berufsschule Metall"], correctIndex:0, source:"Stundenplan"},
+      {category:"Schulleben", text:"Wo erhält man offizielle Informationen zu Terminen?", answers:["Auf der Schulwebseite / Aushängen","Nur über Social Media","Exklusiv per WhatsApp","Über private Blogs"], correctIndex:0, source:"Startseite/Organisation"}
+    ];
+
+    const CATEGORIES = ["Allgemein","Sozialpädagogik","Hauswirtschaft","Körperpflege","Schulleben"];
+    const QUESTIONS_PER_ROUND = 3;
+    const ROUNDS_TOTAL = 4; // 4 x 3 = 12
+
+    // ------------------- Utils -------------------
+    function shuffle(array){
+      for (let i=array.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [array[i],array[j]] = [array[j],array[i]];
+      }
+      return array;
+    }
+    function shuffleQuestion(q){
+      const pairs = q.answers.map((ans,i)=>({ans, ok:i===q.correctIndex}));
+      shuffle(pairs);
+      return { ...q, answers: pairs.map(p=>p.ans), correctIndex: pairs.findIndex(p=>p.ok) };
+    }
+    function opponentPick(correctIndex){
+      const hit = Math.random()<0.65; // 65% korrekt
+      if (hit) return correctIndex;
+      const pool = [0,1,2,3].filter(i=>i!==correctIndex);
+      return pool[Math.floor(Math.random()*pool.length)];
+    }
+
+    // ------------------- State -------------------
+    let round = 0; // 0..ROUNDS_TOTAL-1
+    let picker = 'you'; // wechselt pro Runde
+    let inPick = true;
+    let currentCategory = null;
+    let usedCategories = []; // bereits gespielte Kategorien
+    let roundQuestions = [];
+    let qi = 0; // frage in runde
+    let scoreYou = 0; let scoreOpp = 0;
+    let locked = false; let yourPick = null; let oppPick = null;
+
+    const elStage = document.getElementById('stage');
+    const elYou = document.getElementById('you-score');
+    const elOpp = document.getElementById('opp-score');
+    const elProg = document.getElementById('progressbar');
+    const elProgTxt = document.getElementById('progress-text');
+    const elProgPct = document.getElementById('progress-pct');
+    document.getElementById('btn-restart').addEventListener('click',restart);
+
+    function totalStep(){return round*QUESTIONS_PER_ROUND + qi}
+    function totalQuestions(){return ROUNDS_TOTAL*QUESTIONS_PER_ROUND}
+
+    function updateHeader(){
+      elYou.textContent = scoreYou; elOpp.textContent = scoreOpp;
+      const pct = Math.round((totalStep()/totalQuestions())*100);
+      elProg.style.width = pct+"%";
+      elProgTxt.textContent = `Frage ${Math.min(totalStep()+1,totalQuestions())} / ${totalQuestions()}`;
+      elProgPct.textContent = pct+"%";
+    }
+
+    function render(){
+      updateHeader();
+      if (inPick){ renderCategoryPick(); return; }
+      renderQuestion();
+    }
+
+    function renderCategoryPick(){
+      const yourTurn = picker==='you';
+      const remaining = CATEGORIES.filter(c=>!usedCategories.includes(c));
+
+      // Falls keine Kategorien übrig sind (theoretischer Fallback)
+      if (remaining.length===0){
+        startRoundWithCategory(CATEGORIES[0]);
+        return;
+      }
+
+      const buttons = remaining.map(c=>`<button class="pill" data-cat="${c}">${c}</button>`).join('');
+      elStage.innerHTML = `
+        <div class="panel">
+          <div class="row" style="margin-bottom:8px">
+            <span class="badge">Runde ${round+1} / ${ROUNDS_TOTAL}</span>
+            <span class="badge">${yourTurn? 'Deine Wahl' : 'Gegner wählt…'}</span>
+          </div>
+          <div class="title">Kategorie wählen</div>
+          ${yourTurn ? `<div class="cat-grid" id="cat-grid">${buttons}</div>` : `<div class="label">Der Gegner entscheidet automatisch…</div>`}
+        </div>`;
+      if (yourTurn){
+        document.querySelectorAll('#cat-grid .pill').forEach(btn=>{
+          btn.addEventListener('click',()=>startRoundWithCategory(btn.dataset.cat));
+        });
+      } else {
+        setTimeout(()=>{
+          const choice = remaining[Math.floor(Math.random()*remaining.length)];
+          startRoundWithCategory(choice);
+        }, 700);
+      }
+    }
+
+    function startRoundWithCategory(cat){
+      currentCategory = cat; inPick = false; qi = 0; yourPick=null; oppPick=null; locked=false;
+      if (!usedCategories.includes(cat)) usedCategories.push(cat);
+      // Fragen ziehen (bevorzugt Kategorie, Rest auffüllen)
+      const pool = RAW_QUESTIONS.filter(q=>q.category===currentCategory);
+      const other = RAW_QUESTIONS.filter(q=>q.category!==currentCategory);
+      const chosen = [];
+      shuffle(pool); shuffle(other);
+      while (pool.length && chosen.length<QUESTIONS_PER_ROUND) chosen.push(pool.pop());
+      while (chosen.length<QUESTIONS_PER_ROUND && other.length) chosen.push(other.pop());
+      roundQuestions = chosen.map(shuffleQuestion);
+      render();
+    }
+
+    function renderQuestion(){
+      const q = roundQuestions[qi];
+      const letters = ['A','B','C','D'];
+      const answers = q.answers.map((ans,i)=>{
+        const classes = ['btn'];
+        if (locked){
+          if (i===q.correctIndex) classes.push('correct');
+          else if (yourPick===i) classes.push('wrong');
+        }
+        return `<button class="${classes.join(' ')}" data-i="${i}" ${locked? 'disabled':''}>
+          <span class="letter">${letters[i]}</span>
+          <span class="text">${ans}</span>
+          ${locked? `<span class="label" style="margin-left:auto">${yourPick===i? '✓ Du':''}${oppPick===i? (yourPick===i?' · ':'')+'🤖 Gegner':''}</span>`:''}
+        </button>`;
+      }).join('');
+
+      elStage.innerHTML = `
+        <div class="panel">
+          <div class="row" style="margin-bottom:8px">
+            <span class="badge">${currentCategory}</span>
+            <span class="badge">Frage ${qi+1} / ${QUESTIONS_PER_ROUND}</span>
+          </div>
+          <div class="title">${q.text}</div>
+          <div class="answers" id="answers">${answers}</div>
+          <div class="row-gap">
+            <span class="label" id="hint">${locked? `Richtige Option: <b>${letters[q.correctIndex]}</b>` : 'Wähle eine Antwort…'}</span>
+            <button class="pill primary" id="btn-next" ${locked? '' : 'disabled'}>${qi<QUESTIONS_PER_ROUND-1? 'Weiter' : (round<ROUNDS_TOTAL-1? 'Nächste Runde':'Ergebnis')}</button>
+          </div>
+        </div>`;
+
+      if (!locked){
+        document.querySelectorAll('#answers .btn').forEach(b=>{
+          b.addEventListener('click',()=>pickAnswer(parseInt(b.dataset.i,10)));
+        });
+      }
+      document.getElementById('btn-next').addEventListener('click',next);
+    }
+
+    function pickAnswer(i){
+      if (locked) return; locked = true; yourPick = i;
+      const correct = roundQuestions[qi].correctIndex;
+      oppPick = opponentPick(correct);
+      if (i===correct) scoreYou++;
+      if (oppPick===correct) scoreOpp++;
+      render();
+    }
+
+    function next(){
+      if (!locked) return;
+      if (qi < QUESTIONS_PER_ROUND-1){
+        qi++; yourPick=null; oppPick=null; locked=false; render();
+      } else {
+        // Runde fertig
+        if (round < ROUNDS_TOTAL-1){
+          round++; picker = (picker==='you')? 'opp':'you'; inPick = true; currentCategory = null; render();
+        } else {
+          renderResult();
+        }
+      }
+    }
+
+    function renderResult(){
+      elStage.innerHTML = `
+        <div class="panel">
+          <div class="title">Duell beendet</div>
+          <p class="label">${scoreYou>scoreOpp? 'Stark! Du hast gewonnen.' : (scoreYou===scoreOpp? 'Unentschieden – knappes Ding!' : 'Der Gegner hatte heute die Nase vorn.')}</p>
+          <div class="row-gap">
+            <button class="pill" id="btn-again">Nochmal spielen</button>
+            <button class="pill primary" id="btn-newset">Neues Fragen-Set</button>
+          </div>
+        </div>`;
+      document.getElementById('btn-again').addEventListener('click',restart);
+      document.getElementById('btn-newset').addEventListener('click',()=>{restart(true)});
+    }
+
+    function restart(newSet=false){
+      round=0; picker='you'; inPick=true; currentCategory=null; usedCategories=[]; roundQuestions=[]; qi=0; scoreYou=0; scoreOpp=0; locked=false; yourPick=null; oppPick=null;
+      if (newSet){ shuffle(RAW_QUESTIONS); }
+      render();
+    }
+
+    // Start
+    render();
+  </script>
+</body>
+</html>

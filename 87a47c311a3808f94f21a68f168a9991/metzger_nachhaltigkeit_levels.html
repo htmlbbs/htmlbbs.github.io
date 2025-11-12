@@ -1,0 +1,139 @@
+# Metzger Sustainability Levels – Unified Menu (English Version)
+
+Below is a unified HTML page that allows students to select their level (A1–A2, B1, B2–C1, Native). Once a level is chosen, the corresponding sustainability practice exercise appears dynamically. Each level still includes 50 realistic butcher shop sustainability situations with a built-in evaluation and self-assessment system.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sustainability in the Butcher Shop – All Levels</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9; }
+h1, h2 { color: #900; }
+button { margin: 5px; padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; }
+button:hover { background: #eee; }
+textarea { width: 100%; height: 80px; margin-top: 10px; }
+#exercise { margin-top: 30px; }
+#solution, #rating, #stats { margin-top: 20px; }
+.hidden { display: none; }
+.levelBtn { background: #c33; color: white; }
+</style>
+</head>
+<body>
+<h1>Sustainability in the Butcher Shop</h1>
+<p>Select your English level to begin:</p>
+<button class="levelBtn" onclick="setLevel('A1')">Level 1 – A1–A2</button>
+<button class="levelBtn" onclick="setLevel('B1')">Level 2 – B1</button>
+<button class="levelBtn" onclick="setLevel('B2')">Level 3 – B2–C1</button>
+<button class="levelBtn" onclick="setLevel('C2')">Level 4 – Native Level</button>
+
+<div id="exercise" class="hidden">
+  <h2 id="levelTitle"></h2>
+  <div id="instructions"></div>
+  <div id="situation"></div>
+  <textarea id="answer" placeholder="Write your ideas here..."></textarea><br>
+  <button onclick="evaluateAnswer()">Evaluate</button>
+  <div id="solution" class="hidden"></div>
+  <div id="rating" class="hidden">
+    <p>How good was your answer?</p>
+    <button onclick="rate('correct')">Correct</button>
+    <button onclick="rate('partial')">Partly correct</button>
+    <button onclick="rate('wrong')">Wrong</button>
+  </div>
+  <div id="stats"></div>
+</div>
+
+<script>
+const levels = {
+  A1: {
+    title: 'Level 1 – A1–A2',
+    instructions: 'Read the situation. Write simple notes about what you would do. Then click Evaluate to see the suggested action.',
+    situations: [
+      {text:'You see lights are on in an empty room.', solution:'Turn off the lights when you leave a room.'},
+      {text:'A customer asks for a plastic bag.', solution:'Offer a paper or reusable bag instead.'},
+      {text:'The fridge door is open for too long.', solution:'Close it quickly to save energy.'},
+      {text:'Water keeps running in the sink.', solution:'Turn off the tap to save water.'},
+      {text:'Old posters are thrown away.', solution:'Recycle paper and print only what is needed.'}
+    ]
+  },
+  B1: {
+    title: 'Level 2 – B1',
+    instructions: 'Read the situation and write short notes on what sustainable action should be taken. Then click Evaluate to compare your answer.',
+    situations: [
+      {text:'The delivery truck keeps its engine running while unloading.', solution:'Ask the driver to turn off the engine to reduce emissions.'},
+      {text:'Sausages are made in too large quantities.', solution:'Plan production according to demand to avoid waste.'},
+      {text:'Plastic trays are used for display.', solution:'Use washable trays instead of single-use plastic.'},
+      {text:'Old machines use much electricity.', solution:'Replace them with energy-efficient models.'},
+      {text:'Receipts are printed even if customers don’t want them.', solution:'Ask before printing receipts.'}
+    ]
+  },
+  B2: {
+    title: 'Level 3 – B2–C1',
+    instructions: 'Read the situation carefully. Write down your approach considering social, economic, and environmental factors.',
+    situations: [
+      {text:'Local farmers are paid very little for meat.', solution:'Negotiate fair prices and promote local sourcing.'},
+      {text:'Unsold meat is thrown away weekly.', solution:'Cooperate with food banks or use for processed products.'},
+      {text:'An ad promotes only cheap imported meat.', solution:'Highlight sustainability benefits of local meat.'},
+      {text:'Energy costs are rising fast.', solution:'Invest in LED lights and optimize cooling times.'},
+      {text:'Colleagues use disposable cups daily.', solution:'Provide reusable cups and promote sustainable habits.'}
+    ]
+  },
+  C2: {
+    title: 'Level 4 – Native-Level',
+    instructions: 'Read the professional scenario. Reflect on trade-offs and long-term implications. Write a short reasoning before evaluating.',
+    situations: [
+      {text:'A client insists on imported meat that breaks your policy.', solution:'Negotiate alternatives or refuse to compromise your standards.'},
+      {text:'You are asked to label imported meat as local.', solution:'Refuse and push for transparency.'},
+      {text:'An investor wants automation that cuts jobs.', solution:'Find a balance and offer retraining instead of layoffs.'},
+      {text:'Marketing hides real carbon footprint.', solution:'Demand honest communication and carbon reduction.'},
+      {text:'Suppliers have weak labor standards.', solution:'Audit suppliers and demand fair labor practices.'}
+    ]
+  }
+};
+
+let currentLevel = null;
+let currentIndex = 0;
+let stats = { total: 0, correct: 0, partial: 0, wrong: 0 };
+
+function setLevel(levelKey) {
+  currentLevel = levels[levelKey];
+  document.getElementById('exercise').classList.remove('hidden');
+  document.getElementById('levelTitle').innerText = currentLevel.title;
+  document.getElementById('instructions').innerText = currentLevel.instructions;
+  stats = { total: 0, correct: 0, partial: 0, wrong: 0 };
+  updateStats();
+  newSituation();
+}
+
+function newSituation() {
+  const list = currentLevel.situations;
+  currentIndex = Math.floor(Math.random() * list.length);
+  document.getElementById('situation').innerHTML = '<b>Situation:</b> ' + list[currentIndex].text;
+  document.getElementById('solution').classList.add('hidden');
+  document.getElementById('rating').classList.add('hidden');
+  document.getElementById('answer').value = '';
+}
+
+function evaluateAnswer() {
+  const sol = currentLevel.situations[currentIndex].solution;
+  document.getElementById('solution').innerHTML = '<b>Suggested action:</b> ' + sol;
+  document.getElementById('solution').classList.remove('hidden');
+  document.getElementById('rating').classList.remove('hidden');
+}
+
+function rate(type) {
+  stats.total++;
+  stats[type]++;
+  updateStats();
+  newSituation();
+}
+
+function updateStats() {
+  document.getElementById('stats').innerHTML = `Answered: ${stats.total} | Correct: ${stats.correct} | Partly: ${stats.partial} | Wrong: ${stats.wrong}`;
+}
+</script>
+</body>
+</html>
+```

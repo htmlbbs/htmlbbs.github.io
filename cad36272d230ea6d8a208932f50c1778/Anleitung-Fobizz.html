@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fobizz Praxis: Klassenräume & KI-Assistenten</title>
+    <!-- Lade Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #f7f7f7;
+            cursor: pointer;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        .slide-content {
+            max-width: 90%;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .step-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+            color: #10b981; /* Emerald 500 */
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Präsentations-Container -->
+    <div id="presentation-container">
+
+        <!-- SLIDE 1: Titel -->
+        <div class="slide bg-gradient-to-br from-blue-500 to-blue-800" data-title="Titel">
+            <h1 class="text-6xl font-extrabold text-white mb-4 shadow-lg">
+                Fobizz Praxis: Klassenräume & KI-Assistenten
+            </h1>
+            <p class="text-3xl font-light text-blue-200 mt-4">
+                Der datenschutzkonforme Weg zur KI im Unterricht an der BBS
+            </p>
+            <div class="absolute bottom-10 right-10 text-lg text-blue-300">
+                Anleitung für Option B
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Klassenraum erstellen -->
+        <div class="slide" data-title="Klassenraum">
+            <div class="slide-content bg-white p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-blue-500">
+                <h2 class="text-5xl font-bold text-blue-700 mb-10">
+                    1. Klassenraum erstellen (Sichere Basis)
+                </h2>
+                <ul class="text-2xl text-gray-700 space-y-4 step-list">
+                    <li>
+                        <span class="font-bold text-blue-800">Anmelden & Navigieren:</span> Im Fobizz-Account den Bereich **"Klassenräume"** wählen.
+                    </li>
+                    <li>
+                        <span class="font-bold text-blue-800">Raum anlegen:</span> Titel (z.B. **"BG-SuS-KI G25e"**) und kurze Beschreibung eingeben.
+                    </li>
+                    <li>
+                        <span class="font-bold text-blue-800">Link generieren:</span> Den **Einladungslink** oder Code an die Schüler\*innen verteilen.
+                    </li>
+                    <li>
+                        <span class="font-bold text-blue-800">Tools verwalten:</span> Verfügbare Tools für diese Gruppe freischalten und **beschränken**.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: KI-Assistenten erstellen: Prompt & Wissensbasis -->
+        <div class="slide" data-title="Assistent Prompt & Wissensbasis">
+             <div class="slide-content bg-white p-8 rounded-2xl shadow-2xl w-full max-w-6xl border-t-8 border-purple-500">
+                <h2 class="text-5xl font-bold text-purple-700 mb-6">
+                    2. Eigenen KI-Assistenten definieren
+                </h2>
+                <div class="grid grid-cols-2 gap-8 text-left">
+                    <!-- Linke Spalte: Systemanweisung (Prompt) -->
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-3xl font-semibold text-gray-700 mb-4">
+                            Systemanweisung (Prompt)
+                        </h3>
+                        <div class="bg-purple-50 p-6 rounded-xl border border-purple-300 flex-grow">
+                            <p class="text-xl font-bold text-purple-800 mb-3">
+                                Rolle, Ziel und Regeln festlegen:
+                            </p>
+                            <div class="bg-purple-200 p-4 rounded-lg">
+                                <span class="font-mono text-lg text-purple-900 leading-relaxed">
+                                    <span class="font-extrabold">Beispiel (Gesundheit & Soziales):</span> "Du bist ein Fachberater für Kommunikation im Pflegebereich. Deine Aufgabe ist es, Schülern des Beruflichen Gymnasiums (Schwerpunkt Gesundheit und Soziales) drei konkrete Gesprächsstrategien für die Arbeit mit demenziell veränderten Menschen zu erläutern und deren ethische Grundlagen zu beleuchten."
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rechte Spalte: Wissensbasis -->
+                    <div class="flex flex-col h-full">
+                        <h3 class="text-3xl font-semibold text-gray-700 mb-4">
+                            Wissensbasis (Optional, aber mächtig!)
+                        </h3>
+                        <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-300 flex-grow flex flex-col justify-center">
+                            <p class="text-xl font-bold text-indigo-800 mb-3">
+                                KI mit Ihren Dokumenten erden:
+                            </p>
+                            <ul class="text-xl text-gray-700 space-y-2 list-disc pl-5">
+                                <li>Laden Sie spezifische **Unterrichtsskripte** oder **Fachartikel** hoch.</li>
+                                <li>Die KI nutzt diese Dokumente exklusiv als **Quelle für Antworten**.</li>
+                                <li>Ideal, um sicherzustellen, dass nur **schul- und lehrplanrelevantes** Wissen genutzt wird.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Konfiguration & Test -->
+        <div class="slide" data-title="Konfiguration & Test">
+            <div class="slide-content bg-white p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-yellow-500">
+                <h2 class="text-5xl font-bold text-yellow-700 mb-10">
+                    3. Konfiguration & Test des Assistenten
+                </h2>
+                <ul class="text-2xl text-gray-700 space-y-4 step-list">
+                    <li>
+                        <span class="font-bold text-yellow-800">Namen/Sichtbarkeit:</span> Klaren Namen und Symbol wählen; Sichtbarkeit einstellen.
+                    </li>
+                    <li>
+                        <span class="font-bold text-yellow-800">Modell wählen:</span> Das passende, verfügbare KI-Modell auswählen.
+                    </li>
+                    <li class="bg-yellow-100 p-3 rounded-lg">
+                        <span class="font-bold text-red-700">Ausgiebig testen:</span> Prüfen Sie, ob der Assistent die definierten Regeln (Prompt) strikt einhält.
+                    </li>
+                    <li>
+                        <span class="font-bold text-yellow-800">Freigabe:</span> Assistenten speichern und zur Zuweisung freigeben.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Teilen und Abschluss -->
+        <div class="slide" data-title="Teilen & Abschluss">
+            <div class="slide-content bg-white p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-green-500">
+                <h2 class="text-5xl font-bold text-green-700 mb-10">
+                    4. Teilen & Datenhygiene
+                </h2>
+                <ul class="text-2xl text-gray-700 space-y-4 step-list">
+                    <li>
+                        <span class="font-bold text-green-800">Zuweisung:</span> Assistenten im Klassenraum **aktivieren**.
+                    </li>
+                    <li>
+                        <span class="font-bold text-green-800">Anleiten:</span> Klare Nutzungshinweise an Schüler\*innen geben.
+                    </li>
+                    <li>
+                        <span class="font-bold text-green-800">Überwachen:</span> Protokolle nutzen, um die Interaktion zu prüfen.
+                    </li>
+                    <li class="bg-green-100 p-3 rounded-lg">
+                        <span class="font-bold text-green-800">Datenhygiene:</span> Klassenraum nach Abschluss der Einheit **löschen**.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript für die Slide-Navigation -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        // Funktion zum Anzeigen der aktuellen Folie
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            currentSlide = index;
+        }
+
+        // Funktion zum Vorwärts- oder Rückwärtsgehen
+        function changeSlide(direction) {
+            let newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < slides.length) {
+                showSlide(newIndex);
+            }
+        }
+
+        // Event-Listener für Klicks (nächste Folie)
+        document.body.addEventListener('click', () => changeSlide(1));
+
+        // Event-Listener für Tastatureingaben (Pfeiltasten)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                changeSlide(1); // Rechte Pfeiltaste oder Leertaste
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1); // Linke Pfeiltaste
+            }
+        });
+
+        // Beim Laden die erste Folie anzeigen
+        showSlide(0);
+    </script>
+
+</body>
+</html>
