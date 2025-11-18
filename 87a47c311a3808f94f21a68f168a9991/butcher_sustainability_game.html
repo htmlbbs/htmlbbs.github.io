@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Butcher Sustainability Trainer</title>
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: url('https://i.imgur.com/yourIllustrativeButcher.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+}
+.overlay {
+    background: rgba(0,0,0,0.6);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 700px;
+}
+.level-btn {
+    font-size: 1.2rem;
+    margin: 0.5rem;
+    padding: 15px 30px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    background-color: #c33;
+    transition: transform 0.2s;
+}
+.level-btn:hover {
+    transform: scale(1.05);
+    background-color: #e55;
+}
+</style>
+</head>
+<body>
+<div class="overlay">
+    <div class="title">🌱 Butcher Sustainability Trainer</div>
+    <div class="description">Choose your English level and practice sustainable actions in the butcher trade. Each level gives you tailored tasks and language support.</div>
+    <div>
+        <button class="level-btn" onclick="window.location.href='level1.html'">🟢 Level 1: A1–A2</button>
+        <button class="level-btn" onclick="window.location.href='level2.html'">🟡 Level 2: B1</button>
+        <button class="level-btn" onclick="window.location.href='level3.html'">🔵 Level 3: B2–C1</button>
+        <button class="level-btn" onclick="window.location.href='level4.html'">🔴 Level 4: Native</button>
+    </div>
+</div>
+</body>
+</html>
+
+<!-- LEVEL FILE TEMPLATE: level1.html to level4.html -->
+<!-- The structure is the same for all, only situations, linguistic support, and headings differ -->
+
+<!-- Example: level1.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 1 – A1–A2</title>
+<style>
+body { font-family: Arial; margin:2rem; background:#f9f9f9; }
+button { margin:5px; padding:10px 15px; border:none; border-radius:8px; cursor:pointer; }
+#solution,#rating{margin-top:20px; display:none;}
+textarea { width:100%; height:80px; margin-top:10px; }
+.language-help { background:#e0f7ff; padding:10px; border-radius:8px; margin-bottom:10px; display:none; }
+.emoji { position:absolute; font-size:2rem; pointer-events:none; }
+</style>
+</head>
+<body>
+<h1>🟢 Level 1 – A1–A2</h1>
+<button onclick="toggleHelp()">📘 Language Help</button>
+<div class="language-help" id="help">
+<ul>
+<li>Use less … (plastic / water / energy)</li>
+<li>Buy local … (meat / products / food)</li>
+<li>Don’t waste … (food / paper / meat)</li>
+<li>Reuse … (boxes / bags)</li>
+<li>Check … (temperature / machines)</li>
+<li>Talk to … (customers / boss) about … (recycling / saving energy)</li>
+</ul>
+</div>
+<div id="situation"></div>
+<textarea id="answer" placeholder="Write your notes here..."></textarea><br>
+<button onclick="evaluateAnswer()">Evaluate</button>
+<div id="solution"></div>
+<div id="rating">
+<button onclick="rate('correct')">Correct</button>
+<button onclick="rate('partial')">Partly correct</button>
+<button onclick="rate('wrong')">Wrong</button>
+</div>
+<div id="stats"></div>
+<script>
+const situations = [
+{text:'Lights are on in an empty room.', solution:'Turn off lights when leaving.'},
+{text:'Customer asks for a plastic bag.', solution:'Offer paper or reusable bag.'},
+{text:'Fridge door stays open too long.', solution:'Close quickly to save energy.'},
+{text:'Water is running.', solution:'Turn off tap to save water.'},
+{text:'Old posters are thrown away.', solution:'Recycle paper.'}
+];
+let current=0;
+let stats={total:0,correct:0,partial:0,wrong:0};
+function newSituation(){current=Math.floor(Math.random()*situations.length);document.getElementById('situation').innerHTML='<b>Situation:</b> '+situations[current].text;document.getElementById('solution').style.display='none';document.getElementById('rating').style.display='none';document.getElementById('answer').value='';}
+function evaluateAnswer(){document.getElementById('solution').innerHTML='<b>Suggested action:</b> '+situations[current].solution;document.getElementById('solution').style.display='block';document.getElementById('rating').style.display='block';}
+function rate(type){stats.total++;stats[type]++;updateStats();if(type==='correct'){launchEmojis();}newSituation();}
+function updateStats(){document.getElementById('stats').innerHTML=`Answered: ${stats.total} | Correct: ${stats.correct} | Partly: ${stats.partial} | Wrong: ${stats.wrong}`;}
+function toggleHelp(){const h=document.getElementById('help');h.style.display=(h.style.display==='none')?'block':'none';}
+function launchEmojis(){const emojis=['🥩','🧠','🌱','🥇','🍖'];for(let i=0;i<10;i++){let e=document.createElement('div');e.className='emoji';e.innerText=emojis[Math.floor(Math.random()*emojis.length)];document.body.appendChild(e);e.style.left=Math.random()*window.innerWidth+'px';e.style.top='0px';let fall=setInterval(()=>{let top=parseInt(e.style.top);if(top>window.innerHeight){e.remove();clearInterval(fall);} else{e.style.top=top+5+'px';}},20);}}
+newSituation();updateStats();
+</script>
+</body>
+</html>
