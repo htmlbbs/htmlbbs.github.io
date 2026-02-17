@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Addition an der Kasse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --row-selected: #d4f8d4;
+      --border: #ccc;
+    }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .tableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { border-collapse: collapse; width: 60%; min-width: 520px; margin-bottom: 20px; }
+    th, td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
+    tr { cursor: pointer; }
+    .selected { background-color: var(--row-selected); } /* Hellgrün für ausgewählte Zeilen */
+    .summe { font-size: 1.2em; font-weight: bold; margin-top: 10px; }
+    .hinweis { color: red; margin-top: 5px; }
+    .controls { margin-top: 12px; }
+
+    /* Zahlfelder groß & gut bedienbar */
+    .qty { width: 5.5em; text-align: right; height: 36px; font-size: 16px; }
+
+    /* Mobile-Optimierung */
+    @media (max-width: 600px) {
+      body { margin: 12px; }
+      table { width: 100%; min-width: 0; font-size: 16px; }
+      th, td { padding: 10px; }
+      .qty { width: 90px; height: 48px; font-size: 18px; }
+      .controls button { width: 100%; padding: 12px 16px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Die Kasse im Bistro</h1>
+  <p>Wähle insgesamt drei oder vier Artikel (du kannst denselben Artikel mehrfach nehmen). Die Gesamtsumme wird unten angezeigt.</p>
+
+  <form id="kasseForm" onsubmit="return false;">
+    <div class="tableWrap">
+      <table id="warenTable">
+        <tr><th>Produkt</th><th>Preis</th><th>Anzahl</th></tr>
+
+        <tr data-price="1.50"><td>Belegtes Brötchen</td><td>1,50 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="1.80"><td>Brötchen mit Ei</td><td>1,80 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="1.20"><td>Croissant</td><td>1,20 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.95"><td>Hefegebäck</td><td>0,95 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.85"><td>Schoko-Keks</td><td>0,85 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.70"><td>Kaffee</td><td>0,70 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.25"><td>Pappbecher</td><td>0,25 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="2.45"><td>Pizzastück</td><td>2,45 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="2.20"><td>Pizza vegetarisch</td><td>2,20 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="1.90"><td>Großer Nudelsalat</td><td>1,90 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="1.65"><td>Nudelsalat vegetarisch</td><td>1,65 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="1.30"><td>Laugenbrezel</td><td>1,30 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.50"><td>Obstquark</td><td>0,50 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+
+        <tr data-price="0.45"><td>Fruchtjoghurt</td><td>0,45 €</td>
+          <td><input class="qty" type="number" min="0" max="10" value="0" inputmode="numeric"></td></tr>
+      </table>
+    </div>
+  </form>
+
+  <div class="summe">Gesamtsumme: <span id="gesamt">0,00 €</span></div>
+  <div id="hinweis" class="hinweis"></div>
+  <div class="controls">
+    <button type="button" id="resetBtn">Neu</button>
+  </div>
+
+  <script>
+    const table = document.getElementById("warenTable");
+    const qtyInputs = table.querySelectorAll(".qty");
+    const gesamt = document.getElementById("gesamt");
+    const hinweis = document.getElementById("hinweis");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function formatEuro(n) {
+      return n.toFixed(2).replace(".", ",") + " €";
+    }
+
+    function clampQty(v) {
+      const num = Number(v);
+      if (!Number.isFinite(num) || num < 0) return 0;
+      if (num > 10) return 10;
+      return Math.floor(num);
+    }
+
+    function aktualisiere() {
+      let sum = 0;
+      let count = 0;
+      qtyInputs.forEach(inp => {
+        const row = inp.closest("tr");
+        const price = parseFloat(row.dataset.price);
+        const qty = clampQty(inp.value);
+        if (String(qty) !== inp.value) inp.value = qty; // sichtbaren Wert korrigieren
+        sum += price * qty;
+        count += qty;
+        if (qty > 0) row.classList.add("selected");
+        else row.classList.remove("selected");
+      });
+
+      gesamt.textContent = formatEuro(sum);
+
+      if (count < 3) {
+        hinweis.textContent = "⚠ Bitte wähle insgesamt mindestens 3 Artikel.";
+      } else if (count > 4) {
+        hinweis.textContent = "⚠ Du darfst insgesamt höchstens 4 Artikel wählen.";
+      } else {
+        hinweis.textContent = "";
+      }
+    }
+
+    // Änderungen an Anzahlfeldern
+    qtyInputs.forEach(inp => {
+      inp.addEventListener("input", aktualisiere);
+      inp.addEventListener("change", aktualisiere);
+      // Klicks im Input sollen den Zeilenklick nicht auslösen
+      inp.addEventListener("click", e => e.stopPropagation());
+      // Tastatur: Enter verhindert Formular-Submit und berechnet neu
+      inp.addEventListener("keydown", e => {
+        if (e.key === "Enter") { e.preventDefault(); aktualisiere(); }
+      });
+    });
+
+    // Zeilenklick: Anzahl +1 (bis max)
+    Array.from(table.querySelectorAll("tr")).forEach((row, index) => {
+      if (index === 0) return; // Kopfzeile
+      row.addEventListener("click", (e) => {
+        // wenn direkt ins Eingabefeld geklickt wurde, nichts tun
+        if (e.target.classList && e.target.classList.contains("qty")) return;
+        const inp = row.querySelector(".qty");
+        const current = clampQty(inp.value);
+        if (current < 10) {
+          inp.value = current + 1;
+          aktualisiere();
+        }
+      });
+    });
+
+    // Reset-Button
+    resetBtn.addEventListener("click", () => {
+      qtyInputs.forEach(inp => inp.value = 0);
+      Array.from(table.querySelectorAll("tr")).forEach(r => r.classList.remove("selected"));
+      gesamt.textContent = "0,00 €";
+      hinweis.textContent = "";
+    });
+
+    // Initial
+    aktualisiere();
+  </script>
+</body>
+</html>

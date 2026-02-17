@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lernpfad: Vielfalt und Wandel der Familienstrukturen</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --muted:#9fb3d2; --text:#e6edf6; --accent:#7aa2f7; --accent2:#4fd1c5; --good:#34d399; --bad:#f87171; --warn:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif; background:linear-gradient(180deg,var(--bg),#0d1328); color:var(--text);}
+    .app{display:grid; grid-template-columns: 280px 1fr; min-height:100vh}
+    aside{background:rgba(255,255,255,0.02); border-right:1px solid rgba(255,255,255,0.06); padding:20px; position:sticky; top:0; height:100vh}
+    aside h2{font-size:1rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:0 0 10px}
+    .nav a{display:block; padding:10px 12px; border-radius:12px; color:#cfe3ff; text-decoration:none; margin-bottom:6px; background:transparent; border:1px solid rgba(255,255,255,0.06)}
+    .nav a:hover{background:rgba(122,162,247,0.12); border-color:rgba(122,162,247,0.35)}
+    .progress{height:10px; background:#0a1124; border-radius:999px; overflow:hidden; margin:16px 0 8px}
+    .progress>div{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .4s ease}
+    main{padding:28px;}
+    section{background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:22px; margin:0 0 22px; box-shadow:0 6px 24px rgba(0,0,0,0.25)}
+    h1{font-size:1.8rem; margin:0 0 8px}
+    h2{font-size:1.3rem; margin:0 0 10px}
+    p.lead{color:#c7d7ee}
+    details{background:rgba(255,255,255,0.02); border:1px dashed rgba(255,255,255,0.12); padding:12px 14px; border-radius:12px}
+    details>summary{cursor:pointer; font-weight:600}
+    .pill{display:inline-block; padding:6px 10px; border-radius:999px; font-size:.85rem; background:rgba(79,209,197,0.12); border:1px solid rgba(79,209,197,0.35); color:#b5fff7; margin-right:6px}
+    .quiz{display:grid; gap:12px}
+    .card{background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px}
+    .q{font-weight:700; margin-bottom:10px}
+    .opts{display:grid; gap:8px}
+    .opt{display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.02)}
+    .opt input{margin-top:4px}
+    .actions{display:flex; gap:10px; margin-top:10px}
+    button{appearance:none; border:none; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; color:#0a1020; background:linear-gradient(90deg,var(--accent),var(--accent2));}
+    button.alt{background:#1f2b54; color:#dbe9ff; border:1px solid rgba(255,255,255,0.1)}
+    .result{padding:10px 12px; border-radius:12px; font-weight:600;}
+    .good{background:rgba(52,211,153,.15); border:1px solid rgba(52,211,153,.35); color:#d1fae5}
+    .bad{background:rgba(248,113,113,.18); border:1px solid rgba(248,113,113,.35); color:#fee2e2}
+    .muted{color:var(--muted)}
+    .footer{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:#0e1836; border:1px solid rgba(255,255,255,0.12); padding:2px 6px; border-radius:6px}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <h2>Lernpfad</h2>
+      <div class="progress" aria-label="Lernfortschritt"><div id="progressBar"></div></div>
+      <div class="muted" id="progressLabel">0/6 Abschnitte abgeschlossen</div>
+      <nav class="nav" aria-label="Navigation">
+        <a href="#intro">Einführung</a>
+        <a href="#neuzeit">Neuzeit & Industrialisierung</a>
+        <a href="#kaiserreich">Kaiserreich & Alice Salomon</a>
+        <a href="#weimar">Weimarer Republik</a>
+        <a href="#ns">Nationalsozialismus</a>
+        <a href="#brd">BRD (1950–1970er)</a>
+        <a href="#ddr">DDR & Margot Honecker</a>
+        <a href="#abschluss">Abschluss & Export</a>
+      </nav>
+      <div style="margin-top:14px">
+        <span class="pill" id="scorePill">Score: 0%</span>
+        <span class="pill" id="donePill">0/16 Fragen</span>
+      </div>
+    </aside>
+    <main>
+      <section id="intro">
+        <h1>Vielfalt und Wandel der Familienstrukturen</h1>
+        <p class="lead">Lernpfad für angehende Erzieher*innen (FS Sozialpädagogik, Oberstufe, Niedersachsen). Arbeite dich durch die Abschnitte, öffne die Merkkästen und bearbeite anschließend die Quizfragen. Dein Fortschritt und Score werden lokal im Browser gespeichert.</p>
+        <details>
+          <summary>Ziele des Lernpfads</summary>
+          <ul>
+            <li>Entwicklungen von Familie und Kindheit vom 19. bis späten 20. Jahrhundert beschreiben.</li>
+            <li>Zentrale Akteur*innen und Konzepte (Fröbel, Salomon, Haarer, Honecker) einordnen.</li>
+            <li>Auswirkungen von Politik und Ökonomie auf Familien- und Kindheitsbilder beurteilen.</li>
+          </ul>
+        </details>
+      </section>
+
+      <section id="neuzeit">
+        <h2>Neuzeit & Industrialisierung</h2>
+        <p>Trennung von Wohn- und Arbeitsort, zunehmende Erwerbstätigkeit von Frauen, unbeaufsichtigte Kinder. Friedrich Fröbel begründet den Kindergarten: <em>Spiel</em> als kindgemäße Form des Lernens; Erfahrungsfelder u. a. Musik, Natur, Sprache, Bewegung, Sinne.</p>
+        <div class="quiz" data-quiz="neuzeit"></div>
+      </section>
+
+      <section id="kaiserreich">
+        <h2>Kaiserreich & Alice Salomon</h2>
+        <p>Bürgerliche vs. proletarische Familienwelten; rechtliche Neuerungen (1876 Zivilehe, 1900 BGB). Alice Salomon professionalisiert soziale Arbeit (1908 Soziale Frauenschule, Konzept der Sozialen Diagnostik).</p>
+        <div class="quiz" data-quiz="kaiserreich"></div>
+      </section>
+
+      <section id="weimar">
+        <h2>Weimarer Republik</h2>
+        <p>Sozialpolitische Orientierung, Ausbau von Gesundheitsämtern, Kinderschutz (RJWG), erste moderne Familienpolitik; Doppelrolle der Familie in unsicheren Zeiten.</p>
+        <div class="quiz" data-quiz="weimar"></div>
+      </section>
+
+      <section id="ns">
+        <h2>Nationalsozialismus</h2>
+        <p>Familie als Instrument der Bevölkerungspolitik; <em>Schwarze Pädagogik</em> (z. B. Johanna Haarer) betont Härte, Distanz, Gehorsam.</p>
+        <div class="quiz" data-quiz="ns"></div>
+      </section>
+
+      <section id="brd">
+        <h2>BRD (1950–1970er)</h2>
+        <p>Klassisches Familienbild der 1950er; 1958 Wegfall des Gehorsamsparagrafen (§1354 BGB). 1960/70er: Antibabypille, Bildungsreformen, neue Lebensformen (Studenten-WGs, Kommunen), liberalere Familienpolitik.</p>
+        <div class="quiz" data-quiz="brd"></div>
+      </section>
+
+      <section id="ddr">
+        <h2>DDR & Margot Honecker</h2>
+        <p>Erziehung zur sozialistischen Persönlichkeit, umfassende Kollektivbetreuung (Krippe, Kindergarten, Hort), finanzielle Anreize, gestärkte Frauenrolle; demografischer Effekt: „Honecker‑Buckel”.</p>
+        <div class="quiz" data-quiz="ddr"></div>
+      </section>
+
+      <section id="abschluss">
+        <h2>Abschluss & Export</h2>
+        <p>Wenn alle Abschnitte abgeschlossen sind, kannst du deine Ergebnisse exportieren.</p>
+        <div class="actions">
+          <button class="alt" id="resetBtn" type="button" aria-label="Fortschritt zurücksetzen">Fortschritt zurücksetzen</button>
+          <button id="exportBtn" type="button" aria-label="Ergebnisse exportieren">Ergebnisse als CSV exportieren</button>
+        </div>
+        <p class="muted">Hinweis: Alle Daten werden nur lokal im Browser verarbeitet.</p>
+      </section>
+
+      <footer class="footer">
+        <div>Shortcuts: <span class="kbd">N</span> nächste Frage · <span class="kbd">1–4</span> Antwort wählen · <span class="kbd">E</span> bestätigen</div>
+        <div class="muted">© Lernpfad für die Fachschule Sozialpädagogik</div>
+      </footer>
+    </main>
+  </div>
+
+<script>
+  // Fragenpool (aus deinem MC-Set) mit Erklärungen
+  const POOL = [
+    // Neuzeit
+    {q:"Warum konnte die Familie in der Neuzeit ihre erziehende Rolle oft nicht mehr erfüllen?", a:["Weil Bildung nicht mehr wichtig war","Weil Kinder immer früher verheiratet wurden","Weil Frauen arbeiten mussten und Kinder oft unbeaufsichtigt waren","Weil die Kirche Kinder in Klöster schickte"], c:2, explain:"Industrialisierung: Erwerbstätigkeit von Frauen, Trennung von Wohn- und Arbeitsort, mangelnde Aufsicht." , tag:"neuzeit"},
+    {q:"Wer gründete die ersten Betreuungseinrichtungen für Kinder?", a:["Maria Montessori","Johann Heinrich Pestalozzi","Friedrich Fröbel","Alice Salomon"], c:2, explain:"Fröbel begründete den Kindergarten und verstand Spiel als zentrale Lernform.", tag:"neuzeit"},
+    {q:"In welchen Bereichen sollten Kinder nach Fröbel Erfahrungen sammeln?", a:["Religion, Kunst, Wirtschaft","Musik, Natur, Sprache, Bewegung, Sinneswahrnehmung","Handwerk, Technik, Politik","Mathematik, Philosophie, Sport"], c:1, explain:"Fröbel betonte vielfältige Erfahrungsfelder wie Musik, Natur, Sprache, Bewegung, Sinne.", tag:"neuzeit"},
+
+    // Kaiserreich
+    {q:"Ab wann waren Ehen in Deutschland nur noch gültig, wenn sie vor einem Standesbeamten geschlossen wurden?", a:["1806","1876","1900","1919"], c:1, explain:"Mit Einführung der obligatorischen Zivilehe 1876.", tag:"kaiserreich"},
+    {q:"Welche Unterschiede bestanden zwischen bürgerlichen und proletarischen Familien im Kaiserreich?", a:["Bürgerliche Familien lebten in Armut, proletarische im Wohlstand","Proletarische Familien lebten in Armut/Not; bürgerliche hatten Personal und großzügigen Wohnraum","Beide hatten ähnliche Lebensbedingungen","Nur proletarische Familien durften Bildung genießen"], c:1, explain:"Starke soziale Gegensätze: Proletarische Armut vs. bürgerliche Häuslichkeit mit Personal.", tag:"kaiserreich"},
+    {q:"Wer gründete 1908 die erste ‚Soziale Frauenschule‘ in Berlin?", a:["Clara Zetkin","Alice Salomon","Johanna Haarer","Rosa Luxemburg"], c:1, explain:"Alice Salomon professionalisierte die soziale Arbeit und prägte ‚Soziale Diagnostik‘.", tag:"kaiserreich"},
+
+    // Weimar
+    {q:"Welche Ziele verfolgte die Familienpolitik in der Weimarer Republik?", a:["Ausbau von Gesundheitsämtern, Gleichberechtigung, Kinderschutz","Förderung der Monarchie","Einführung der Kinderarbeit","Abschaffung von Bildungseinrichtungen"], c:0, explain:"Weimarer Sozialpolitik: Gesundheitsämter, Gleichberechtigungsschritte, Reichsjugendwohlfahrtsgesetz.", tag:"weimar"},
+    {q:"Was regelte das Reichsjugendwohlfahrtsgesetz?", a:["Den Bau von Kindergärten","Den Schutz von Kindern und Jugendlichen","Den Militärdienst für Jugendliche","Die Einführung des Frauenwahlrechts"], c:1, explain:"RJWG schuf Rahmen für Jugendfürsorge und Kinderschutz.", tag:"weimar"},
+
+    // NS
+    {q:"Welche Erziehungsgrundsätze vertrat Johanna Haarer?", a:["Liebevolle Erziehung mit viel Nähe","Schwarze Pädagogik: Härte, Strenge, Distanz","Freie Entfaltung der Kinder","Demokratische Mitbestimmung"], c:1, explain:"Haarer propagierte autoritäre, distanzierende Erziehung.", tag:"ns"},
+    {q:"Welche Rolle spielte die Familie im Nationalsozialismus?", a:["Rückzugsort vor Politik","Instrument der Bevölkerungspolitik","Unwichtig","Vollständig durch Staat ersetzt"], c:1, explain:"Familie wurde zur Durchsetzung bevölkerungs- und rassenpolitischer Ziele instrumentalisiert.", tag:"ns"},
+
+    // BRD
+    {q:"Was besagte der Gehorsamsparagraf (§1354 BGB) bis 1958?", a:["Kinder mussten den Eltern gehorchen","Ehefrauen mussten den Ehemännern gehorchen","Männer mussten für den Haushalt sorgen","Jugendliche mussten in die Armee"], c:1, explain:"Bis 1958 hatte der Mann das Letztentscheidungsrecht in der Ehe.", tag:"brd"},
+    {q:"Was brachte die Antibabypille ab den 1960er-Jahren?", a:["Mehr Selbstbestimmung für Frauen in der Familienplanung","Ein Verbot von Kinderbetreuung","Mehr Abhängigkeit von Männern","Rückkehr zum klassischen Rollenmodell"], c:0, explain:"Die Pille erhöhte die Kontrolle über Familienplanung und Lebensentwürfe.", tag:"brd"},
+    {q:"Welche neuen Lebensformen entstanden in den 1960er-Jahren in der BRD?", a:["Klösterliche Gemeinschaften","Studenten-WGs und Kommunen","Adlige Großfamilien","Landkommunen im Kaiserreichsstil"], c:1, explain:"WG- und Kommunebewegungen prägten Jugendkultur und Erziehungsbilder.", tag:"brd"},
+
+    // DDR
+    {q:"Welches Ziel verfolgte die Familienpolitik der DDR?", a:["Stärkung der Individualität","Erziehung zu sozialistischen Persönlichkeiten","Förderung des Kapitalismus","Abschaffung von Kinderbetreuung"], c:1, explain:"Ziel war Loyalität gegenüber Partei/Staat und sozialistischer Wertekanon.", tag:"ddr"},
+    {q:"Welche Rolle spielten Krippen und Kindergärten in der DDR?", a:["Sie existierten kaum","Flächendeckende Betreuung und ideologische Prägung","Nur privat betrieben","Nur für bürgerliche Familien"], c:1, explain:"Umfassende Kollektivbetreuung sollte Erwerbstätigkeit und Sozialisation sichern.", tag:"ddr"},
+    {q:"Was bezeichnet man als ‚Honecker‑Buckel‘?", a:["Rückgang der Scheidungsquote","Anstieg der Geburtenrate durch Familienförderung","Gesetz zur Wehrpflicht","Pädagogische Reform"], c:1, explain:"Vorübergehende Erhöhung der Geburtenziffer infolge DDR-Familienförderung.", tag:"ddr"},
+  ];
+
+  // Gruppierung nach Abschnitt
+  const GROUPS = {
+    neuzeit: {title:"Neuzeit & Industrialisierung", count:3},
+    kaiserreich: {title:"Kaiserreich & Alice Salomon", count:3},
+    weimar: {title:"Weimarer Republik", count:2},
+    ns: {title:"Nationalsozialismus", count:2},
+    brd: {title:"BRD (1950–1970er)", count:3},
+    ddr: {title:"DDR & Margot Honecker", count:3}
+  };
+
+  let state = JSON.parse(localStorage.getItem('lernpfad-state')||'null') || {
+    answered: 0, correct: 0, bySection:{}, doneById:{}
+  };
+
+  function save(){ localStorage.setItem('lernpfad-state', JSON.stringify(state)); }
+
+  function renderQuizzes(){
+    const byTag = POOL.reduce((acc,it,i)=>{ (acc[it.tag]=acc[it.tag]||[]).push({...it, id:i}); return acc; },{});
+    document.querySelectorAll('.quiz').forEach(container=>{
+      const tag = container.dataset.quiz;
+      const items = (byTag[tag]||[]);
+      items.forEach(item=> container.appendChild(renderCard(item)) );
+    });
+  }
+
+  function renderCard(item){
+    const card = document.createElement('div'); card.className='card';
+    const q = document.createElement('div'); q.className='q'; q.textContent = item.q; card.appendChild(q);
+    const opts = document.createElement('div'); opts.className='opts';
+    const name = 'q_'+item.id;
+    item.a.forEach((label,idx)=>{
+      const row = document.createElement('label'); row.className='opt';
+      const inp = document.createElement('input'); inp.type='radio'; inp.name=name; inp.value=idx; inp.setAttribute('aria-label',`Antwort ${idx+1}`);
+      if(state.doneById[item.id] && state.doneById[item.id].choice===idx) inp.checked = true;
+      row.appendChild(inp);
+      const span = document.createElement('span'); span.textContent = label; row.appendChild(span);
+      opts.appendChild(row);
+    });
+    card.appendChild(opts);
+
+    const result = document.createElement('div'); result.className='result hidden'; card.appendChild(result);
+
+    const actions = document.createElement('div'); actions.className='actions';
+    const checkBtn = document.createElement('button'); checkBtn.textContent='Antwort prüfen'; checkBtn.addEventListener('click',()=>{
+      const sel = card.querySelector('input[type=radio]:checked');
+      if(!sel){ flash(result,'Bitte eine Antwort auswählen.', 'warn'); return; }
+      const choice = parseInt(sel.value,10);
+      const ok = (choice===item.c);
+      const prev = state.doneById[item.id];
+      if(!prev){
+        state.answered += 1; if(ok) state.correct += 1;
+        state.doneById[item.id] = {choice, ok};
+      } else {
+        // Überschreiben erlaubt: Score anpassen, falls Zustand wechselt
+        if(prev.ok!==ok){ state.correct += ok?1:-1; state.doneById[item.id] = {choice, ok}; }
+      }
+      showResult(result, ok, item);
+      updateHUD(); save(); updateSectionCompletion();
+    });
+    const revealBtn = document.createElement('button'); revealBtn.textContent='Lösung zeigen'; revealBtn.className='alt'; revealBtn.addEventListener('click',()=>{
+      showResult(result, true, item, true);
+    });
+    actions.appendChild(checkBtn); actions.appendChild(revealBtn); card.appendChild(actions);
+
+    // falls schon beantwortet
+    if(state.doneById[item.id]){ showResult(result, state.doneById[item.id].ok, item); }
+    return card;
+  }
+
+  function showResult(el, ok, item, revealOnly=false){
+    el.classList.remove('hidden');
+    el.className = 'result ' + (ok? 'good':'bad');
+    const correctLabel = item.a[item.c];
+    el.innerHTML = `<div><strong>${ok? 'Richtig!':'Leider falsch.'}</strong> Richtige Antwort: „${correctLabel}“</div><div class="muted">Begründung: ${item.explain}</div>`;
+  }
+
+  function flash(el, msg, type){
+    el.classList.remove('hidden');
+    const cls = type==='warn'? 'bad' : 'good';
+    el.className = 'result ' + cls;
+    el.textContent = msg;
+    setTimeout(()=>{ el.classList.add('hidden'); }, 1600);
+  }
+
+  function updateHUD(){
+    const score = (state.answered? Math.round((state.correct/state.answered)*100) : 0);
+    document.getElementById('scorePill').textContent = `Score: ${score}%`;
+    document.getElementById('donePill').textContent = `${Object.keys(state.doneById).length}/${POOL.length} Fragen`;
+  }
+
+  function updateSectionCompletion(){
+    const perTag = {};
+    Object.entries(GROUPS).forEach(([tag,def])=> perTag[tag]=0 );
+    Object.entries(state.doneById).forEach(([id,rec])=>{ const t = POOL[id].tag; perTag[t] = (perTag[t]||0)+1; });
+    let finished = 0; let total = Object.keys(GROUPS).length;
+    Object.entries(GROUPS).forEach(([tag,def])=>{ if((perTag[tag]||0) >= def.count) finished += 1; });
+    const pct = Math.round((finished/total)*100);
+    document.getElementById('progressBar').style.width = pct+'%';
+    document.getElementById('progressLabel').textContent = `${finished}/${total} Abschnitte abgeschlossen`;
+  }
+
+  function exportCSV(){
+    const rows = [['Section','Frage','Gewählt','Richtig','Korrekt?']];
+    Object.entries(state.doneById).forEach(([id,rec])=>{
+      const item = POOL[id];
+      rows.push([GROUPS[item.tag].title, item.q, item.a[rec.choice]||'', item.a[item.c], rec.ok? 'ja':'nein']);
+    });
+    const csv = rows.map(r=> r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+    const blob = new Blob(["\ufeff"+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='Lernpfad_Ergebnisse.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  function resetAll(){
+    if(!confirm('Wirklich gesamten Fortschritt löschen?')) return;
+    state = {answered:0, correct:0, bySection:{}, doneById:{}}; save(); location.reload();
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', exportCSV);
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  // Tastatursteuerung (N, 1-4, E)
+  document.addEventListener('keydown', (e)=>{
+    const focusCard = document.querySelector('.card:last-of-type') || document.querySelector('.card');
+    if(['1','2','3','4'].includes(e.key)){
+      const idx = parseInt(e.key,10)-1; const el = document.querySelector(`.card input[value="${idx}"]`); if(el){ el.checked=true; }
+    }
+    if(e.key.toLowerCase()==='e'){
+      const btn = document.querySelector('.card button'); if(btn) btn.click();
+    }
+  });
+
+  // Init
+  renderQuizzes(); updateHUD(); updateSectionCompletion();
+</script>
+</body>
+</html>

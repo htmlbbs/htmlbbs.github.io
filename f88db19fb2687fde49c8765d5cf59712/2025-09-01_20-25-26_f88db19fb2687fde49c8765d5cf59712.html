@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernpfad für Erzieher*innen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .quiz {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:disabled {
+            background-color: #ccc;
+        }
+        .answer {
+            margin-top: 5px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="section" id="section1">
+    <h3>Familie in der Neuzeit – Friedrich Fröbel</h3>
+    <p>In der Neuzeit wurden durch die Aufklärung und Philosophie die Machtstrukturen der Kirche geschwächt. Gleichzeitig führten wirtschaftliche Veränderungen wie die Gründung von Fabriken zur Landflucht. Friedrich Fröbel spielte eine entscheidende Rolle bei der Entwicklung der Kindergärten und verfolgte das Ziel, Kinder zu freien, denkenden und selbsttätigen Menschen zu bilden.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Welche zwei Hauptfaktoren schwächten die Macht der Kirche in der Neuzeit?</p>
+            <div class="answer"><input type="checkbox" id="q1a" value="c"> a) Wissenschaft und Technologie</div>
+            <div class="answer"><input type="checkbox" id="q1b" value="b"> b) Wirtschaft und Politik</div>
+            <div class="answer"><input type="checkbox" id="q1c" value="a"> c) Aufklärung und Philosophie</div>
+            <div class="answer"><input type="checkbox" id="q1d" value="d"> d) Industrialisierung und Bildung</div>
+        </div>
+        <div>
+            <p>2. Welche wirtschaftlichen Veränderungen führten zur "Landflucht"?</p>
+            <div class="answer"><input type="checkbox" id="q2a" value="a"> a) Die Verringerung der Arbeitszeiten</div>
+            <div class="answer"><input type="checkbox" id="q2b" value="b"> b) Die Erhöhung der Löhne auf dem Land</div>
+            <div class="answer"><input type="checkbox" id="q2c" value="c"> c) Die Gründung von Fabriken in Städten</div>
+            <div class="answer"><input type="checkbox" id="q2d" value="d"> d) Die Einführung von Maschinen in der Landwirtschaft</div>
+        </div>
+        <div>
+            <p>3. Welche Rolle spielte Friedrich Fröbel in der Entwicklung der Betreuungseinrichtungen für Kinder?</p>
+            <div class="answer"><input type="checkbox" id="q3a" value="a"> a) Er gründete die ersten Schulen.</div>
+            <div class="answer"><input type="checkbox" id="q3b" value="b"> b) Er führte die Kinderarbeit ein.</div>
+            <div class="answer"><input type="checkbox" id="q3c" value="c"> c) Er schrieb Bücher über Kindererziehung.</div>
+            <div class="answer"><input type="checkbox" id="q3d" value="d"> d) Er gründete die ersten Kindergärten.</div>
+        </div>
+        <div>
+            <p>4. Welche Ziele verfolgte Friedrich Fröbel mit seinen pädagogischen Ansätzen?</p>
+            <div class="answer"><input type="checkbox" id="q4a" value="a"> a) Kinder zu wissenschaftlichen und technischen Experten auszubilden</div>
+            <div class="answer"><input type="checkbox" id="q4b" value="b"> b) Kinder zu religiösen und frommen Menschen zu machen</div>
+            <div class="answer"><input type="checkbox" id="q4c" value="c"> c) Kinder zu freien, denkenden und selbsttätigen Menschen zu bilden</div>
+            <div class="answer"><input type="checkbox" id="q4d" value="d"> d) Kinder zu gehorsamen und disziplinierten Menschen zu erziehen</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section1')">Überprüfen</button>
+        <p id="feedback1" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section2">
+    <h3>Familie im Kaiserreich – Alice Salomon</h3>
+    <p>Alice Salomon war eine bedeutende Figur in der Sozialen Arbeit, die sich für die Gleichberechtigung von Frauen einsetzte. 1908 gründete sie die erste Soziale Frauenschule Deutschlands. Im Kaiserreich wurden Ehen ab 1876 nur noch als rechtsgültig anerkannt, wenn sie vor einem Standesbeamten geschlossen wurden. Das Volljährigkeitsalter wurde 1875 auf 21 Jahre festgelegt.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Was war das Hauptziel von Alice Salomons Arbeit in der Sozialen Arbeit?</p>
+            <div class="answer"><input type="checkbox" id="q5a" value="a"> a) Die Unterstützung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q5b" value="b"> b) Die Förderung der Gleichberechtigung von Frauen</div>
+            <div class="answer"><input type="checkbox" id="q5c" value="c"> c) Die Abschaffung der Bildung</div>
+            <div class="answer"><input type="checkbox" id="q5d" value="d"> d) Die Einführung der Kinderarbeit</div>
+        </div>
+        <div>
+            <p>2. Welche Einrichtung gründete Alice Salomon 1908 in Berlin?</p>
+            <div class="answer"><input type="checkbox" id="q6a" value="a"> a) Die erste Frauenuniversität</div>
+            <div class="answer"><input type="checkbox" id="q6b" value="b"> b) Die erste Frauenpartei</div>
+            <div class="answer"><input type="checkbox" id="q6c" value="c"> c) Das erste Frauenwahlrecht</div>
+            <div class="answer"><input type="checkbox" id="q6d" value="d"> d) Die erste Soziale Frauenschule Deutschlands</div>
+        </div>
+        <div>
+            <p>3. Welche Kernbotschaft vertrat Alice Salomon in Bezug auf die Soziale Arbeit?</p>
+            <div class="answer"><input type="checkbox" id="q7a" value="a"> a) Soziale Arbeit sollte nur von Männern ausgeübt werden</div>
+            <div class="answer"><input type="checkbox" id="q7b" value="b"> b) Soziale Arbeit ist unnötig</div>
+            <div class="answer"><input type="checkbox" id="q7c" value="c"> c) Soziale Arbeit ist eine Wissenschaft und Kunst zugleich</div>
+            <div class="answer"><input type="checkbox" id="q7d" value="d"> d) Soziale Arbeit sollte nur in Krankenhäusern stattfinden</div>
+        </div>
+        <div>
+            <p>4. Ab welchem Jahr waren Ehen in Deutschland nur noch rechtsgültig, wenn sie vor einem Standesbeamten geschlossen wurden?</p>
+            <div class="answer"><input type="checkbox" id="q8a" value="a"> a) 1874</div>
+            <div class="answer"><input type="checkbox" id="q8b" value="b"> b) 1877</div>
+            <div class="answer"><input type="checkbox" id="q8c" value="c"> c) 1875</div>
+            <div class="answer"><input type="checkbox" id="q8d" value="d"> d) 1876</div>
+        </div>
+        <div>
+            <p>5. Welches Alter wurde 1875 als Volljährigkeitsalter festgelegt?</p>
+            <div class="answer"><input type="checkbox" id="q9a" value="a"> a) 18 Jahre</div>
+            <div class="answer"><input type="checkbox" id="q9b" value="b"> b) 20 Jahre</div>
+            <div class="answer"><input type="checkbox" id="q9c" value="c"> c) 21 Jahre</div>
+            <div class="answer"><input type="checkbox" id="q9d" value="d"> d) 25 Jahre</div>
+        </div>
+        <div>
+            <p>6. Welche Rolle spielte die Frau in der bürgerlichen Familie im Kaiserreich?</p>
+            <div class="answer"><input type="checkbox" id="q10a" value="a"> a) Sie sollte die politischen Entscheidungen treffen</div>
+            <div class="answer"><input type="checkbox" id="q10b" value="b"> b) Sie sollte die Familie allein ernähren</div>
+            <div class="answer"><input type="checkbox" id="q10c" value="c"> c) Sie sollte zu Konversationen fähig sein und ein angenehmes Äußeres haben</div>
+            <div class="answer"><input type="checkbox" id="q10d" value="d"> d) Sie sollte arbeiten gehen</div>
+        </div>
+        <div>
+            <p>7. Welche Rolle spielte der Mann in der proletarischen Familie im Kaiserreich?</p>
+            <div class="answer"><input type="checkbox" id="q11a" value="a"> a) Er war für die Hausarbeit zuständig</div>
+            <div class="answer"><input type="checkbox" id="q11b" value="b"> b) Er war für die finanzielle Planung zuständig</div>
+            <div class="answer"><input type="checkbox" id="q11c" value="c"> c) Er war die Autoritätsperson in der Familie</div>
+            <div class="answer"><input type="checkbox" id="q11d" value="d"> d) Er war für die Erziehung der Kinder zuständig</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section2')">Überprüfen</button>
+        <p id="feedback2" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section3">
+    <h3>Familie in der Weimarer Republik – Friedrich Ebert</h3>
+    <p>Die Weimarer Republik verfolgte Ziele wie die Gleichberechtigung der Frau, die Verbesserung der Lebensbedingungen und den Schutz von Kindern und Jugendlichen. Das Reichsjugendwohlfahrtsgesetz regelte den Schutz von Kindern und Jugendlichen und es wurden verschiedene Methoden zur Verbesserung der Lebensbedingungen eingeführt.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Welche Ziele verfolgte die Weimarer Republik in Bezug auf die Familie?</p>
+            <div class="answer"><input type="checkbox" id="q12a" value="a"> a) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q12b" value="b"> b) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q12c" value="c"> c) Gleichberechtigung der Frau, Verbesserung der Lebensbedingungen, Ausbau von Gesundheitsämtern, Schutz von Kindern und Jugendlichen, Erweiterung der Bildungschancen</div>
+            <div class="answer"><input type="checkbox" id="q12d" value="d"> d) Förderung der Kinderarbeit, Einschränkung der Frauenrechte, Verbot von Schulen</div>
+        </div>
+        <div>
+            <p>2. Welche Rolle spielte das Reichsjugendwohlfahrtsgesetz in der Weimarer Republik?</p>
+            <div class="answer"><input type="checkbox" id="q13a" value="a"> a) Es förderte die Kinderarbeit</div>
+            <div class="answer"><input type="checkbox" id="q13b" value="b"> b) Es verbot die Bildung für Mädchen</div>
+            <div class="answer"><input type="checkbox" id="q13c" value="c"> c) Es regelte den Schutz von Kindern und Jugendlichen</div>
+            <div class="answer"><input type="checkbox" id="q13d" value="d"> d) Es förderte die Adelsfamilien</div>
+        </div>
+        <div>
+            <p>3. Welche Methoden wurden in der Weimarer Republik zur Verbesserung der Lebensbedingungen eingesetzt?</p>
+            <div class="answer"><input type="checkbox" id="q14a" value="a"> a) Einführung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q14b" value="b"> b) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q14c" value="c"> c) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q14d" value="d"> d) Gesetzliche Verankerung, Gesundheitsämter, Arbeitsrechtliche Reformen, Volksbildung, Jugendfürsorge</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section3')">Überprüfen</button>
+        <p id="feedback3" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section4">
+    <h3>Familie im Nationalsozialismus – Johanna Haarer</h3>
+    <p>Im Nationalsozialismus wurde die Rolle der Frau auf das Gebären und Erziehen von Kindern festgelegt. Die NS-Familienpolitik förderte „arische“ kinderreiche Familien und ergriff Maßnahmen wie Ehestandsdarlehen und die Einführung der Hitler-Jugend zur Kontrolle der Familie.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Welche Rolle sollte die Frau im Nationalsozialismus spielen?</p>
+            <div class="answer"><input type="checkbox" id="q15a" value="a"> a) Sie sollte die Familie allein ernähren</div>
+            <div class="answer"><input type="checkbox" id="q15b" value="b"> b) Sie sollte Kinder gebären und erziehen</div>
+            <div class="answer"><input type="checkbox" id="q15c" value="c"> c) Sie sollte die politischen Entscheidungen treffen</div>
+            <div class="answer"><input type="checkbox" id="q15d" value="d"> d) Sie sollte arbeiten gehen</div>
+        </div>
+        <div>
+            <p>2. Welche Ziele verfolgte die NS-Familien- und Erziehungspolitik?</p>
+            <div class="answer"><input type="checkbox" id="q16a" value="a"> a) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q16b" value="b"> b) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q16c" value="c"> c) Förderung „arischer“ kinderreicher Familien, Stärkung der Großfamilie, Festlegung der Frau auf Mutterrolle</div>
+            <div class="answer"><input type="checkbox" id="q16d" value="d"> d) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+        </div>
+        <div>
+            <p>3. Welche Maßnahmen wurden im Nationalsozialismus zur Kontrolle der Familie ergriffen?</p>
+            <div class="answer"><input type="checkbox" id="q17a" value="a"> a) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q17b" value="b"> b) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q17c" value="c"> c) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q17d" value="d"> d) Ehestandsdarlehen, Verbot aller anderen Jugendverbände, Einführung der Hitler-Jugend</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section4')">Überprüfen</button>
+        <p id="feedback4" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section5">
+    <h3>Familie in der Bundesrepublik Deutschland – Alexander Mitscherlich</h3>
+    <p>In der Bundesrepublik Deutschland nach dem Zweiten Weltkrieg spielte die Familie eine zentrale Rolle für Stabilität und Sicherheit. Alexander Mitscherlich setzte sich für die Stärkung der Familie als Grundbaustein der Gesellschaft ein und förderte die Gleichberechtigung sowie die Selbstbestimmung. In den 1960er und 1970er Jahren gab es zahlreiche gesellschaftliche Veränderungen und Errungenschaften.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Welche Ziele verfolgte Alexander Mitscherlich in Bezug auf die Familie in der BRD?</p>
+            <div class="answer"><input type="checkbox" id="q18a" value="a"> a) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q18b" value="b"> b) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q18c" value="c"> c) Stabilität und Sicherung der Nachkriegsgesellschaft durch traditionelle Rollen, Stärkung der Familie als Grundbaustein der Gesellschaft, Schrittweise Förderung der Gleichberechtigung, Förderung von Selbstbestimmung und Individualität</div>
+            <div class="answer"><input type="checkbox" id="q18d" value="d"> d) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+        </div>
+        <div>
+            <p>2. Welche Veränderungen gab es in den 1960er Jahren in der BRD?</p>
+            <div class="answer"><input type="checkbox" id="q19a" value="a"> a) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q19b" value="b"> b) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q19c" value="c"> c) Streichung des Gehorsamsparagrafen, Einfluss der amerikanischen Kultur, Entstehung von neuen Lebensformen, Einführung der Antibabypille</div>
+            <div class="answer"><input type="checkbox" id="q19d" value="d"> d) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+        </div>
+        <div>
+            <p>3. Welche Errungenschaften gab es in den 1970er Jahren in der BRD?</p>
+            <div class="answer"><input type="checkbox" id="q20a" value="a"> a) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q20b" value="b"> b) Bildungsreform, neue Jugendkultur, Reform des Scheidungsrechts, liberale Familienpolitik</div>
+            <div class="answer"><input type="checkbox" id="q20c" value="c"> c) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q20d" value="d"> d) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section5')">Überprüfen</button>
+        <p id="feedback5" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section6">
+    <h3>Familie in der DDR – Margot Honecker</h3>
+    <p>Die DDR verfolgte das Ziel, eine sozialistische Persönlichkeit zu erziehen und die Gleichstellung von Frau und Mann zu fördern. Es wurden Methoden wie die Frühsozialisierung und staatlich kontrollierte Kollektivbetreuung eingesetzt. Margot Honecker spielte eine zentrale Rolle in der Familienpolitik der DDR.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Welche Ziele verfolgte die DDR in Bezug auf die Familie?</p>
+            <div class="answer"><input type="checkbox" id="q21a" value="a"> a) Erziehung zu einer sozialistischen Persönlichkeit, Gleichstellung von Frau und Mann, Vereinbarkeit von Familie und Beruf, demographische Stabilisierung</div>
+            <div class="answer"><input type="checkbox" id="q21b" value="b"> b) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q21c" value="c"> c) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q21d" value="d"> d) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+        </div>
+        <div>
+            <p>2. Welche Methoden wurden in der DDR zur Förderung der Familie eingesetzt?</p>
+            <div class="answer"><input type="checkbox" id="q22a" value="a"> a) Förderung der Kinderarbeit, Abschaffung der Schulen, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q22b" value="b"> b) Einführung der Sklaverei, Abschaffung der Bildung, Förderung der Armut</div>
+            <div class="answer"><input type="checkbox" id="q22c" value="c"> c) Einführung der Monarchie, Abschaffung der Demokratie, Förderung der Adelsfamilien</div>
+            <div class="answer"><input type="checkbox" id="q22d" value="d"> d) Frühsozialisierung und Ideologisierung, staatlich kontrollierte Kollektivbetreuung, finanzielle Anreize, Arbeitsschutz für Mütter, strenge Kontrolle und Eingriffe</div>
+        </div>
+        <div>
+            <p>3. Welche Rolle spielte Margot Honecker in der Familienpolitik der DDR?</p>
+            <div class="answer"><input type="checkbox" id="q23a" value="a"> a) Sie förderte die Adelsfamilien und die Einführung der Monarchie</div>
+            <div class="answer"><input type="checkbox" id="q23b" value="b"> b) Sie förderte die Kinderarbeit und die Abschaffung der Schulen</div>
+            <div class="answer"><input type="checkbox" id="q23c" value="c"> c) Sie förderte die Gleichstellung von Frau und Mann und die Vereinbarkeit von Familie und Beruf</div>
+            <div class="answer"><input type="checkbox" id="q23d" value="d"> d) Sie förderte die Sklaverei und die Abschaffung der Bildung</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section6')">Überprüfen</button>
+        <p id="feedback6" class="hidden"></p>
+    </div>
+</div>
+
+<script>
+    function checkAnswers(sectionId) {
+        let correctAnswers = {
+            section1: ['c', 'c', 'd', 'c'],
+            section2: ['b', 'd', 'c', 'd', 'c', 'c', 'c'],
+            section3: ['c', 'c', 'd'],
+            section4: ['b', 'c', 'd'],
+            section5: ['c', 'c', 'b'],
+            section6: ['a', 'd', 'c']
+        };
+
+        let feedbackElement = document.getElementById(`feedback${sectionId.charAt(sectionId.length - 1)}`);
+        let sectionElement = document.getElementById(sectionId);
+        let inputs = sectionElement.querySelectorAll('input[type="checkbox"]');
+        let userAnswers = Array.from(inputs).filter(input => input.checked).map(input => input.value);
+
+        if (userAnswers.length === correctAnswers[sectionId].length && userAnswers.every(val => correctAnswers[sectionId].includes(val))) {
+            feedbackElement.textContent = "Richtig! Du kannst zum nächsten Abschnitt weitergehen.";
+            feedbackElement.className = "correct";
+            feedbackElement.classList.remove("hidden");
+            let nextSection = document.getElementById(`section${parseInt(sectionId.charAt(sectionId.length - 1)) + 1}`);
+            if (nextSection) {
+                nextSection.classList.remove("hidden");
+            }
+        } else {
+            feedbackElement.textContent = "Falsch. Bitte versuche es erneut.";
+            feedbackElement.className = "incorrect";
+            feedbackElement.classList.remove("hidden");
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bruchrechnung – 30 Übungsaufgaben</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background: #f6f7fb; color: #111; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 20px; }
+    .card {
+      background: #fff; border-radius: 16px; padding: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+    h1 { font-size: 20px; margin: 0 0 10px; }
+
+/* MOBILE FIRST: standardmäßig 1 Spalte */
+.row { 
+  display: grid; 
+  gap: 14px; 
+  grid-template-columns: 1fr; 
+  align-items: start; 
+}
+@media (min-width: 1200px){
+  .row { grid-template-columns: 1.2fr .8fr; }
+}
+
+@media (max-width: 520px){
+  .wrap { padding: 10px; }
+  .card { padding: 12px; }
+  .task { font-size: 22px; }
+  .side { padding: 12px; }
+}
+
+    .taskBox { padding: 14px; border-radius: 14px; background: #f0f3ff; }
+    .taskTop { display:flex; justify-content: space-between; align-items:center; gap: 10px; flex-wrap: wrap; }
+
+    .pill { background: #111; color: #fff; padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+
+    .task { font-size: 26px; font-weight: 800; margin: 10px 0 6px; line-height: 1.1; }
+    .hint { font-size: 14px; opacity: .88; margin: 0; }
+
+    .btns { display:flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+    button{
+      border: 0; border-radius: 12px; padding: 10px 14px; font-size: 15px; cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,.10);
+    }
+    button.primary{ background:#2b59ff; color:#fff; }
+    button.secondary{ background:#fff; color:#111; border:1px solid #d6d8e5; box-shadow:none; }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+
+    /* Eingabe als "Bruch" (schmal, übereinander) */
+    .fracInputWrap { display:flex; align-items:flex-start; gap: 14px; margin-top: 10px; }
+    .fracInput {
+      width: 120px;
+      display:flex;
+      flex-direction: column;
+      align-items: stretch;
+      background: #fff;
+      border: 1px solid #d6d8e5;
+      border-radius: 14px;
+      padding: 10px 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.06);
+    }
+    .fracInput label { font-size: 12px; opacity:.8; margin-bottom: 4px; }
+
+    /* wichtig: >=16px verhindert iOS Auto-Zoom */
+    .fracInput input[type="number"]{
+      width: 72px;
+      margin: 0 auto;
+      padding: 10px 8px;
+      border-radius: 12px;
+      border: 1px solid #d6d8e5;
+      font-size: 18px;
+      background: #fff;
+      text-align: center;
+      display: block;
+    }
+    .bar {
+      height: 2px;
+      background: #111;
+      margin: 10px 6px;
+      border-radius: 2px;
+      opacity: .9;
+    }
+
+    .msg { margin-top: 12px; padding: 12px; border-radius: 12px; display:none; }
+    .ok { background: #e9fbef; border: 1px solid #b7efc6; }
+    .warn { background: #fff8e6; border: 1px solid #ffd28a; }
+    .bad{ background: #fff0f0; border: 1px solid #ffb7b7; }
+
+    .solution {
+      margin-top: 10px; white-space: normal;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px; line-height: 1.35;
+    }
+    /* Highlight für Erweiterungszahlen */
+    .hl {
+      color: #2b59ff;
+      font-weight: 900;
+      padding: 0 1px;
+    }
+
+    .side { padding: 14px; border-radius: 14px; background: #fff; border: 1px solid #e6e8f2; }
+    .stats { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .stat { background:#f7f8ff; border:1px solid #e6e8f2; border-radius: 14px; padding: 10px; }
+    .stat .k { font-size: 12px; opacity:.8; }
+    .stat .v { font-size: 20px; font-weight: 800; margin-top: 4px; }
+    .mini { font-size: 12px; opacity:.85; margin-top: 10px; }
+    .hr { height:1px; background:#e6e8f2; margin: 12px 0; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#111; color:#fff; padding:2px 6px; border-radius:6px; font-size: 12px; }
+
+    /* ---------------- MOBILE OPTIMIERUNGEN ---------------- */
+    @media (max-width: 520px){
+      .wrap { padding: 10px; }
+      .card { padding: 12px; border-radius: 14px; }
+      h1 { font-size: 18px; }
+
+      .taskBox { padding: 12px; }
+      .task { font-size: 22px; }
+
+      /* Input + Buttons besser zentriert */
+      .fracInputWrap { justify-content: center; }
+      .fracInput { width: 128px; }
+
+      /* Statistik kompakter */
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stat { padding: 9px; border-radius: 12px; }
+      .stat .v { font-size: 18px; }
+
+      /* Sticky Button-Leiste unten */
+      .btns{
+        position: sticky;
+        bottom: 0;
+        background: rgba(246,247,251,.92);
+        backdrop-filter: blur(8px);
+        padding: 10px 0 8px;
+        margin: 14px -12px 0;   /* bis an Kartenrand */
+        padding-left: 12px;
+        padding-right: 12px;
+        border-top: 1px solid #e6e8f2;
+      }
+      .btns button{
+        flex: 1 1 45%;
+        min-width: 140px;
+        padding: 12px 12px;
+        font-size: 16px;
+      }
+
+      /* Messages nicht zu klein */
+      .msg { font-size: 15px; }
+
+      /* Lösung gut lesbar */
+      .solution { font-size: 12.5px; line-height: 1.45; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Bruchrechnung – 30 Übungsaufgaben</h1>
+
+    <div class="row">
+      <div class="taskBox">
+        <div class="taskTop">
+          <div class="pill" id="progressPill">Aufgabe 1/30</div>
+          <div class="pill" id="typePill">Addition</div>
+        </div>
+
+        <div class="task" id="taskText">–</div>
+        <p class="hint" id="taskHint">
+          Rechne auf Papier und schreibe hier die Ergebnisse.<br>
+          Kürze alle Ergebnisse! (Ungekürzt = halbe Punktzahl).<br>
+          Bei Addition/Subtraktion mit ungleichem Nenner: über Kreuz erweitern.
+        </p>
+
+        <div class="hr"></div>
+
+        <div class="fracInputWrap" aria-label="Eingabe Ergebnis als Bruch">
+          <div class="fracInput" role="group" aria-label="Bruch-Eingabe">
+            <div>
+              <label for="numIn">Zähler</label>
+              <input id="numIn" type="number" inputmode="numeric" />
+            </div>
+            <div class="bar" aria-hidden="true"></div>
+            <div>
+              <label for="denIn">Nenner</label>
+              <input id="denIn" type="number" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="checkBtn">Prüfen</button>
+          <button class="secondary" id="nextBtn" disabled>Nächste Aufgabe</button>
+          <button class="secondary" id="resetBtn">Neu starten</button>
+        </div>
+
+        <div class="msg ok" id="msgOk"></div>
+        <div class="msg warn" id="msgWarn"></div>
+        <div class="msg bad" id="msgBad"></div>
+      </div>
+
+      <div class="side">
+        <div class="stats">
+          <div class="stat">
+            <div class="k">richtig</div>
+            <div class="v" id="rightCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">ungekürzt</div>
+            <div class="v" id="halfCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">falsch</div>
+            <div class="v" id="wrongCount">0</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="mini">
+          Eingabe als <b>gekürzten Bruch</b>.<br/><br/>
+          Beispiel: <span class="kbd">6/8</span> → richtig ist <span class="kbd">3/4</span>.
+        </div>
+
+        <div class="mini" style="margin-top:10px;">
+          Punkte: jede Aufgabe = 1 Punkt <br>
+          (ungekürztes Ergebnis: halbe Punktzahl).
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="stat" style="box-shadow:none;">
+          <div class="k">Punkte</div>
+          <div class="v" id="score">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/** ---------- Hilfsfunktionen (Brüche) ---------- **/
+function gcd(a, b){
+  a = Math.abs(a); b = Math.abs(b);
+  while (b !== 0){ const t = a % b; a = b; b = t; }
+  return a === 0 ? 1 : a;
+}
+
+function normalizeFrac(n, d){
+  if (d === 0) return { n: NaN, d: NaN, g: NaN };
+  if (d < 0){ n = -n; d = -d; }
+  const g = gcd(n, d);
+  return { n: n/g, d: d/g, g };
+}
+
+function mixedToImproper(m){
+  const w = m.w || 0;
+  const n = m.n || 0;
+  const d = m.d;
+  return { n: w*d + n, d };
+}
+function fracToText(m){
+  const w = m.w || 0;
+  const n = m.n || 0;
+  const d = m.d;
+  if (w !== 0) return `${w} ${n}/${d}`;
+  return `${n}/${d}`;
+}
+function hl(x){ return `<span class="hl">${x}</span>`; }
+function brJoin(lines){ return lines.join("<br>"); }
+
+/** ---------- Aufgabenliste (30) ---------- **/
+const tasks = [
+  { op:"+", a:{w:0,n:1,d:8},  b:{w:0,n:3,d:8},  label:"Addition" },
+  { op:"-", a:{w:0,n:7,d:10}, b:{w:0,n:2,d:10}, label:"Subtraktion" },
+  { op:"+", a:{w:0,n:2,d:9},  b:{w:0,n:4,d:9},  label:"Addition" },
+  { op:"-", a:{w:0,n:11,d:12},b:{w:0,n:5,d:12}, label:"Subtraktion" },
+  { op:"+", a:{w:0,n:5,d:6},  b:{w:0,n:1,d:6},  label:"Addition" },
+  { op:"-", a:{w:0,n:9,d:14}, b:{w:0,n:3,d:14}, label:"Subtraktion" },
+
+  { op:"+", a:{w:0,n:1,d:4},  b:{w:0,n:1,d:6},  label:"Addition (über Kreuz)" },
+  { op:"-", a:{w:0,n:5,d:6},  b:{w:0,n:1,d:4},  label:"Subtraktion (über Kreuz)" },
+  { op:"+", a:{w:0,n:3,d:5},  b:{w:0,n:2,d:15}, label:"Addition (über Kreuz)" },
+  { op:"-", a:{w:0,n:7,d:8},  b:{w:0,n:1,d:3},  label:"Subtraktion (über Kreuz)" },
+  { op:"+", a:{w:0,n:5,d:12}, b:{w:0,n:7,d:18}, label:"Addition (über Kreuz)" },
+  { op:"-", a:{w:0,n:11,d:12},b:{w:0,n:5,d:8},  label:"Subtraktion (über Kreuz)" },
+  { op:"+", a:{w:0,n:9,d:10}, b:{w:0,n:2,d:5},  label:"Addition (über Kreuz)" },
+  { op:"-", a:{w:0,n:13,d:15},b:{w:0,n:1,d:6},  label:"Subtraktion (über Kreuz)" },
+  { op:"+", a:{w:0,n:7,d:9},  b:{w:0,n:5,d:12}, label:"Addition (über Kreuz)" },
+  { op:"-", a:{w:0,n:17,d:20},b:{w:0,n:3,d:10}, label:"Subtraktion (über Kreuz)" },
+
+  { op:"+", a:{w:1,n:1,d:4},  b:{w:0,n:2,d:4},  label:"Addition (gemischt → Bruch)" },
+  { op:"-", a:{w:2,n:1,d:3},  b:{w:0,n:5,d:6},  label:"Subtraktion (gemischt → Bruch)" },
+  { op:"+", a:{w:1,n:3,d:5},  b:{w:2,n:1,d:10}, label:"Addition (gemischt → Bruch, über Kreuz)" },
+  { op:"-", a:{w:3,n:1,d:8},  b:{w:1,n:3,d:4},  label:"Subtraktion (gemischt → Bruch, über Kreuz)" },
+  { op:"+", a:{w:2,n:5,d:6},  b:{w:1,n:2,d:3},  label:"Addition (gemischt → Bruch)" },
+  { op:"-", a:{w:4,n:1,d:5},  b:{w:2,n:3,d:10}, label:"Subtraktion (gemischt → Bruch, über Kreuz)" },
+
+  { op:"*", a:{w:0,n:2,d:3},  b:{w:0,n:3,d:5},  label:"Multiplikation" },
+  { op:"*", a:{w:0,n:7,d:8},  b:{w:0,n:4,d:7},  label:"Multiplikation" },
+  { op:"*", a:{w:1,n:1,d:2},  b:{w:0,n:2,d:3},  label:"Multiplikation (gemischt → Bruch)" },
+  { op:"*", a:{w:2,n:3,d:4},  b:{w:1,n:2,d:5},  label:"Multiplikation (gemischt → Bruch)" },
+
+  { op:"/", a:{w:0,n:3,d:4},  b:{w:0,n:2,d:5},  label:"Division (Kehrwert)" },
+  { op:"/", a:{w:0,n:7,d:9},  b:{w:0,n:14,d:27},label:"Division (Kehrwert, Kürzen am Ende)" },
+  { op:"/", a:{w:1,n:3,d:5},  b:{w:0,n:2,d:3},  label:"Division (gemischt → Bruch)" },
+  { op:"/", a:{w:3,n:1,d:4},  b:{w:1,n:5,d:6},  label:"Division (gemischt → Bruch, über Kreuz + Kehrwert)" },
+];
+
+/** ---------- Rechnen + Lösungsweg ---------- **/
+function compute(task){
+  const A = mixedToImproper(task.a);
+  const B = mixedToImproper(task.b);
+
+  let rawN, rawD;
+  const steps = [];
+
+  const aIsMixed = (task.a.w || 0) !== 0;
+  const bIsMixed = (task.b.w || 0) !== 0;
+
+  if (aIsMixed || bIsMixed){
+    steps.push(`1) Gemischten Bruch umwandeln:`);
+    if (aIsMixed){
+      steps.push(`  ${fracToText(task.a)} = (${task.a.w}·${task.a.d} + ${task.a.n})/${task.a.d} = ${A.n}/${A.d}`);
+    }
+    if (bIsMixed){
+      steps.push(`  ${fracToText(task.b)} = (${task.b.w}·${task.b.d} + ${task.b.n})/${task.b.d} = ${B.n}/${B.d}`);
+    }
+    steps.push(``);
+  }
+
+  const stepNo = (aIsMixed || bIsMixed) ? 2 : 1;
+
+  if (task.op === "+" || task.op === "-"){
+    steps.push(`${stepNo}) ${task.op==="+"?"Addieren":"Subtrahieren"}`);
+
+    if (A.d === B.d){
+      rawD = A.d;
+      rawN = (task.op === "+") ? (A.n + B.n) : (A.n - B.n);
+      steps.push(`  Gleicher Nenner: ${A.n}/${A.d} ${task.op} ${B.n}/${B.d}`);
+      steps.push(`  Zähler rechnen: (${A.n} ${task.op} ${B.n})/${rawD} = ${rawN}/${rawD}`);
+    } else {
+      const a = A.n, b = A.d, c = B.n, d = B.d;
+
+      const aExtN = a*d;
+      const aExtD = b*d;
+      const bExtN = c*b;
+      const bExtD = d*b;
+
+      rawD = b*d;
+      rawN = (task.op === "+") ? (aExtN + bExtN) : (aExtN - bExtN);
+
+      steps.push(`  Ungleicher Nenner → über Kreuz erweitern:`);
+      steps.push(
+        `  ${a}/${b} ${task.op} ${c}/${d} = ` +
+        `${a}·${hl(d)}/${b}·${hl(d)} ${task.op} ` +
+        `${c}·${hl(b)}/${d}·${hl(b)}`
+      );
+      steps.push(
+        `  = ${aExtN}/${aExtD} ${task.op} ${bExtN}/${bExtD} = ${rawN}/${rawD}`
+      );
+    }
+  }
+
+  if (task.op === "*"){
+    steps.push(`${stepNo}) Multiplizieren`);
+    steps.push(`  ${A.n}/${A.d} · ${B.n}/${B.d} = (${A.n}·${B.n})/(${A.d}·${B.d})`);
+    rawN = A.n * B.n;
+    rawD = A.d * B.d;
+    steps.push(`  = ${rawN}/${rawD}`);
+  }
+
+  if (task.op === "/"){
+    steps.push(`${stepNo}) Dividieren (Kehrwert)`);
+    steps.push(`  ${A.n}/${A.d} : ${B.n}/${B.d} = ${A.n}/${A.d} · ${B.d}/${B.n}`);
+    rawN = A.n * B.d;
+    rawD = A.d * B.n;
+    steps.push(`  = (${A.n}·${B.d})/(${A.d}·${B.n}) = ${rawN}/${rawD}`);
+  }
+
+  const norm = normalizeFrac(rawN, rawD);
+  steps.push(``);
+  steps.push(`${stepNo + 1}) Am Ende kürzen`);
+  if (Math.abs(norm.g) === 1){
+    steps.push(`  ${rawN}/${rawD} ist schon vollständig gekürzt.`);
+  } else {
+    steps.push(`  Beide Zahlen sind durch ${norm.g} teilbar.`);
+    steps.push(`  ${rawN}/${rawD} ÷ ${norm.g}/${norm.g} = ${norm.n}/${norm.d}`);
+  }
+
+  return { n: norm.n, d: norm.d, g: norm.g, stepsHtml: brJoin(steps) };
+}
+
+function opSymbol(op){
+  if (op === "+") return "+";
+  if (op === "-") return "−";
+  if (op === "*") return "·";
+  if (op === "/") return ":";
+  return op;
+}
+
+/** ---------- UI Logik ---------- **/
+let idx = 0;
+let locked = false;
+let right = 0, half = 0, wrong = 0, score = 0;
+
+const el = (id)=>document.getElementById(id);
+const taskText = el("taskText");
+const progressPill = el("progressPill");
+const typePill = el("typePill");
+const numIn = el("numIn");
+const denIn = el("denIn");
+const checkBtn = el("checkBtn");
+const nextBtn = el("nextBtn");
+const resetBtn = el("resetBtn");
+const msgOk = el("msgOk");
+const msgWarn = el("msgWarn");
+const msgBad = el("msgBad");
+const rightCount = el("rightCount");
+const halfCount = el("halfCount");
+const wrongCount = el("wrongCount");
+const scoreEl = el("score");
+
+function clearMsgs(){
+  msgOk.style.display = "none";
+  msgWarn.style.display = "none";
+  msgBad.style.display = "none";
+  msgOk.textContent = "";
+  msgWarn.textContent = "";
+  msgBad.textContent = "";
+}
+
+function setStats(){
+  rightCount.textContent = String(right);
+  halfCount.textContent = String(half);
+  wrongCount.textContent = String(wrong);
+  scoreEl.textContent = String(score);
+}
+
+function render(){
+  clearMsgs();
+  locked = false;
+  nextBtn.disabled = true;
+  checkBtn.disabled = false;
+
+  const t = tasks[idx];
+  progressPill.textContent = `Aufgabe ${idx+1}/30`;
+  typePill.textContent = t.label;
+
+  taskText.textContent = `${fracToText(t.a)} ${opSymbol(t.op)} ${fracToText(t.b)} = ?`;
+
+  numIn.value = "";
+  denIn.value = "";
+  numIn.focus({ preventScroll: true });
+}
+
+function check(){
+  if (locked) return;
+  clearMsgs();
+
+  const nStr = numIn.value.trim();
+  const dStr = denIn.value.trim();
+  const n = Number(nStr);
+  const d = Number(dStr);
+
+  if (nStr === "" || dStr === "" || !Number.isFinite(n) || !Number.isFinite(d) || d === 0){
+    msgBad.style.display = "block";
+    msgBad.className = "msg bad";
+    msgBad.textContent = "Bitte gib einen gültigen Zähler und Nenner ein (Nenner ≠ 0).";
+    return;
+  }
+
+  const t = tasks[idx];
+  const sol = compute(t);
+
+  const userNorm = normalizeFrac(n, d);
+  const userRaw = (d < 0) ? { n: -n, d: -d } : { n, d };
+
+  // alle Aufgaben gleich: 1 Punkt
+  const fullPts = 1;
+
+  // Voll richtig (gekürzt eingegeben)
+  if (userNorm.n === sol.n && userNorm.d === sol.d && (userRaw.n === sol.n && userRaw.d === sol.d)){
+    right++;
+    score += fullPts;
+    setStats();
+
+    msgOk.style.display = "block";
+    msgOk.className = "msg ok";
+    msgOk.innerHTML = `<b>Richtig!</b> Ergebnis: ${sol.n}/${sol.d} · Punkte: +${fullPts}`;
+
+    nextBtn.disabled = false;
+    checkBtn.disabled = true;
+    locked = true;
+    return;
+  }
+
+  // Wert richtig, aber nicht gekürzt
+  const valueCorrect = (userNorm.n === sol.n && userNorm.d === sol.d);
+  const userReducible = (normalizeFrac(userRaw.n, userRaw.d).g !== 1);
+
+  if (valueCorrect && userReducible){
+    half++;
+    const halfPts = 0.5;
+    score += halfPts;
+    setStats();
+
+    const g = normalizeFrac(userRaw.n, userRaw.d).g;
+    msgWarn.style.display = "block";
+    msgWarn.className = "msg warn";
+    msgWarn.innerHTML =
+      `<b>Fast richtig!</b> Der Wert stimmt, aber du musst noch kürzen.<br/>` +
+      `Dein Ergebnis: ${userRaw.n}/${userRaw.d} → gekürzt: ${sol.n}/${sol.d}<br/>` +
+      `Hinweis: Beide Zahlen sind durch ${g} teilbar.<br/>` +
+      `Punkte: +${halfPts}`;
+
+    nextBtn.disabled = false;
+    checkBtn.disabled = true;
+    locked = true;
+    return;
+  }
+
+  // Falsch → Lösung + Lösungsweg
+  wrong++;
+  setStats();
+
+  msgBad.style.display = "block";
+  msgBad.className = "msg bad";
+  msgBad.innerHTML =
+    `<b>Leider falsch.</b> Richtig ist: ${sol.n}/${sol.d}` +
+    `<div class="solution" style="margin-top:10px;">${sol.stepsHtml}</div>`;
+
+  nextBtn.disabled = false;
+  checkBtn.disabled = true;
+  locked = true;
+}
+
+function next(){
+  if (idx < tasks.length - 1){
+    idx++;
+    render();
+  } else {
+    clearMsgs();
+    locked = true;
+    checkBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    msgOk.style.display = "block";
+    msgOk.className = "msg ok";
+    msgOk.innerHTML =
+      `<b>Fertig!</b> Du hast alle 30 Aufgaben gemacht.<br/>` +
+      `richtig: ${right} · ungekürzt: ${half} · falsch: ${wrong} · Punkte: ${score}`;
+  }
+}
+
+function resetAll(){
+  const ok = confirm("Wirklich neu starten?\nAlle Ergebnisse gehen verloren.");
+  if (!ok) return;
+
+  idx = 0; right = 0; half = 0; wrong = 0; score = 0;
+  setStats();
+  render();
+}
+
+/** Events */
+checkBtn.addEventListener("click", check);
+nextBtn.addEventListener("click", next);
+resetBtn.addEventListener("click", resetAll);
+
+document.addEventListener("keydown", (e)=>{
+  if (e.key === "Enter") { e.preventDefault(); check(); }
+  if (e.key.toLowerCase() === "n") { if (!nextBtn.disabled) next(); }
+});
+
+setStats();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pluspunkt Deutsch A2 – Kapitel 3 & 4: Interaktive Übungen</title>
+<style>
+  :root{
+    --bg:#0f172a;           /* slate-900 */
+    --panel:#111827;        /* gray-900 */
+    --muted:#1f2937;        /* gray-800 */
+    --accent:#22d3ee;       /* cyan-400 */
+    --accent-2:#a78bfa;     /* violet-400 */
+    --text:#e5e7eb;         /* gray-200 */
+    --ok:#34d399;           /* green-400 */
+    --bad:#f87171;          /* red-400 */
+    --warn:#fbbf24;         /* amber-400 */
+  }
+  html,body{height:100%;}
+  body{
+    margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    background: radial-gradient(1200px 600px at 10% 0%, #111827 0%, #0f172a 50%, #0b1022 100%);
+    color:var(--text);
+  }
+  header{
+    padding: 24px clamp(16px, 4vw, 48px);
+    background: linear-gradient(90deg, #0b1022 0%, #111827 50%, #0b1022 100%);
+    border-bottom: 1px solid #1f2937;
+    position: sticky; top:0; z-index: 5;
+  }
+  h1{margin:0 0 8px; font-size: clamp(22px, 3vw, 36px); letter-spacing: .5px}
+  .subtitle{opacity:.85; font-size:clamp(14px, 1.6vw, 18px)}
+  .meta{display:flex; gap:16px; align-items:center; margin-top:10px; flex-wrap:wrap}
+  .chip{background: #0b1328; border:1px solid #1f2937; padding:6px 10px; border-radius:999px; font-size:12px}
+  .timer{font-variant-numeric: tabular-nums; padding:6px 12px; border-radius:10px; border:1px solid #374151; background:#101827}
+
+  main{padding: 24px clamp(16px, 4vw, 48px); max-width: 1100px; margin:auto}
+  .grid{display:grid; gap:18px}
+  @media(min-width: 900px){ .grid{grid-template-columns: 1fr 1fr} }
+
+  section.task{
+    border:1px solid #1f2937; background:linear-gradient(180deg, #0b1328 0%, #0c142a 100%);
+    border-radius:16px; padding:18px; position:relative; overflow:hidden
+  }
+  section.task h2{margin:0 0 8px; font-size: clamp(18px, 2.2vw, 24px)}
+  section.task .about{opacity:.85; margin-bottom:12px}
+  .controls{display:flex; gap:10px; flex-wrap:wrap}
+  button{
+    background: linear-gradient(180deg, #1f4a7a, #143a63);
+    color:#e6f6ff; border:1px solid #0f2a49; padding:8px 12px; border-radius:10px; cursor:pointer;
+    transition: transform .06s ease, filter .2s ease; font-weight:600
+  }
+  button.secondary{background:#101827; color:var(--text); border-color:#283447}
+  button:hover{filter:brightness(1.05)}
+  button:active{transform: translateY(1px)}
+
+  .card{background:#0c142a; border:1px solid #1f2937; border-radius:12px; padding:12px; margin:10px 0}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .row > *{flex: 0 0 auto}
+  .row .grow{flex:1 1 300px}
+
+  .feedback{margin-top:6px; font-size:14px}
+  .f-bad{color:var(--bad)}
+  .f-hint{color:var(--warn)}
+  .f-good{color:var(--ok)}
+
+  input[type="text"], select{
+    background:#0a1225; color:var(--text); border:1px solid #263248; border-radius:10px; padding:8px 10px; min-width:140px
+  }
+  .options{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .option{border:1px solid #263248; background:#0a1225; padding:6px 10px; border-radius:999px; cursor:pointer; user-select:none}
+  .option.selected{outline:2px solid var(--accent)}
+
+  /* Drag & Drop */
+  .drags{display:flex; gap:8px; flex-wrap:wrap}
+  .drag{padding:6px 10px; border-radius:999px; border:1px dashed #32507a; background:#0a1327; cursor:grab}
+  .dropzone{min-height:42px; min-width:180px; border:2px dashed #2a3b57; border-radius:10px; display:flex; align-items:center; gap:8px; padding:6px 8px; flex-wrap:wrap}
+
+  /* Sentence tiles */
+  .tiles{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .tile{padding:6px 10px; border-radius:12px; border:1px solid #2b3a58; background:#0a1225; cursor:grab}
+  .tile[draggable="true"]:active{cursor:grabbing}
+
+  footer{margin: 26px 0 60px; opacity:.85}
+  .progress{height:10px; background:#091022; border-radius:999px; border:1px solid #1f2937; overflow:hidden}
+  .bar{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition:width .4s ease}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pluspunkt Deutsch A2 – Kapitel 3 & 4</h1>
+  <div class="subtitle">Interaktive Übungen (Niveau A2). Bei einem Fehler: erst <em>falsch</em>, beim zweiten Fehler eine <em>Hilfe</em>, beim dritten die <em>Lösung</em>.</div>
+  <div class="meta">
+    <div class="chip">⏱️ Zielzeit: ca. 60 Minuten</div>
+    <div class="chip">🧩 8 Aufgaben | 45+ Items</div>
+    <div class="timer" id="timer">00:00</div>
+    <button class="secondary" id="resetAll">Alles zurücksetzen</button>
+  </div>
+</header>
+
+<main>
+  <div class="progress" title="Fortschritt">
+    <div class="bar" id="progressBar"></div>
+  </div>
+
+  <div class="grid">
+    <!-- Aufgabe 1: Termine & Uhrzeiten (MC) -->
+    <section class="task" id="t1">
+      <h2>1) Termine & Uhrzeiten – Mehrfachwahl</h2>
+      <div class="about">Wähle die richtige Option.</div>
+      <div id="t1-items"></div>
+    </section>
+
+    <!-- Aufgabe 2: Trennbare Verben (Lücken) -->
+    <section class="task" id="t2">
+      <h2>2) Trennbare Verben – Lückentext</h2>
+      <div class="about">Setze das Verb richtig ein (Präsens).</div>
+      <div id="t2-items"></div>
+    </section>
+
+    <!-- Aufgabe 3: Wechselpräpositionen (Fallwahl) -->
+    <section class="task" id="t3">
+      <h2>3) Wechselpräpositionen – Akkusativ oder Dativ?</h2>
+      <div class="about">Wähle den richtigen Artikel.</div>
+      <div id="t3-items"></div>
+    </section>
+
+    <!-- Aufgabe 4: Wortschatz Lebensmittel (Zuordnung Drag & Drop) -->
+    <section class="task" id="t4">
+      <h2>4) Wortschatz – Lebensmittel zuordnen</h2>
+      <div class="about">Ziehe das Wort zum passenden Bild/Begriff.</div>
+      <div id="t4-items"></div>
+    </section>
+
+    <!-- Aufgabe 5: Mengenangaben (Lücken) -->
+    <section class="task" id="t5">
+      <h2>5) Mengen & Einkaufen – Lücken</h2>
+      <div class="about">Schreibe die passende Mengenangabe.</div>
+      <div id="t5-items"></div>
+    </section>
+
+    <!-- Aufgabe 6: Modalverben (MC) -->
+    <section class="task" id="t6">
+      <h2>6) Modalverben – Bedeutung & Form</h2>
+      <div class="about">Wähle die korrekte Form oder Bedeutung.</div>
+      <div id="t6-items"></div>
+    </section>
+
+    <!-- Aufgabe 7: Perfekt mit haben/sein (Drag) -->
+    <section class="task" id="t7">
+      <h2>7) Perfekt – haben/sein + Partizip II</h2>
+      <div class="about">Baue das Perfekt: Ziehe Hilfsverb und Partizip ins Feld.</div>
+      <div id="t7-items"></div>
+    </section>
+
+    <!-- Aufgabe 8: Satzbau (Reihenfolge) -->
+    <section class="task" id="t8">
+      <h2>8) Satzbau – Bringe die Teile in die richtige Reihenfolge</h2>
+      <div class="about">Ziehe die Kärtchen, bis der Satz korrekt ist.</div>
+      <div id="t8-items"></div>
+    </section>
+  </div>
+
+  <footer>
+    <p><strong>Tipp:</strong> Klick/Tippe auf „Prüfen“ bei jedem Item. Nach dem ersten falschen Versuch wird nur „Falsch“ angezeigt, nach dem zweiten bekommst du eine Hilfe, nach dem dritten die Lösung. Du kannst danach weiterüben oder „Alles zurücksetzen“ nutzen.</p>
+  </footer>
+</main>
+
+<script>
+// ---------- Utility & State ----------
+const attempts = new Map(); // key -> count
+const solved = new Set(); // item keys solved correctly
+
+function incAttempt(key){
+  const n = attempts.get(key) || 0; attempts.set(key, n+1); return n+1;
+}
+function getAttempt(key){ return attempts.get(key)||0 }
+
+function normalize(s){ return (s||"").toString().trim().toLowerCase().replace(/\s+/g,' ')}
+
+function updateProgress(){
+  const all = document.querySelectorAll('[data-itemkey]').length;
+  const done = solved.size;
+  const pct = all? Math.round(100*done/all) : 0;
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressBar').ariaValueNow = pct;
+  document.getElementById('progressBar').title = `Fortschritt: ${pct}%`;
+}
+
+function resetAll(){
+  attempts.clear(); solved.clear(); updateProgress();
+  document.querySelectorAll('.feedback').forEach(el=>{el.textContent=''});
+  document.querySelectorAll('input[type=text]').forEach(el=>{el.value=''});
+  document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('.dropzone').forEach(z=>{ z.innerHTML=''; z.dataset.value='' });
+  document.querySelectorAll('.tiles').forEach(t=>{
+    // reset order tiles back to initial order
+    const initial = t.dataset.initial?.split('|') || [];
+    if(initial.length){ t.innerHTML=''; initial.forEach(w=>t.appendChild(makeTile(w))) }
+  })
+}
+
+// Timer (count up)
+let seconds = 0; setInterval(()=>{
+  seconds++; const m = Math.floor(seconds/60), s=seconds%60;
+  document.getElementById('timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}, 1000)
+
+document.getElementById('resetAll').addEventListener('click', resetAll)
+
+// ---------- Components ----------
+function makeItemCard(key, innerHTML){
+  const card = document.createElement('div'); card.className='card'; card.dataset.itemkey=key;
+  card.innerHTML = innerHTML;
+  return card;
+}
+
+function feedbackHTML(key){
+  return `<div class="feedback" id="fb-${key}"></div>`
+}
+
+function setFeedback(key, type, msg){
+  const fb = document.getElementById(`fb-${key}`);
+  if(!fb) return;
+  fb.className = 'feedback ' + (type==='good'?'f-good': type==='hint'?'f-hint':'f-bad');
+  fb.textContent = msg;
+}
+
+// Multiple Choice
+function renderMC(container, items){
+  items.forEach((it, idx)=>{
+    const key = `${container.id}-${idx}`
+    const opts = it.options.map((o,i)=>`<span class="option" data-key="${key}" data-val="${i}">${o}</span>`).join(' ');
+    const card = makeItemCard(key, `
+      <div><strong>${it.q}</strong></div>
+      <div class="options">${opts}</div>
+      <div class="controls">
+        <button data-action="check" data-key="${key}">Prüfen</button>
+        <button class="secondary" data-action="solution" data-key="${key}">Lösung</button>
+      </div>
+      ${feedbackHTML(key)}
+    `)
+    container.appendChild(card)
+  })
+  container.addEventListener('click', (e)=>{
+    const opt = e.target.closest('.option');
+    if(opt){
+      const key = opt.dataset.key; document.querySelectorAll(`.option[data-key="${key}"]`).forEach(o=>o.classList.remove('selected')); opt.classList.add('selected');
+    }
+    const btn = e.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action, key = btn.dataset.key; if(!key) return;
+    const item = items[Number(key.split('-').pop())];
+    if(action==='solution'){
+      document.querySelectorAll(`.option[data-key="${key}"]`).forEach((o,i)=>{
+        o.classList.toggle('selected', i===item.answer)
+      });
+      setFeedback(key,'good',`Lösung: ${item.options[item.answer]}`);
+      solved.add(key); updateProgress(); return;
+    }
+    if(action==='check'){
+      const selected = [...document.querySelectorAll(`.option[data-key="${key}"]`)].find(o=>o.classList.contains('selected'));
+      if(!selected){ setFeedback(key,'hint','Bitte wähle eine Option.'); return; }
+      const val = Number(selected.dataset.val);
+      if(val===item.answer){ setFeedback(key,'good','Richtig!'); solved.add(key); updateProgress(); }
+      else {
+        const n=incAttempt(key);
+        if(n===1) setFeedback(key,'bad','Falsch. Versuche es noch einmal.');
+        else if(n===2) setFeedback(key,'hint',`Hilfe: ${item.hint}`);
+        else { setFeedback(key,'good',`Lösung: ${item.options[item.answer]}`); solved.add(key); updateProgress(); }
+      }
+    }
+  })
+}
+
+// Gap-fill (free text)
+function renderGap(container, items){
+  items.forEach((it, idx)=>{
+    const key = `${container.id}-${idx}`
+    const card = makeItemCard(key, `
+      <div><strong>${it.q}</strong></div>
+      <div class="row"><input type="text" id="in-${key}" placeholder="Antwort" class="grow" /></div>
+      <div class="controls">
+        <button data-action="check" data-key="${key}">Prüfen</button>
+        <button class="secondary" data-action="solution" data-key="${key}">Lösung</button>
+      </div>
+      ${feedbackHTML(key)}
+    `)
+    container.appendChild(card)
+  })
+  container.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action, key = btn.dataset.key; const idx = Number(key.split('-').pop());
+    const item = items[idx];
+    const input = document.getElementById(`in-${key}`);
+
+    if(action==='solution'){
+      input.value = item.solution; setFeedback(key,'good',`Lösung: ${item.solution}`); solved.add(key); updateProgress(); return;
+    }
+
+    const val = normalize(input.value);
+    const correct = (Array.isArray(item.answer)? item.answer : [item.answer]).map(normalize);
+    if(correct.includes(val)){
+      setFeedback(key,'good','Richtig!'); solved.add(key); updateProgress();
+    } else {
+      const n = incAttempt(key);
+      if(n===1) setFeedback(key,'bad','Falsch. Versuche es noch einmal.');
+      else if(n===2) setFeedback(key,'hint',`Hilfe: ${item.hint}`);
+      else { input.value=item.solution; setFeedback(key,'good',`Lösung: ${item.solution}`); solved.add(key); updateProgress(); }
+    }
+  })
+}
+
+// Drag & Drop for matching or assembling
+function enableDragDrop(){
+  document.querySelectorAll('.drag').forEach(el=>{
+    el.setAttribute('draggable','true');
+    el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', el.dataset.val); e.dataTransfer.effectAllowed='move'; });
+  })
+  document.querySelectorAll('.dropzone').forEach(z=>{
+    z.addEventListener('dragover', e=>{ e.preventDefault(); e.dataTransfer.dropEffect='move' })
+    z.addEventListener('drop', e=>{
+      e.preventDefault(); const val = e.dataTransfer.getData('text/plain');
+      const pill = document.createElement('span'); pill.className='drag'; pill.textContent=val; pill.dataset.val=val; pill.setAttribute('draggable','true');
+      z.appendChild(pill); z.dataset.value = (z.dataset.value? z.dataset.value+' ' : '') + val;
+      enableDragDrop();
+    })
+  })
+}
+
+function renderMatch(container, items){
+  items.forEach((it, idx)=>{
+    const key = `${container.id}-${idx}`
+    const choices = it.choices.map(c=>`<span class="drag" data-val="${c}">${c}</span>`).join(' ');
+    const card = makeItemCard(key, `
+      <div><strong>${it.q}</strong></div>
+      <div class="drags">${choices}</div>
+      <div class="row" style="margin-top:8px">
+        <div class="dropzone grow" id="dz-${key}" aria-label="Antwortfeld"></div>
+      </div>
+      <div class="controls">
+        <button data-action="check" data-key="${key}">Prüfen</button>
+        <button class="secondary" data-action="solution" data-key="${key}">Lösung</button>
+      </div>
+      ${feedbackHTML(key)}
+    `)
+    container.appendChild(card)
+  })
+  enableDragDrop();
+  container.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action, key = btn.dataset.key; const idx = Number(key.split('-').pop());
+    const item = items[idx]; const dz = document.getElementById(`dz-${key}`);
+
+    if(action==='solution'){
+      dz.innerHTML=''; dz.dataset.value=''; item.solution.split(' ').forEach(tok=>{
+        const pill=document.createElement('span'); pill.className='drag'; pill.dataset.val=tok; pill.textContent=tok; pill.setAttribute('draggable','true'); dz.appendChild(pill);
+      }); enableDragDrop(); setFeedback(key,'good',`Lösung: ${item.solution}`); solved.add(key); updateProgress(); return;
+    }
+
+    const val = normalize(dz.dataset.value||dz.textContent||'');
+    const ok = normalize(item.answer);
+    if(val===ok){ setFeedback(key,'good','Richtig!'); solved.add(key); updateProgress(); }
+    else{
+      const n = incAttempt(key);
+      if(n===1) setFeedback(key,'bad','Falsch. Versuche es noch einmal.');
+      else if(n===2) setFeedback(key,'hint',`Hilfe: ${item.hint}`);
+      else { dz.innerHTML=''; dz.dataset.value=''; item.solution.split(' ').forEach(tok=>{
+        const pill=document.createElement('span'); pill.className='drag'; pill.dataset.val=tok; pill.textContent=tok; pill.setAttribute('draggable','true'); dz.appendChild(pill);
+      }); enableDragDrop(); setFeedback(key,'good',`Lösung: ${item.solution}`); solved.add(key); updateProgress(); }
+    }
+  })
+}
+
+// Sentence order (tiles you can reorder)
+function makeTile(word){ const s=document.createElement('span'); s.className='tile'; s.textContent=word; s.setAttribute('draggable','true'); return s }
+
+function renderOrder(container, items){
+  items.forEach((it, idx)=>{
+    const key = `${container.id}-${idx}`
+    const tiles = document.createElement('div'); tiles.className='tiles'; tiles.id=`tiles-${key}`; tiles.dataset.initial = it.scrambled.join('|');
+    it.scrambled.forEach(w=> tiles.appendChild(makeTile(w)) )
+
+    const card = makeItemCard(key, `
+      <div><strong>${it.q}</strong></div>
+    `)
+    card.appendChild(tiles)
+    const ctrls = document.createElement('div'); ctrls.className='controls';
+    ctrls.innerHTML = `<button data-action="check" data-key="${key}">Prüfen</button>
+                       <button class="secondary" data-action="solution" data-key="${key}">Lösung</button>
+                       ${feedbackHTML(key)}`
+    card.appendChild(ctrls)
+    container.appendChild(card)
+
+    // drag logic for tiles
+    tiles.addEventListener('dragstart', e=>{ if(e.target.classList.contains('tile')){ e.dataTransfer.setData('text/plain', [...tiles.children].indexOf(e.target)); }} )
+    tiles.addEventListener('dragover', e=> e.preventDefault())
+    tiles.addEventListener('drop', e=>{
+      e.preventDefault(); const from = Number(e.dataTransfer.getData('text/plain'));
+      const toEl = e.target.closest('.tile'); if(!toEl) return; const to = [...tiles.children].indexOf(toEl);
+      if(from===to) return; const moving = tiles.children[from];
+      if(from<to) tiles.insertBefore(moving, toEl.nextSibling); else tiles.insertBefore(moving, toEl);
+    })
+  })
+  container.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action, key = btn.dataset.key; const idx = Number(key.split('-').pop());
+    const item = items[idx]; const tiles = document.getElementById(`tiles-${key}`);
+
+    if(action==='solution'){
+      tiles.innerHTML=''; item.solution.forEach(w=> tiles.appendChild(makeTile(w)) ); setFeedback(key,'good',`Lösung: ${item.solution.join(' ')}`); solved.add(key); updateProgress(); return;
+    }
+
+    const attempt = [...tiles.children].map(c=>c.textContent);
+    if(attempt.join(' ')===item.solution.join(' ')){
+      setFeedback(key,'good','Richtig!'); solved.add(key); updateProgress();
+    } else {
+      const n=incAttempt(key);
+      if(n===1) setFeedback(key,'bad','Falsch. Versuche es noch einmal.');
+      else if(n===2) setFeedback(key,'hint',`Hilfe: ${item.hint}`);
+      else { tiles.innerHTML=''; item.solution.forEach(w=> tiles.appendChild(makeTile(w)) ); setFeedback(key,'good',`Lösung: ${item.solution.join(' ')}`); solved.add(key); updateProgress(); }
+    }
+  })
+}
+
+// ---------- Data (A2 – thematisch an Kap. 3 & 4 angelehnt) ----------
+const data = {
+  t1: [
+    { q:"Der Termin ist um ____. Welche Uhrzeit passt?", options:["halb drei","viertel vor zwei","zehn nach drei","zwanzig vor drei"], answer:1, hint:"45 Minuten nach 1.", },
+    { q:"Wir treffen uns am Montag __ 14 Uhr.", options:["am","um","im","in"], answer:1, hint:"Uhrzeit: ___ 14 Uhr.", },
+    { q:"Welches Datum ist korrekt geschrieben?", options:["den 5. Mai 2025","5.ter Mai 2025","der 5 Mai 2025","5. Mai, 25"], answer:0, hint:"Akkusativ: den + Ordnungszahl mit Punkt.", },
+    { q:"'Wie spät ist es?' – 'Es ist ____.'", options:["zwölf Uhr dreißig","dreizehn Uhr halb","halb dreizehn","dreißig nach zwölf"], answer:0, hint:"30 nach zwölf.", },
+    { q:"Ich habe jeden Mittwoch Deutschkurs. Das ist ein ____ Termin.", options:["einmaliger","täglicher","wöchentlicher","jährlicher"], answer:2, hint:"Jede Woche.", },
+  ],
+  t2: [
+    { q:"Ich ___ morgen früh um 6 Uhr ___ (aufstehen)", answer:["stehe auf","ich stehe auf"], solution:"stehe auf", hint:"Verbklammer: ich ___ ___.", },
+    { q:"Rufst du deine Freundin heute Abend ___? (anrufen)", answer:["an"], solution:"an", hint:"Präfix steht am Satzende.", },
+    { q:"Der Bus ___ um 7:10 Uhr ___. (abfahren)", answer:["fährt ab","der bus fährt ab"], solution:"fährt ab", hint:"3. Person Singular.", },
+    { q:"Wir ___ morgen die Hausaufgaben ___. (mitbringen)", answer:["bringen mit","wir bringen mit"], solution:"bringen mit", hint:"Plural 1. Person.", },
+    { q:"Kannst du bitte die Tür __? (zumachen)", answer:["zumachen","zu machen"], solution:"zumachen", hint:"Infinitiv.", },
+    { q:"Ich ___ später wieder ___. (zurückkommen)", answer:["komme zurück","ich komme zurück"], solution:"komme zurück", hint:"1. Person Singular.", },
+  ],
+  t3: [
+    { q:"Ich stelle die Tasche ___ (der/die/das) Stuhl.", options:["auf den","auf dem","an dem","unter dem"], answer:0, hint:"Richtung/Bewegung ⇒ Akkusativ.", },
+    { q:"Die Lampe hängt ___ (der/die/das) Decke.", options:["an den","an der","auf der","hinter den"], answer:1, hint:"Position ⇒ Dativ.", },
+    { q:"Wir gehen ___ (der/die/das) Park spazieren.", options:["in den","in dem","auf den","an den"], answer:0, hint:"Wohin? ⇒ Akkusativ.", },
+    { q:"Das Bild hängt ___ (der/die/das) Wand.", options:["an die","an der","auf die","zwischen den"], answer:1, hint:"Wo? ⇒ Dativ.", },
+    { q:"Ich lege das Buch ___ (der/die/das) Tisch.", options:["auf den","auf dem","unter den","hinter dem"], answer:0, hint:"Legen = Bewegung.", },
+  ],
+  t4: [
+    { q:"Frühstück: Ziehe passende Wörter (z. B. 'das Brot die Butter').", choices:["das Brot","die Butter","die Marmelade","der Käse","der Apfel","der Joghurt"], answer:"das brot die butter", solution:"das Brot die Butter", hint:"Zwei Wörter, klassisch aufs Brot.", },
+    { q:"Getränke: Ziehe zwei, die alkoholfrei sind.", choices:["das Wasser","das Bier","der Saft","der Wein","der Tee"], answer:"das wasser der saft der tee", solution:"das Wasser der Saft der Tee", hint:"Kein Alkohol.", },
+    { q:"Gemüse für Salat: Ziehe drei.", choices:["die Tomate","die Gurke","die Schokolade","der Salat","die Karotte"], answer:"die tomate die gurke der salat die karotte", solution:"die Tomate die Gurke der Salat die Karotte", hint:"Süßes gehört nicht hinein.", },
+  ],
+  t5: [
+    { q:"Ich hätte gern ____ Milch (1 l).", answer:["einen liter","1 liter","einen liter milch"], solution:"einen Liter", hint:"Akkusativ: einen ___.", },
+    { q:"Bitte ____ Äpfel (5 Stück).", answer:["fünf","5"], solution:"fünf", hint:"Zahlwort ausschreiben oder Ziffer.", },
+    { q:"Ich nehme ____ Brot (500 g).", answer:["ein halbes","0,5","ein halbes brot"], solution:"ein halbes", hint:"Hälfte.", },
+    { q:"Haben Sie ____ Käse (200 g)?", answer:["200 gramm","200 g","zweihundert gramm"], solution:"200 Gramm", hint:"Maßeinheit groß.", },
+    { q:"Wir brauchen ____ Eier (ein Paket).", answer:["ein paket","eine packung"], solution:"eine Packung", hint:"Synonym: die Packung.", },
+  ],
+  t6: [
+    { q:"Bedeutung von 'müssen':", options:["Erlaubnis","Notwendigkeit","Fähigkeit","Wunsch"], answer:1, hint:"Es ist nötig.", },
+    { q:"Konjugation: Ich ____ heute lange arbeiten. (müssen)", options:["muss","müsste","musst","mussst"], answer:0, hint:"1. Person Singular ohne Endung.", },
+    { q:"Er ____ gut schwimmen. (können)", options:["kann","könnt","kannst","können"], answer:0, hint:"3. Person Singular.", },
+    { q:"Darf ich hier parken? – Nein, du ____ hier nicht parken.", options:["musst","kannst","darfst","sollst"], answer:2, hint:"Erlaubnis verneint.", },
+    { q:"Wir ____ heute zu Hause bleiben. (sollen)", options:["soll","sollen","sollt","sollten"], answer:1, hint:"1. Person Plural.", },
+  ],
+  t7: [
+    { q:"Gestern ____ ich spät ____. (aufstehen)", choices:["habe","bin","aufgestanden"], answer:"bin aufgestanden", solution:"bin aufgestanden", hint:"Bewegung/Zustandswechsel ⇒ sein.", },
+    { q:"Er ____ den Tisch ____. (decken)", choices:["hat","ist","gedeckt"], answer:"hat gedeckt", solution:"hat gedeckt", hint:"kein Ortswechsel.", },
+    { q:"Wir ____ nach Berlin ____. (fahren)", choices:["sind","haben","gefahren"], answer:"sind gefahren", solution:"sind gefahren", hint:"Bewegung von A nach B.", },
+    { q:"Sie ____ viel ____. (arbeiten)", choices:["hat","ist","gearbeitet"], answer:"hat gearbeitet", solution:"hat gearbeitet", hint:"kein Richtungswechsel.", },
+    { q:"Ich ____ um 22 Uhr ____. (einschlafen)", choices:["bin","habe","eingeschlafen"], answer:"bin eingeschlafen", solution:"bin eingeschlafen", hint:"Zustandswechsel.", },
+  ],
+  t8: [
+    { q:"Bildung eines Hauptsatzes:", scrambled:["morgen","ich","ins","gehe","Kino"], solution:["ich","gehe","morgen","ins","Kino"], hint:"Verb an Position 2.", },
+    { q:"Nebensatz mit 'weil':", scrambled:["ich","muss","zu Hause","bleiben","weil","krank","bin","ich"], solution:["ich","bleiben","muss","weil","ich","krank","bin","zu Hause"], hint:"Verb am Ende im Nebensatz.", },
+    { q:"Fragesatz (Ja/Nein):", scrambled:["du","heute","arbeitest","?"], solution:["arbeitest","du","heute","?"], hint:"Verb zuerst.", },
+    { q:"Trennbares Verb:", scrambled:["ich","stehe","auf","um","6 Uhr"], solution:["ich","stehe","um","6 Uhr","auf"], hint:"Präfix am Ende.", },
+    { q:"Modalverb + Infinitiv:", scrambled:["wir","müssen","einkaufen","heute"], solution:["wir","müssen","heute","einkaufen"], hint:"Infinitiv am Satzende.", },
+  ]
+}
+
+// ---------- Render all ----------
+renderMC(document.getElementById('t1-items'), data.t1)
+renderGap(document.getElementById('t2-items'), data.t2)
+renderMC(document.getElementById('t3-items'), data.t3)
+renderMatch(document.getElementById('t4-items'), data.t4)
+renderGap(document.getElementById('t5-items'), data.t5)
+renderMC(document.getElementById('t6-items'), data.t6)
+renderMatch(document.getElementById('t7-items'), data.t7)
+renderOrder(document.getElementById('t8-items'), data.t8)
+
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selbststudium: Phase III - Datenabfrage (SQL)</title>
+    <style>
+        /* ------------------------------------------------------------------- */
+        /* BASIS & LAYOUT */
+        /* ------------------------------------------------------------------- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            background-color: #3498DB;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 30px -20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        h2 {
+            border-bottom: 3px solid #E74C3C;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            color: #2C3E50;
+        }
+
+        h3 {
+            color: #3498DB;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        /* ------------------------------------------------------------------- */
+        /* INHALTSELEMENTE */
+        /* ------------------------------------------------------------------- */
+        .ueberblick {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 5px solid #34495E;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .code-block {
+            background-color: #2C3E50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto; /* Sorgt für responsives Scrolling bei langen Zeilen */
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+
+        /* Tabellen Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498DB;
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* ------------------------------------------------------------------- */
+        /* SPEZIELLE BLÖCKE (Aufgaben, Merke) */
+        /* ------------------------------------------------------------------- */
+        .aufgabe {
+            border: 2px dashed #F39C12;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #fcf8e3;
+            border-radius: 5px;
+        }
+
+        .merke {
+            background-color: #D4EDDA;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* ------------------------------------------------------------------- */
+        /* SELF-TEST / LÖSUNG */
+        /* ------------------------------------------------------------------- */
+        .selbsttest, .loesungsfeld {
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .selbsttest {
+            background-color: #e8f5e9;
+            border: 1px solid #81c784;
+        }
+
+        .loesungsfeld {
+            background-color: #ffe0b2;
+            border: 1px solid #ff9800;
+            margin-top: 20px;
+            display: none; /* Standardmäßig versteckt */
+        }
+
+        .loesungsfeld h2 {
+            border-bottom-color: #ff9800;
+        }
+
+        .toggle-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-button:hover {
+            background-color: #C0392B;
+        }
+
+        /* ------------------------------------------------------------------- */
+        /* RESPONSIVITÄT */
+        /* ------------------------------------------------------------------- */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px 10px;
+                padding: 15px;
+            }
+
+            header {
+                padding: 15px 0;
+                margin: -15px -15px 20px -15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            /* Tabellen-Optimierung für kleine Bildschirme */
+            table, thead, tbody, th, td, tr { 
+                display: block; 
+            }
+            
+            thead tr { 
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            tr { 
+                border: 1px solid #ccc;
+                margin-bottom: 15px;
+            }
+            
+            td { 
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%; 
+                text-align: right;
+            }
+            
+            td:before { 
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%; 
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: #555;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>💾 Selbststudium: Phase III – Datenabfrage (Modul 4, 5, 8)</h1>
+        <p>Berufliches Gymnasium, Klasse 13 | Kontext: Music-Event (Event-Planer)</p>
+    </header>
+
+    <div class="ueberblick">
+        <strong>Zielsetzung:</strong> Sie werden die mächtigsten SQL-Befehle beherrschen, um Daten gezielt abzufragen, Tabellen zu verknüpfen und statistische Analysen durchzuführen.
+    </div>
+
+    <h2>🚀 Modul 4: Gezielte Datenselektion (`SELECT` & `WHERE`)</h2>
+
+    <p><strong>Überblick:</strong> Hier lernen Sie, wie Sie Daten gezielt aus Tabellen abfragen, filtern und sortieren.</p>
+
+    <h3>1. Die `SELECT`-Syntax</h3>
+    <p>Der grundlegendste Befehl in SQL ist `SELECT`. Er wählt bestimmte Spalten oder alle Spalten (`*`) aus einer oder mehreren Tabellen aus.</p>
+
+    <table>
+        <thead>
+            <tr><th>Befehl</th><th>Zweck</th></tr>
+        </thead>
+        <tbody>
+            <tr><td data-label="Befehl"><code>SELECT Attribut1, Attribut2</code></td><td data-label="Zweck">Wählt spezifische Spalten aus.</td></tr>
+            <tr><td data-label="Befehl"><code>SELECT *</code></td><td data-label="Zweck">Wählt alle Spalten aus (Vorsicht bei großen Tabellen!).</td></tr>
+            <tr><td data-label="Befehl"><code>FROM Tabelle</code></td><td data-label="Zweck">Gibt an, aus welcher Tabelle die Daten stammen.</td></tr>
+        </tbody>
+    </table>
+
+    <p><strong>Beispiel:</strong> Zeige mir den Namen und die Stadt aller Veranstaltungsorte.</p>
+    <div class="code-block">
+        <pre><code>SELECT Name, Stadt
+FROM Veranstaltungsort;</code></pre>
+    </div>
+
+    <h3>2. Filtern mit `WHERE`</h3>
+    <p>Die `WHERE`-Klausel definiert die **Bedingungen**, die ein Datensatz erfüllen muss, um in der Ergebnismenge zu erscheinen.</p>
+
+    <table>
+        <thead>
+            <tr><th>Operator-Typ</th><th>Beispiel</th><th>Erklärung</th></tr>
+        </thead>
+        <tbody>
+            <tr><td data-label="Operator-Typ"><strong>Vergleich</strong></td><td data-label="Beispiel"><code>=</code>, <code>></code>, <code><></code></td><td data-label="Erklärung">Gleich, größer als, ungleich</td></tr>
+            <tr><td data-label="Operator-Typ"><strong>Logisch</strong></td><td data-label="Beispiel"><code>AND</code>, <code>OR</code>, <code>NOT</code></td><td data-label="Erklärung">Verknüpfung mehrerer Bedingungen</td></tr>
+            <tr><td data-label="Operator-Typ"><strong>Bereich</strong></td><td data-label="Beispiel"><code>BETWEEN 100 AND 200</code></td><td data-label="Erklärung">Werte in einem bestimmten Intervall</td></tr>
+            <tr><td data-label="Operator-Typ"><strong>Menge</strong></td><td data-label="Beispiel"><code>IN ('Pop', 'Rock')</code></td><td data-label="Erklärung">Werte in einer Liste von Möglichkeiten</td></tr>
+            <tr><td data-label="Operator-Typ"><strong>Text</strong></td><td data-label="Beispiel"><code>LIKE 'A%'</code></td><td data-label="Erklärung">Mustersuche (z.B. beginnt mit 'A')</td></tr>
+        </tbody>
+    </table>
+
+    <p><strong>Beispiel:</strong> Finde alle Konzerte, die **nach** dem 01.12.2025 stattfinden **und** mehr als 100 Euro kosten.</p>
+    <div class="code-block">
+        <pre><code>SELECT Titel, Datum, Preis
+FROM Konzert
+WHERE Datum > '2025-12-01' AND Preis > 100;</code></pre>
+    </div>
+
+    <h3>3. Sortierung und Begrenzung (`ORDER BY`, `LIMIT`)</h3>
+    <p><code>ORDER BY</code> sortiert das Ergebnis. <code>LIMIT</code> begrenzt die Anzahl der Zeilen (wichtig für die Performance!).</p>
+
+    <h2>🤝 Modul 5: Tabellen Verknüpfen (`JOINs`)</h2>
+
+    <p><strong>Überblick:</strong> Relationale Datenbanken speichern Daten in mehreren Tabellen. `JOINs` sind notwendig, um diese Tabellen über ihre **Fremdschlüssel** zu verknüpfen und einen vollständigen Datensatz zu erhalten.</p>
+
+    <h3>1. Arten von `JOINs` (Mengenlehre)</h3>
+    <table>
+        <thead>
+            <tr><th>JOIN-Typ</th><th>Beschreibung</th><th>Anwendungsfall</th></tr>
+        </thead>
+        <tbody>
+            <tr><td data-label="JOIN-Typ"><strong><code>INNER JOIN</code></strong></td><td data-label="Beschreibung">Liefert nur die Tupel, für die in **beiden Tabellen** ein passender Eintrag existiert (Schnittmenge).</td><td data-label="Anwendungsfall">Standardfall: Ein Konzert MUSS einen Künstler und einen Veranstaltungsort haben.</td></tr>
+            <tr><td data-label="JOIN-Typ"><strong><code>LEFT JOIN</code></strong></td><td data-label="Beschreibung">Liefert **alle** Tupel aus der **linken Tabelle** und die passenden Tupel aus der rechten Tabelle. Fehlende Werte werden mit <code>NULL</code> aufgefüllt.</td><td data-label="Anwendungsfall">Finde alle Künstler, **auch wenn** sie noch kein Konzert eingetragen haben.</td></tr>
+            <tr><td data-label="JOIN-Typ"><strong><code>RIGHT JOIN</code></strong></td><td data-label="Beschreibung">Das Gegenteil von <code>LEFT JOIN</code>.</td><td data-label="Anwendungsfall">*Wird seltener verwendet.*</td></tr>
+        </tbody>
+    </table>
+
+    <h3>2. Die `JOIN`-Syntax</h3>
+    <p>Der `JOIN`-Befehl benötigt die <code>ON</code>-Klausel, die angibt, welche Spalten (Primär- und Fremdschlüssel) die Tabellen verknüpfen.</p>
+
+    <p><strong>Beispiel:</strong> Welcher Künstler tritt bei welchem Konzert auf? (Verknüpfung von *Konzert* und *Künstler*)</p>
+    <div class="code-block">
+        <pre><code>SELECT K.Titel, Kst.Name AS Künstlername
+FROM Konzert K
+INNER JOIN Künstler Kst
+  ON K.KünstlerID = Kst.ID;</code></pre>
+    </div>
+    <div class="merke">
+        <strong>Hinweis:</strong> <code>K</code> und <code>Kst</code> sind **Aliase**, um lange Tabellennamen abzukürzen.
+    </div>
+
+    <div class="aufgabe">
+        <strong>Aufgabe:</strong> Erstellen Sie eine Abfrage, die alle Benutzer anzeigt, **auch wenn** sie noch kein Ticket reserviert haben. 
+    </div>
+
+    <h2>📊 Modul 8: Datenanalyse (`COUNT`, `GROUP BY`, `HAVING`)</h2>
+
+    <p><strong>Überblick:</strong> Aggregatfunktionen fassen Daten zusammen und berechnen statistische Werte. Sie sind ideal für Reports und Business Intelligence (BI).</p>
+
+    <h3>1. Aggregatfunktionen</h3>
+    <table>
+        <thead>
+            <tr><th>Funktion</th><th>Zweck</th></tr>
+        </thead>
+        <tbody>
+            <tr><td data-label="Funktion"><code>COUNT()</code></td><td data-label="Zweck">Zählt die Anzahl der Zeilen.</td></tr>
+            <tr><td data-label="Funktion"><code>SUM()</code></td><td data-label="Zweck">Berechnet die Summe der Werte in einer Spalte.</td></tr>
+            <tr><td data-label="Funktion"><code>AVG()</code></td><td data-label="Zweck">Berechnet den Durchschnitt (Average).</td></tr>
+            <tr><td data-label="Funktion"><code>MIN()</code>, <code>MAX()</code></td><td data-label="Zweck">Findet den minimalen/maximalen Wert.</td></tr>
+        </tbody>
+    </table>
+    
+    <h3>2. Gruppierung mit `GROUP BY`</h3>
+    <p>Wenn Sie Aggregatfunktionen auf **Untergruppen** von Daten anwenden möchten (z.B. die Anzahl der Konzerte *pro Stadt*), verwenden Sie `GROUP BY`.</p>
+
+    <p><strong>Beispiel:</strong> Zeige nur Veranstaltungsorte an, in denen **mehr als 5** Konzerte stattfinden.</p>
+    <div class="code-block">
+        <pre><code>SELECT OrtID, COUNT(*) AS AnzahlKonzerte
+FROM Konzert
+GROUP BY OrtID
+HAVING COUNT(*) > 5;</code></pre>
+    </div>
+    <div class="merke">
+        <strong>Merke:</strong> <code>WHERE</code> filtert **Datensätze**; <code>HAVING</code> filtert **Gruppen** (nach Aggregatfunktionen).
+    </div>
+
+    <div class="selbsttest">
+        <h2>📝 Selbsttest zur Überprüfung</h2>
+        <p>Beantworten Sie die folgenden Fragen (mit Hilfe des Skripts und der geladenen Datenbank) und schreiben Sie die entsprechende SQL-Abfrage auf. **Überprüfen Sie erst danach mit dem Lösungsfeld!**</p>
+
+        <table>
+            <thead>
+                <tr><th>Nr.</th><th>Frage (Bezug auf den Event-Planer)</th><th>Ihre SQL-Abfrage</th></tr>
+            </thead>
+            <tbody>
+                <tr><td data-label="Nr.">1.</td><td data-label="Frage">Finde alle **Künstler** aus **Hamburg** oder **Berlin**.</td><td><textarea rows="2" style="width:100%;">

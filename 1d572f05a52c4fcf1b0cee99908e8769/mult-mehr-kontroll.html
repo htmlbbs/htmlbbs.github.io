@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="save-password" content="never" />
+  <meta name="save-form" content="never" />
+  <title>Multiplikation - interaktive Kontrolle</title>
+  <style>
+    :root{
+      /* Modernes helles Blau Theme */
+      --bg:#f0f9ff;          /* sky-50 */
+      --panel:#e0f2fe;       /* sky-100 */
+      --panel-2:#bae6fd;     /* sky-200 */
+      --text:#0c4a6e;        /* sky-900 */
+      --muted:#0369a1;       /* sky-700 */
+      --border:#7dd3fc;      /* sky-300 */
+      --border-strong:#38bdf8;/* sky-400 */
+      --accent:#0284c7;      /* sky-600 */
+      --accent-2:#0ea5e9;    /* sky-500 */
+      --warn:#dc2626;        /* red-600 */
+      --card:#e0f2fe;
+      --btn:#bae6fd;
+      --shadow: 0 8px 24px rgba(14,165,233,.15);
+    }
+    html, body{height:100%}
+    html {
+      overflow-y: scroll; /* Scrollbar permanent anzeigen */
+    }
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, #e0f2fe 0, #f0f9ff 60%, #dbeafe 100%);
+      color:var(--text);
+      display:flex; flex-direction:column; min-height:100vh;
+    }
+    header{
+      padding:22px 16px; text-align:center; position:sticky; top:0; z-index:5;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(224,242,254,.95), rgba(240,249,255,.8));
+      border-bottom:1px solid var(--border); position:relative;
+    }
+    .reset-btn{
+      position:absolute; top:16px; right:16px; 
+      background:var(--btn); border:1px solid var(--border); 
+      color:var(--text); padding:8px 12px; border-radius:8px; 
+      font-size:12px; font-weight:600; cursor:pointer;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+    }
+    .reset-btn:hover{
+      transform:translateY(-1px); border-color:var(--border-strong);
+      background:var(--panel);
+    }
+    .reset-btn:active{ transform:translateY(0) }
+    h1{font-size:clamp(20px,2.6vw,34px); margin:0 0 6px; letter-spacing:.3px}
+    .sub{color:var(--muted); font-size:14px}
+
+    .difficulty-bar{
+      display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; max-width:900px; margin:18px auto 0;
+    }
+    .diff-btn{
+      border:1px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer;
+      background:linear-gradient(180deg, #e0f2fe, #f0f9ff);
+      color:var(--text); font-weight:700; letter-spacing:.3px; box-shadow: var(--shadow);
+      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .diff-btn:is(:hover,:focus-visible){ transform: translateY(-1px); border-color: var(--border-strong) }
+    .diff-btn.active{ outline:2px solid var(--accent-2); box-shadow: 0 0 0 6px rgba(59,130,246,.15), var(--shadow)}
+    .diff-btn small{ display:block; color:var(--muted); font-weight:600 }
+
+    main{ width:min(1200px, 92vw); margin:24px auto; flex:1; }
+
+    .grid{ display:grid; gap:14px; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); }
+    .group-title{ margin:28px 6px 10px; font-size:18px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; }
+    .task{ background: linear-gradient(180deg, #e0f2fe, #f0f9ff); border:1px solid var(--border); border-radius:16px; padding:12px; cursor:pointer; position:relative; box-shadow: var(--shadow); }
+    .task:hover{ border-color:var(--border-strong) }
+    .task h3{ margin:0 0 6px; font-size:14px }
+    .eq{ color:#0c4a6e; font-weight:700; font-size:15px; margin-bottom:8px; }
+    .status-chip{ position:static; display:block; font-size:11px; padding:3px 6px; border-radius:999px; border:1px solid var(--border); background:#e0f2fe; color:var(--muted); font-weight:700; text-align:center; margin-top:6px; }
+    .status-chip.correct{ color:#000000; background:#86efac; border-color:#86efac; }
+    .status-chip.wrong{ color:#000000; background:#fca5a5; border-color:#fca5a5; }
+
+    /* Modal */
+    dialog#solutionModal, dialog#workModal{ border:none; border-radius:18px; padding:0; width:min(57vw, 540px); max-width:57vw; background:var(--panel); color:var(--text); box-shadow: 0 30px 60px rgba(2,6,23,.18); }
+    .modal-header{ padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center }
+    .modal-title{ font-weight:800; font-size:18px }
+    .modal-body{ padding:26px 22px 8px; text-align:center; overflow:visible; }
+    .rechnung{ color:var(--muted); font-weight:700; margin-bottom:10px }
+    .loesung{ font-size: clamp(36px, 8vw, 64px); font-weight:900; letter-spacing:.02em; margin:0 0 4px }
+    .modal-actions{ display:flex; gap:10px; justify-content:center; padding:16px 18px 24px }
+    .btn{ border:1px solid var(--border); background:var(--btn); color:var(--text); padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer; transition: transform .06s ease, border-color .2s ease, box-shadow .2s ease; }
+    .btn:hover{ transform:translateY(-1px); border-color: var(--border-strong) }
+    .btn:active{ transform:translateY(0) }
+    .btn.primary{ background: linear-gradient(180deg, #e7f6ed, #eafaf0); border-color:#16a34a60 }
+    .btn.danger{ background: linear-gradient(180deg, #fde8e8, #fff1f1); border-color:#dc262660 }
+    .btn:disabled{ background: var(--panel-2); color:var(--muted); cursor: not-allowed; border-color: var(--border); }
+    .btn:disabled:hover{ transform: none; border-color: var(--border); }
+    
+    /* Eingabefeld Styling */
+    #solutionInput{ 
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
+    }
+    
+    /* Spinner-Controls für number input entfernen */
+    #solutionInput::-webkit-outer-spin-button,
+    #solutionInput::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #solutionInput[type=number] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    /* Footer stats */
+    footer{ margin-top:26px; padding:12px; position:sticky; bottom:0; backdrop-filter: blur(6px); background: linear-gradient(0deg, rgba(224,242,254,.95), rgba(240,249,255,.85)); border-top:1px solid var(--border); }
+    .stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; max-width:1200px; margin:0 auto }
+    .stat{ background: linear-gradient(180deg, #e0f2fe, #f0f9ff); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; box-shadow: var(--shadow); }
+    .stat .label{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.14em }
+    .stat .value{ font-weight:900; font-size:22px; margin-top:4px }
+    @media (max-width:700px){ .stats{ grid-template-columns: 1fr 1fr } }
+
+    /* Rechenweg-Grid (hell) */
+    .grid-math{ border-collapse: collapse; margin: 8px auto 18px; background:linear-gradient(180deg, #e0f2fe, #f0f9ff); box-shadow: var(--shadow); width:auto; max-width:100%; }
+    .grid-math td{ width:auto; min-width:28px; height:34px; text-align:center; vertical-align:middle; border:1px solid var(--border); font-weight:800; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:16px; color:var(--text); padding:2px 4px; }
+    .math-caption{ text-align:left; margin: 0 auto 8px; width:100%; color:var(--muted); font-weight:700 }
+    .muted{ color:var(--muted) }
+
+    /* Ziffernfarben 0–9 (für Multiplikator & passende Teilprodukte) */
+    .d-0{ color:#64748b } /* slate-500 */
+    .d-1{ color:#7c3aed } /* violet-600 */
+    .d-2{ color:#2563eb } /* blue-600 */
+    .d-3{ color:#059669 } /* emerald-600 */
+    .d-4{ color:#16a34a } /* green-600 */
+    .d-5{ color:#d97706 } /* amber-600 */
+    .d-6{ color:#ea580c } /* orange-600 */
+    .d-7{ color:#dc2626 } /* red-600 */
+    .d-8{ color:#db2777 } /* pink-600 */
+    .d-9{ color:#0ea5e9 } /* sky-500 */
+    
+    /* Stellenwert-Farben für Einer, Zehner, Hunderter */
+    .grid-math .stelle-einer{ color:#ea580c !important; } /* orange-600 - für Einer-Stelle */
+    .grid-math .stelle-zehner{ color:#059669 !important; } /* emerald-600 - für Zehner-Stelle */
+    .grid-math .stelle-hunderter{ color:#2563eb !important; } /* blue-600 - für Hunderter-Stelle */
+
+    /* Touch-Tastatur */
+    .touch-keyboard{
+      display: none; /* Standardmäßig versteckt */
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .touch-keyboard.active{
+      display: grid;
+    }
+    .touch-key{
+      background: var(--btn);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .touch-key:hover, .touch-key:active{
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      background: var(--panel);
+    }
+    .touch-key.wide{
+      grid-column: span 2;
+    }
+    .touch-key.primary{
+      background: linear-gradient(180deg, #e7f6ed, #eafaf0);
+      border-color: #16a34a60;
+      color: #16a34a;
+    }
+    .touch-key.delete{
+      background: linear-gradient(180deg, #fde8e8, #fff1f1);
+      border-color: #dc262660;
+      color: #dc2626;
+    }
+    
+    /* Touch-Tastatur nur auf Touch-Geräten anzeigen */
+    @media (pointer: coarse) {
+      .touch-keyboard{
+        display: grid;
+      }
+      .touch-keyboard.active{
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="reset-btn" id="resetBtn" title="Alle Fortschritte zurücksetzen">↻ Reset</button>
+    <h1>Multiplikation mehrstellig – interaktive Kontrolle</h1>
+    <div class="sub">Wähle zuerst den Schwierigkeitsgrad. Klicke dann auf eine Aufgabe, um deine Lösung zu überprüfen.</div>
+
+    <div class="difficulty-bar" role="tablist" aria-label="Schwierigkeitsgrad wählen">
+      <button class="diff-btn" id="btn-leicht" role="tab" aria-selected="false">Leicht (links)<small>12 + 5 Aufgaben</small></button>
+      <button class="diff-btn" id="btn-mittel" role="tab" aria-selected="false">Mittel (Mitte)<small>16 + 6 Aufgaben</small></button>
+      <button class="diff-btn" id="btn-schwer" role="tab" aria-selected="false">Schwer (rechts)<small>18 + 10 Aufgaben</small></button>
+    </div>
+  </header>
+
+  <main>
+    <div id="lists"></div>
+  </main>
+
+  <footer>
+    <div class="stats" aria-live="polite">
+      <div class="stat"><div class="label">Richtig</div><div class="value" id="stat-correct">0</div></div>
+      <div class="stat"><div class="label">Falsch</div><div class="value" id="stat-wrong">0</div></div>
+      <div class="stat"><div class="label">% richtig (alle)</div><div class="value" id="stat-pct-all">0%</div></div>
+      <div class="stat"><div class="label">% richtig (kontrolliert)</div><div class="value" id="stat-pct-checked">0%</div></div>
+    </div>
+  </footer>
+
+  <dialog id="solutionModal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Aufgabe</div>
+      <button class="btn" id="closeModal" aria-label="schließen">Schließen</button>
+    </div>
+    <div class="modal-body">
+      <div class="rechnung" id="modalEq"></div>
+      <div id="inputMode" style="display:block;">
+        <input type="text" id="solutionInput" placeholder="Deine Lösung eingeben..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:24px; padding:12px; border:2px solid var(--border); border-radius:8px; text-align:center; width:300px; margin:10px 0;">
+        
+        <!-- Touch-Tastatur -->
+        <div class="touch-keyboard" id="touchKeyboard">
+          <button class="touch-key" data-key="1">1</button>
+          <button class="touch-key" data-key="2">2</button>
+          <button class="touch-key" data-key="3">3</button>
+          <button class="touch-key" data-key="4">4</button>
+          <button class="touch-key" data-key="5">5</button>
+          <button class="touch-key" data-key="6">6</button>
+          <button class="touch-key" data-key="7">7</button>
+          <button class="touch-key" data-key="8">8</button>
+          <button class="touch-key" data-key="9">9</button>
+          <button class="touch-key delete" data-key="backspace">⌫</button>
+          <button class="touch-key" data-key="0">0</button>
+          <button class="touch-key" data-key=",">,</button>
+        </div>
+        
+        <div style="margin-top:15px;">
+          <button class="btn primary" id="btnCheck">Prüfen</button>
+        </div>
+      </div>
+      <div id="resultMode" style="display:none;">
+        <div class="loesung" id="modalSolution">—</div>
+        <div class="modal-actions">
+          <button class="btn primary" id="btnMarkCorrect">Richtig</button>
+          <button class="btn danger" id="btnMarkWrong">Falsch</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Rechenweg-Dialog -->
+  <dialog id="workModal">
+    <div class="modal-header">
+      <div class="modal-title" id="workTitle">Lösungsweg</div>
+    </div>
+    <div class="modal-body">
+      <div id="workCaption" class="math-caption"></div>
+      <div id="workContainer" style="overflow:visible; width:100%; display:flex; justify-content:center;"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="closeWork2">Fertig</button>
+    </div>
+  </dialog>
+
+  <!-- Passwort-Dialog -->
+  <dialog id="passwordModal">
+    <div class="modal-header">
+      <div class="modal-title">Lehrermodus</div>
+      <button class="btn" id="closePassword" aria-label="schließen">Abbrechen</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:15px; color:var(--muted);">Passwort eingeben:</div>
+      <input type="password" id="passwordInput" placeholder="Passwort..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="font-size:18px; padding:12px; border:2px solid var(--border); border-radius:8px; text-align:center; width:200px; margin:10px 0;">
+      <div style="margin-top:15px;">
+        <button class="btn primary" id="btnPasswordOk">OK</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Meldungs-Dialog -->
+  <dialog id="messageModal">
+    <div class="modal-header">
+      <div class="modal-title" id="messageTitle">Meldung</div>
+    </div>
+    <div class="modal-body">
+      <div id="messageText" style="margin-bottom:15px; color:var(--text); text-align:center;"></div>
+      <div style="margin-top:15px;">
+        <button class="btn primary" id="btnMessageOk">OK</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Reset-Bestätigung Dialog -->
+  <dialog id="confirmModal">
+    <div class="modal-header">
+      <div class="modal-title">Bestätigung</div>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:15px; color:var(--text); text-align:center;">Alles zurücksetzen? Das kann nicht rückgängig gemacht werden.</div>
+      <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+        <button class="btn" id="btnConfirmCancel">Abbrechen</button>
+        <button class="btn danger" id="btnConfirmOk">Zurücksetzen</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // --- Datengrundlage ---
+    const leicht = {
+      Rechenaufgaben: [
+        {id:1, eq:"12345 · 12", result:148140},
+        {id:2, eq:"23456 · 23", result:539488},
+        {id:3, eq:"34567 · 34", result:1175278},
+        {id:4, eq:"45678 · 45", result:2055510},
+        {id:5, eq:"56789 · 12", result:681468},
+        {id:6, eq:"67890 · 23", result:1561470},
+        {id:7, eq:"78901 · 34", result:2682634},
+        {id:8, eq:"89012 · 45", result:4005540},
+        {id:9, eq:"90123 · 12", result:1081476},
+        {id:10, eq:"11234 · 23", result:258382},
+        {id:11, eq:"22345 · 34", result:759730},
+        {id:12, eq:"33456 · 45", result:1505520},
+      ],
+      Textaufgaben: [
+        {id:1, eq:"12345 · 13", result:160485},
+        {id:2, eq:"34567 · 34", result:1175278},
+        {id:3, eq:"5678 · 45", result:255510},
+        {id:4, eq:"67890 · 23", result:1561470},
+        {id:5, eq:"90123 · 12", result:1081476},
+      ],
+    };
+
+    const mittel = {
+      Rechenaufgaben: [
+        {id:1, eq:"12345 · 12", result:148140},
+        {id:2, eq:"23456 · 23", result:539488},
+        {id:3, eq:"34567 · 34", result:1175278},
+        {id:4, eq:"45678 · 45", result:2055510},
+        {id:5, eq:"56789 · 12", result:681468},
+        {id:6, eq:"67890 · 23", result:1561470},
+        {id:7, eq:"78901 · 34", result:2682634},
+        {id:8, eq:"89012 · 45", result:4005540},
+        {id:9, eq:"90123 · 123", result:11085129},
+        {id:10, eq:"11234 · 234", result:2628756},
+        {id:11, eq:"22345 · 345", result:7709025},
+        {id:12, eq:"33456 · 123", result:4115088},
+        {id:13, eq:"44567 · 234", result:10428678},
+        {id:14, eq:"55678 · 345", result:19208910},
+        {id:15, eq:"66789 · 123", result:8215047},
+        {id:16, eq:"77890 · 234", result:18226260},
+      ],
+      Textaufgaben: [
+        {id:1, eq:"12345 · 13", result:160485},
+        {id:2, eq:"34567 · 34", result:1175278},
+        {id:3, eq:"5678 · 45", result:255510},
+        {id:4, eq:"67890 · 123", result:8350470},
+        {id:5, eq:"89012 · 178", result:15844136},
+        {id:6, eq:"234 · 245", result:57330},
+      ],
+    };
+
+    const schwer = {
+      Rechenaufgaben: [
+        {id:1, eq:"12345 · 12", result:148140},
+        {id:2, eq:"23456 · 23", result:539488},
+        {id:3, eq:"34567 · 34", result:1175278},
+        {id:4, eq:"45678 · 45", result:2055510},
+        {id:5, eq:"56789 · 12", result:681468},
+        {id:6, eq:"67890 · 23", result:1561470},
+        {id:7, eq:"78901 · 34", result:2682634},
+        {id:8, eq:"89012 · 45", result:4005540},
+        {id:9, eq:"90123 · 123", result:11085129},
+        {id:10, eq:"11234 · 234", result:2628756},
+        {id:11, eq:"22345 · 345", result:7709025},
+        {id:12, eq:"33456 · 123", result:4115088},
+        {id:13, eq:"44567 · 234", result:10428678},
+        {id:14, eq:"55678 · 345", result:19208910},
+        {id:15, eq:"66789 · 123", result:8215047},
+        {id:16, eq:"77890 · 234", result:18226260},
+        {id:17, eq:"88901 · 890", result:79121890},
+        {id:18, eq:"99012 · 901", result:89209812},
+      ],
+      Textaufgaben: [
+        {id:1, eq:"12345 · 13", result:160485},
+        {id:2, eq:"34567 · 34", result:1175278},
+        {id:3, eq:"5678 · 45", result:255510},
+        {id:4, eq:"67890 · 123", result:8350470},
+        {id:5, eq:"89012 · 178", result:15844136},
+        {id:6, eq:"234 · 245", result:57330},
+        {id:7, eq:"90123 · 901", result:81200823},
+        {id:8, eq:"67890 · 678", result:46029420},
+        {id:9, eq:"78901 · 789", result:62252889},
+        {id:10, eq:"56789 · 567", result:32199363},
+      ],
+    };
+
+    const datasets = { leicht, mittel, schwer };
+
+    // --- State ---
+    let currentLevel = null; // Kein Level vorausgewählt
+    const taskState = new Map();
+    let teacherMode = false; // Neue Variable für Lehrermodus
+
+    const keyFor = (level, group, idx) => `${level}|${group}|${idx}`;
+
+    function renderLists(){
+      const container = document.getElementById('lists');
+      container.innerHTML = '';
+      
+      // Zeige Nachricht an, wenn kein Schwierigkeitsgrad gewählt wurde
+      if(!currentLevel) {
+        const message = document.createElement('div');
+        message.style.textAlign = 'center';
+        message.style.color = 'var(--muted)';
+        message.style.fontSize = '18px';
+        message.style.margin = '40px auto';
+        message.style.fontWeight = '600';
+        message.textContent = 'Wähle zuerst einen Schwierigkeitsgrad aus.';
+        container.appendChild(message);
+        return;
+      }
+      
+      const data = datasets[currentLevel];
+      Object.entries(data).forEach(([groupName, tasks])=>{
+        const title = document.createElement('div');
+        title.className = 'group-title';
+        title.textContent = groupName;
+        container.appendChild(title);
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        tasks.forEach((t, i)=>{
+          const card = document.createElement('button');
+          card.className = 'task';
+          card.setAttribute('data-group', groupName);
+          card.setAttribute('data-index', i);
+          const h3 = document.createElement('h3'); h3.textContent = `Aufgabe ${t.id}`;
+          const eq = document.createElement('div'); eq.className = 'eq'; eq.textContent = t.eq;
+          const k = keyFor(currentLevel, groupName, i); const st = taskState.get(k);
+          const chip = document.createElement('div'); chip.className = 'status-chip'; chip.textContent = 'noch offen';
+          if(st?.checked){ chip.className = 'status-chip ' + (st.correct ? 'correct' : 'wrong'); chip.textContent = st.correct ? '✔ Richtig' : '✘ Falsch'; }
+          card.appendChild(h3); card.appendChild(eq); card.appendChild(chip);
+          card.addEventListener('click', ()=> openModal(groupName, i));
+          grid.appendChild(card);
+        });
+        container.appendChild(grid);
+      });
+      updateStats();
+    }
+
+    // Modal
+    let currentModal = { group:null, index:null };
+
+    function openModal(groupName, index){
+      currentModal = { group: groupName, index };
+      const t = datasets[currentLevel][groupName][index];
+      document.getElementById('modalTitle').textContent = `${groupName} – Aufgabe ${t.id}`;
+      document.getElementById('modalEq').textContent = `${t.eq} =`;
+      document.getElementById('modalSolution').textContent = t.result.toLocaleString('de-DE');
+      
+      if(teacherMode){
+        // Lehrermodus: Direkt Ergebnis anzeigen
+        document.getElementById('inputMode').style.display = 'none';
+        document.getElementById('resultMode').style.display = 'block';
+      } else {
+        // Schülermodus: Eingabefeld anzeigen
+        document.getElementById('inputMode').style.display = 'block';
+        document.getElementById('resultMode').style.display = 'none';
+        document.getElementById('solutionInput').value = '';
+        
+        // Mindestlänge berechnen (2 Stellen unter der richtigen Lösung)
+        const correctLength = String(t.result).length;
+        const minLength = Math.max(1, correctLength - 2);
+        currentModal.minLength = minLength;
+        
+        // Button initial deaktivieren
+        const checkBtn = document.getElementById('btnCheck');
+        checkBtn.disabled = true;
+        
+        setTimeout(() => document.getElementById('solutionInput').focus(), 100);
+      }
+      
+      document.getElementById('solutionModal').showModal();
+    }
+
+    function checkSolution(){
+      const { group, index } = currentModal; 
+      if(group == null) return;
+      
+      // Prüfen ob Button aktiviert ist
+      const checkBtn = document.getElementById('btnCheck');
+      if(checkBtn.disabled) return;
+      
+      const t = datasets[currentLevel][group][index];
+      const inputValue = document.getElementById('solutionInput').value;
+      
+      // Deutsches Komma durch Punkt ersetzen für parseFloat
+      const cleanedInput = inputValue.replace(/,/g, '.');
+      const userInput = parseFloat(cleanedInput);
+      
+      const isCorrect = userInput === t.result;
+      
+      if(isCorrect){
+        mark(true);
+      } else {
+        mark(false);
+      }
+    }
+
+    function mark(correct){
+      const { group, index } = currentModal; if(group == null) return;
+      const k = keyFor(currentLevel, group, index);
+      taskState.set(k, { checked:true, correct });
+      document.getElementById('solutionModal').close();
+      renderLists();
+      if(!correct){ const t = datasets[currentLevel][group][index]; showWork(t); }
+    }
+
+    function updateStats(){
+      let total = 0, correct = 0, wrong = 0, checked = 0;
+      
+      // Wenn kein Level gewählt ist, zeige 0 Statistiken
+      if(!currentLevel) {
+        document.getElementById('stat-correct').textContent = 0;
+        document.getElementById('stat-wrong').textContent = 0;
+        document.getElementById('stat-pct-all').textContent = '0%';
+        document.getElementById('stat-pct-checked').textContent = '0%';
+        return;
+      }
+      
+      const data = datasets[currentLevel];
+      Object.entries(data).forEach(([group, tasks])=>{
+        tasks.forEach((_, i)=>{
+          total++; const st = taskState.get(keyFor(currentLevel, group, i));
+          if(st?.checked){ checked++; if(st.correct) correct++; else wrong++; }
+        })
+      });
+      const pctAll = total ? Math.round((correct/total)*100) : 0;
+      const pctChecked = checked ? Math.round((correct/checked)*100) : 0;
+      document.getElementById('stat-correct').textContent = correct;
+      document.getElementById('stat-wrong').textContent = wrong;
+      document.getElementById('stat-pct-all').textContent = pctAll + '%';
+      document.getElementById('stat-pct-checked').textContent = pctChecked + '%';
+    }
+
+    // Difficulty buttons
+    function setActive(btn){ 
+      document.querySelectorAll('.diff-btn').forEach(b=> {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      }); 
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+    }
+    document.getElementById('btn-leicht').addEventListener('click', (e)=>{ currentLevel='leicht'; setActive(e.currentTarget); renderLists(); });
+    document.getElementById('btn-mittel').addEventListener('click', (e)=>{ currentLevel='mittel'; setActive(e.currentTarget); renderLists(); });
+    document.getElementById('btn-schwer').addEventListener('click', (e)=>{ currentLevel='schwer'; setActive(e.currentTarget); renderLists(); });
+
+    // Eigene Popup-Funktionen
+    function showMessage(title, message) {
+      document.getElementById('messageTitle').textContent = title;
+      document.getElementById('messageText').textContent = message;
+      document.getElementById('messageModal').showModal();
+    }
+
+    function showConfirm(message, onConfirm) {
+      document.getElementById('confirmModal').querySelector('.modal-body div').textContent = message;
+      document.getElementById('confirmModal').showModal();
+      
+      // Event Listeners für Bestätigung
+      const confirmOk = () => {
+        document.getElementById('confirmModal').close();
+        onConfirm();
+        document.getElementById('btnConfirmOk').removeEventListener('click', confirmOk);
+      };
+      
+      const confirmCancel = () => {
+        document.getElementById('confirmModal').close();
+        document.getElementById('btnConfirmOk').removeEventListener('click', confirmOk);
+      };
+      
+      document.getElementById('btnConfirmOk').addEventListener('click', confirmOk);
+      document.getElementById('btnConfirmCancel').addEventListener('click', confirmCancel);
+    }
+
+    // Reset Button
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      showConfirm('Alles zurücksetzen? Das kann nicht rückgängig gemacht werden.', () => {
+        taskState.clear();
+        teacherMode = false;
+        currentLevel = null; // Kein Schwierigkeitsgrad ausgewählt
+        
+        // Alle Schwierigkeitsgrad-Buttons deaktivieren
+        document.querySelectorAll('.diff-btn').forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        
+        renderLists(); // Zeigt "Wähle zuerst einen Schwierigkeitsgrad aus."
+        updateStats();
+      });
+    });
+
+    // Touch-Tastatur Event Listeners
+    document.getElementById('touchKeyboard').addEventListener('click', (e) => {
+      if(!e.target.classList.contains('touch-key')) return;
+      
+      const key = e.target.dataset.key;
+      const input = document.getElementById('solutionInput');
+      
+      if(key === 'backspace') {
+        // Letztes Zeichen löschen
+        input.value = input.value.slice(0, -1);
+      } else if(key === ',') {
+        // Komma nur hinzufügen wenn noch keins vorhanden
+        if(!input.value.includes(',')) {
+          input.value += ',';
+        }
+      } else {
+        // Ziffer hinzufügen
+        input.value += key;
+      }
+      
+      // Input-Event auslösen für Button-Validierung
+      input.dispatchEvent(new Event('input'));
+      
+      // Focus auf Input behalten (für Cursor)
+      input.focus();
+    });
+
+    // Touch-Tastatur bei Touch-Geräten aktivieren
+    function detectTouchDevice() {
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if(isTouchDevice) {
+        document.getElementById('touchKeyboard').classList.add('active');
+        // Bildschirmtastatur des Betriebssystems verhindern
+        const input = document.getElementById('solutionInput');
+        input.setAttribute('readonly', 'true');
+        input.setAttribute('inputmode', 'none');
+        input.style.caretColor = 'transparent';
+      }
+    }
+
+    // Modal Buttons
+    document.getElementById('closeModal').addEventListener('click', ()=> document.getElementById('solutionModal').close());
+    document.getElementById('btnMarkCorrect').addEventListener('click', ()=> mark(true));
+    document.getElementById('btnMarkWrong').addEventListener('click', ()=> mark(false));
+    document.getElementById('btnCheck').addEventListener('click', checkSolution);
+    
+    // Enter-Taste im Eingabefeld (entfernt, da jetzt in keypress-Handler)
+    
+    // Eingabe-Validierung für Button-Aktivierung
+    document.getElementById('solutionInput').addEventListener('input', (e) => {
+      const inputValue = e.target.value;
+      const inputLength = inputValue.length;
+      const minLength = currentModal.minLength || 1;
+      const checkBtn = document.getElementById('btnCheck');
+      
+      if(inputLength >= minLength && inputValue.trim() !== '') {
+        checkBtn.disabled = false;
+      } else {
+        checkBtn.disabled = true;
+      }
+    });
+    
+    // Eingabefilter: Nur Ziffern und Komma erlauben
+    document.getElementById('solutionInput').addEventListener('keypress', (e) => {
+      // Enter-Taste behandeln
+      if(e.key === 'Enter' && !document.getElementById('btnCheck').disabled) {
+        checkSolution();
+        return;
+      }
+      
+      // Nur Ziffern (0-9) und Komma (,) erlauben
+      const allowedChars = /[0-9,]/;
+      if(!allowedChars.test(e.key)) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Nur ein Komma erlauben
+      if(e.key === ',' && e.target.value.includes(',')) {
+        e.preventDefault();
+      }
+    });
+    
+    // Paste-Event validieren
+    document.getElementById('solutionInput').addEventListener('paste', (e) => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      let cleanPaste = paste.replace(/[^0-9,]/g, ''); // Nur erlaubte Zeichen
+      
+      // Nur ein Komma erlauben
+      const commaCount = cleanPaste.split(',').length - 1;
+      if(commaCount > 1) {
+        const firstCommaIndex = cleanPaste.indexOf(',');
+        cleanPaste = cleanPaste.substring(0, firstCommaIndex + 1) + cleanPaste.substring(firstCommaIndex + 1).replace(/,/g, '');
+      }
+      
+      // Prüfen ob bereits ein Komma im Feld ist
+      if(e.target.value.includes(',') && cleanPaste.includes(',')) {
+        cleanPaste = cleanPaste.replace(/,/g, '');
+      }
+      
+      e.target.value = e.target.value + cleanPaste;
+      // Input-Event manuell auslösen für Button-Validierung
+      e.target.dispatchEvent(new Event('input'));
+    });
+    
+    // Lehrermodus-Aktivierung durch Klick auf "% richtig (alle)"
+    document.getElementById('stat-pct-all').parentElement.addEventListener('click', () => {
+      if(teacherMode) {
+        // Vom Lehrermodus zurück zum Normalmodus
+        teacherMode = false;
+        showMessage('Lehrermodus', 'Lehrermodus deaktiviert!');
+      } else {
+        // Zum Lehrermodus wechseln
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordModal').showModal();
+        setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+      }
+    });
+
+    // Passwort-Modal Event Listeners
+    document.getElementById('closePassword').addEventListener('click', () => {
+      document.getElementById('passwordModal').close();
+    });
+    
+    document.getElementById('btnPasswordOk').addEventListener('click', () => {
+      checkPassword();
+    });
+    
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if(e.key === 'Enter') checkPassword();
+    });
+    
+    // Meldungs-Modal Event Listeners
+    document.getElementById('btnMessageOk').addEventListener('click', () => {
+      document.getElementById('messageModal').close();
+    });
+    
+    function checkPassword() {
+      const password = document.getElementById('passwordInput').value;
+      if(password === 'schneller') {
+        teacherMode = true;
+        document.getElementById('passwordModal').close();
+        showMessage('Lehrermodus', 'Lehrermodus aktiviert!');
+      } else if(password.length > 0) {
+        showMessage('Fehler', 'Falsches Passwort!');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+      }
+    }
+
+    // Rechenweg-Dialog Controls
+    document.getElementById('closeWork2').addEventListener('click', ()=> document.getElementById('workModal').close());
+
+    window.addEventListener('keydown', (ev)=>{ 
+      if(ev.key === 'Escape'){ 
+        document.getElementById('solutionModal').close(); 
+        const workModal = document.getElementById('workModal'); 
+        if(workModal && workModal.open) workModal.close();
+        const passwordModal = document.getElementById('passwordModal');
+        if(passwordModal && passwordModal.open) passwordModal.close();
+        const messageModal = document.getElementById('messageModal');
+        if(messageModal && messageModal.open) messageModal.close();
+        const confirmModal = document.getElementById('confirmModal');
+        if(confirmModal && confirmModal.open) confirmModal.close();
+      } 
+    });
+
+    // --- Rechenweg-Generator ---
+    function showWork(task){
+      const [aRaw, bRaw] = task.eq.split('·').map(s=> s.trim());
+      const a = aRaw.replace(/\D/g,'');
+      const b = bRaw.replace(/\D/g,'');
+      
+      // Falsche Lösung aus dem Eingabefeld holen
+      const wrongAnswer = document.getElementById('solutionInput').value;
+      
+      const grid = buildLongMultiplicationGrid(a, b, task.result);
+      
+      // Caption mit falscher Lösung rechtsbündig
+      const captionDiv = document.getElementById('workCaption');
+      captionDiv.style.display = 'flex';
+      captionDiv.style.justifyContent = 'space-between';
+      captionDiv.style.alignItems = 'center';
+      
+      // Falsche Lösung mit deutschem Komma formatieren
+      const formattedWrongAnswer = wrongAnswer.replace(/\./g, ',');
+      
+      captionDiv.innerHTML = `
+        <span>Aufgabe: ${a} · ${b}</span>
+        <span style="color: var(--muted);">
+          Deine Lösung: <span style="color:#dc2626; font-weight:900; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; letter-spacing: 0.05em;">${formattedWrongAnswer}</span>
+        </span>
+      `;
+      
+      document.getElementById('workTitle').textContent = `Lösungsweg – Aufgabe ${task.id}`;
+      
+      // "falsch" rechtsbündig im Header hinzufügen
+      const modalHeader = document.querySelector('#workModal .modal-header');
+      let falschSpan = modalHeader.querySelector('.falsch-indicator');
+      if(!falschSpan) {
+        falschSpan = document.createElement('span');
+        falschSpan.className = 'falsch-indicator';
+        falschSpan.style.cssText = 'color: #000000; background: #fca5a5; border: 1px solid #fca5a5; font-size: 11px; padding: 3px 6px; border-radius: 999px; font-weight: 700; position: absolute; right: 18px; top: 50%; transform: translateY(-50%);';
+        modalHeader.style.position = 'relative';
+        modalHeader.appendChild(falschSpan);
+      }
+      falschSpan.textContent = '✘ Falsch';
+      
+      const cont = document.getElementById('workContainer');
+      cont.innerHTML = '';
+      cont.appendChild(grid);
+      document.getElementById('workModal').showModal();
+    }
+
+    function buildLongMultiplicationGrid(aStr, bStr, resultNumber){
+      const a = aStr.split('').map(n=>+n);
+      const b = bStr.split('').map(n=>+n);
+      const aLen = a.length, bLen = b.length;
+
+      function multiplyRow(d){
+        let carry = 0; const out = []; const carries = new Array(aLen).fill(null);
+        
+        // Von rechts nach links rechnen
+        for(let i=aLen-1;i>=0;i--){ 
+          const prod = a[i]*d + carry; 
+          out.unshift(prod%10); 
+          carry = Math.floor(prod/10);
+          
+          // Übertrag für Position i wird bei Position i-1 gespeichert (eine Stelle links)
+          if(carry > 0 && i > 0) {
+            carries[i-1] = carry;
+          }
+        }
+        
+        while(carry>0){ out.unshift(carry%10); carry=Math.floor(carry/10); }
+        return {digits: out, carries: carries};
+      }
+
+      // Teilprodukte inkl. verwendeter Ziffer (für Farbe nach Stellenwert)
+      const partials = [];
+      for(let k=bLen-1;k>=0;k--){
+        const digit = b[k];
+        const position = bLen-1-k; // 0=erste Zeile (Einer), 1=zweite Zeile (Zehner), 2=dritte Zeile (Hunderter)
+        let stellenKlasse = 'muted';
+        if(position === 0) stellenKlasse = 'stelle-einer'; // erste Zeile (rechteste Ziffer)
+        else if(position === 1) stellenKlasse = 'stelle-zehner'; // zweite Zeile (mittlere Ziffer)
+        else if(position === 2) stellenKlasse = 'stelle-hunderter'; // dritte Zeile (linkeste Ziffer)
+        
+        const result = multiplyRow(digit);
+        partials.push({shift:(bLen-1-k), digits: result.digits, digit, stellenKlasse, carries: result.carries});
+      }
+
+      const resultStr = String(resultNumber ?? (BigInt(aStr)*BigInt(bStr))).replace(/n$/,'');
+      const totalCols = Math.max(aLen + 1 + bLen, resultStr.length, ...partials.map(p=> p.digits.length + p.shift));
+
+      function placeRow(tr, fromRight, digits, cls){
+        const start = totalCols - digits.length - fromRight;
+        for(let c=0;c<totalCols;c++){
+          const td = document.createElement('td');
+          if(c>=start && c<start+digits.length){ 
+            td.textContent = digits[c-start]; 
+            if(cls) td.classList.add(cls); 
+          }
+          tr.appendChild(td);
+        }
+      }
+
+      // Berechne die Überträge für die Addition der Teilprodukte
+      function calculateCarries(){
+        const carries = [];
+        let carry = 0;
+        for(let col = totalCols - 1; col >= 0; col--){
+          let sum = carry;
+          partials.forEach(p => {
+            const digitPos = col - (totalCols - p.digits.length - p.shift);
+            if(digitPos >= 0 && digitPos < p.digits.length){
+              sum += p.digits[digitPos];
+            }
+          });
+          carry = Math.floor(sum / 10);
+          if(carry > 0) carries[col - 1] = carry;
+        }
+        return carries;
+      }
+
+      const carries = calculateCarries();
+
+      const table = document.createElement('table');
+      table.className = 'grid-math';
+
+      // Übertrag-Zeilen oberhalb der Tabelle (für jede Multiplikation)
+      // Reihenfolge: Hunderter (blau) oben, Zehner (grün) mitte, Einer (orange) unten
+      const orderedPartials = [...partials].reverse(); // Umgekehrte Reihenfolge
+      
+      orderedPartials.forEach((p, partialIndex) => {
+        const carryRowTr = document.createElement('tr');
+        for(let c=0;c<totalCols;c++){
+          const td = document.createElement('td');
+          td.style.border = 'none';
+          td.style.fontSize = '10px';
+          td.style.color = 'var(--muted)';
+          td.style.height = '18px'; // Reduzierte Höhe
+          td.style.padding = '0';   // Kein Padding
+          
+          // Position der ersten Zahl in der Kopfzeile finden
+          const aStartPos = Math.max(0, totalCols - bLen - 1 - aLen);
+          
+          // Ist diese Spalte über der ersten Zahl?
+          if(c >= aStartPos && c < aStartPos + aLen) {
+            const positionInA = c - aStartPos; // 0 = linkeste Ziffer von a
+            
+            // Direkt den Übertrag an dieser Position anzeigen
+            if(positionInA < p.carries.length && p.carries[positionInA] !== null) {
+              td.innerHTML = `<span class="${p.stellenKlasse}" style="font-size:10px; opacity:0.7;">${p.carries[positionInA]}</span>`;
+            }
+          }
+          carryRowTr.appendChild(td);
+        }
+        table.appendChild(carryRowTr);
+      });
+
+      // Kopfzeile: a · b  (jedes b-Digit mit Stellenwert-Farbe)
+      const header = document.createElement('tr');
+      for(let c=0;c<totalCols;c++) header.appendChild(document.createElement('td'));
+      let pos = totalCols - bLen;
+      for(let i=0;i<bLen;i++){ 
+        const d=b[i]; 
+        const position = bLen-1-i; // Position von rechts: 0=rechteste (Einer), 1=mittlere (Zehner), 2=linkeste (Hunderter)
+        let stellenKlasse = 'muted';
+        if(position === 0) stellenKlasse = 'stelle-einer'; // rechteste Ziffer (erste Zeile)
+        else if(position === 1) stellenKlasse = 'stelle-zehner'; // mittlere Ziffer (zweite Zeile)
+        else if(position === 2) stellenKlasse = 'stelle-hunderter'; // linkeste Ziffer (dritte Zeile)
+        
+        header.children[pos+i].innerHTML = `<span class="${stellenKlasse}">${d}</span>`; 
+      }
+      if(pos-1>=0) header.children[pos-1].innerHTML = `<span class="muted">·</span>`;
+      const aStart = Math.max(0, pos-1-aLen);
+      for(let i=0;i<aLen;i++){ header.children[aStart+i].textContent = a[i]; }
+      table.appendChild(header);
+
+      // Trennlinie nach der Kopfzeile (wie vor dem Endergebnis)
+      const headerSeparatorTr = document.createElement('tr');
+      for(let c=0;c<totalCols;c++){
+        const td = document.createElement('td');
+        td.style.borderBottom = '1px solid var(--border-strong)';
+        td.style.height = '2px';
+        headerSeparatorTr.appendChild(td);
+      }
+      table.appendChild(headerSeparatorTr);
+
+      // Teilprodukte: Farbe nach Stellenwert (ohne obere Leerzeile)
+      partials.forEach(p=>{ const tr = document.createElement('tr'); placeRow(tr, p.shift, p.digits, p.stellenKlasse); table.appendChild(tr); });
+
+      // Übertrag-Zeile (untere leere Zeile mit Überträgen)
+      const carryTr = document.createElement('tr');
+      for(let c=0;c<totalCols;c++){
+        const td = document.createElement('td');
+        if(carries[c]){
+          td.innerHTML = `<span class="muted" style="font-size:12px">${carries[c]}</span>`;
+        }
+        carryTr.appendChild(td);
+      }
+      table.appendChild(carryTr);
+
+      // Eine zusätzliche Trennlinie vor dem Endergebnis (für doppelte Linie)
+      const separatorTr = document.createElement('tr');
+      for(let c=0;c<totalCols;c++){
+        const td = document.createElement('td');
+        td.style.borderBottom = '1px solid var(--border-strong)';
+        td.style.height = '2px';
+        separatorTr.appendChild(td);
+      }
+      table.appendChild(separatorTr);
+
+      // Ergebniszeile mit '=' links
+      const resultTr = document.createElement('tr'); 
+      for(let c=0;c<totalCols;c++) resultTr.appendChild(document.createElement('td'));
+      resultTr.children[0].innerHTML = '<span class="muted">=</span>';
+      const rStart = totalCols - resultStr.length; 
+      for(let i=0;i<resultStr.length;i++) {
+        const td = resultTr.children[rStart+i];
+        td.innerHTML = `<span style="font-weight: 900; color: #0f172a;">${resultStr[i]}</span>`;
+      }
+      table.appendChild(resultTr);
+
+      return table;
+    }
+
+    // Initial render - nur Statistiken, aber keine Aufgaben
+    updateStats();
+    
+    // Touch-Tastatur aktivieren falls Touch-Gerät
+    detectTouchDevice();
+  </script>
+</body>
+</html>

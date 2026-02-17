@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="save-password" content="never" />
+  <meta name="save-form" content="never" />
+  <title>Multiplikationsrechner</title>
+  <style>
+    :root{
+      /* Modernes helles Blau Theme */
+      --bg:#f0f9ff;          /* sky-50 */
+      --panel:#e0f2fe;       /* sky-100 */
+      --panel-2:#bae6fd;     /* sky-200 */
+      --text:#0c4a6e;        /* sky-900 */
+      --muted:#0369a1;       /* sky-700 */
+      --border:#7dd3fc;      /* sky-300 */
+      --border-strong:#38bdf8;/* sky-400 */
+      --accent:#0284c7;      /* sky-600 */
+      --accent-2:#0ea5e9;    /* sky-500 */
+      --warn:#dc2626;        /* red-600 */
+      --card:#e0f2fe;
+      --btn:#bae6fd;
+      --shadow: 0 8px 24px rgba(162, 22, 139, 0.15);
+    }
+    html, body{height:100%}
+    html {
+      overflow-y: scroll; /* Scrollbar permanent anzeigen */
+    }
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, #e0f2fe 0, #f0f9ff 60%, #dbeafe 100%);
+      color:var(--text);
+      display:flex; flex-direction:column; min-height:100vh;
+    }
+    header{
+      padding:22px 16px; text-align:center; position:sticky; top:0; z-index:5;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(224,242,254,.95), rgba(240,249,255,.8));
+      border-bottom:1px solid var(--border);
+    }
+    h1{font-size:clamp(20px,2.6vw,34px); margin:0 0 6px; letter-spacing:.3px}
+    .sub{color:var(--muted); font-size:14px}
+
+    main{ width:min(1200px, 92vw); margin:24px auto; flex:1; }
+
+    /* Eingabebereich */
+    .calculation-section{
+      background: linear-gradient(180deg, #e0f2fe, #f0f9ff); 
+      border:1px solid var(--border); 
+      border-radius:16px; 
+      padding:32px; 
+      margin-bottom:24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    
+    .calc-title{
+      font-size:20px; 
+      font-weight:800; 
+      color:var(--muted); 
+      margin-bottom:24px;
+      text-transform:uppercase; 
+      letter-spacing:.12em;
+    }
+    
+    .input-row{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    
+    .task-input{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 28px;
+      padding: 16px 24px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      width: 350px;
+      background: white;
+      color: var(--text);
+      font-weight: 700;
+    }
+    
+    .task-input:focus{
+      outline: none;
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(14,165,233,.2);
+    }
+
+    /* Buttons */
+    .btn{ 
+      border:1px solid var(--border); 
+      background:var(--btn); 
+      color:var(--text); 
+      padding:12px 20px; 
+      border-radius:12px; 
+      font-weight:800; 
+      cursor:pointer; 
+      transition: transform .06s ease, border-color .2s ease, box-shadow .2s ease;
+      font-size: 16px;
+      margin: 8px;
+    }
+    .btn:hover{ 
+      transform:translateY(-1px); 
+      border-color: var(--border-strong) 
+    }
+    .btn:active{ transform:translateY(0) }
+    .btn.primary{ 
+      background: linear-gradient(180deg, #e7f6ed, #eafaf0); 
+      border-color:#16a34a60;
+      color: #555; /* gleiche Textfarbe wie die Zahlen */
+    }
+    .btn.secondary{
+      background: linear-gradient(180deg, #e0f2fe, #bae6fd); 
+      border-color: var(--accent-2);
+      color: var(--accent);
+    }
+    /* Slow/Einzeln: wenn klickbar, ebenfalls in Grün darstellen (wie Primary) */
+    #showSlowWorkBtn:not(:disabled),
+    #showSingleWorkBtn:not(:disabled){
+      background: linear-gradient(180deg, #e7f6ed, #eafaf0);
+      border-color:#16a34a60;
+      color:#555; /* gleiche Textfarbe wie die Zahlen */
+    }
+    #showSlowWorkBtn:not(:disabled):hover,
+    #showSingleWorkBtn:not(:disabled):hover{
+      border-color:#16a34a;
+    }
+    .btn:disabled{ 
+      background: var(--panel-2); 
+      color:var(--muted); 
+      cursor: not-allowed; 
+      border-color: var(--border); 
+    }
+    .btn.primary:disabled{
+      background: #e5e7eb !important;
+      color: #6b7280 !important;
+      border-color: #d1d5db !important;
+    }
+    .btn.secondary:disabled{
+      background: #e5e7eb !important;
+      color: #6b7280 !important;
+      border-color: #d1d5db !important;
+      filter: none !important;
+    }
+    .btn:disabled:hover{ 
+      transform: none; 
+      border-color: var(--border); 
+    }
+
+    /* Touch-Tastatur */
+    .touch-keyboard{
+      display: none; /* Standardmäßig versteckt */
+      position: relative;
+      margin: 16px auto;
+      width: 280px;
+      max-width: 100%;
+    }
+    
+    .keyboard-grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 280px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    
+    .button-grid{
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      width: 280px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    
+    .button-grid .btn{
+      margin: 0;
+      width: 100%;
+    }
+    .touch-keyboard.active{
+      display: block;
+    }
+    .touch-key{
+      background: var(--btn);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .touch-key:hover, .touch-key:active{
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      background: var(--panel);
+    }
+    .touch-key.wide{
+      grid-column: span 2;
+    }
+    .touch-key.multiply{
+      background: var(--btn);
+      border-color: var(--border-strong);
+      color: var(--text);
+      filter: brightness(0.8);
+    }
+    .touch-key.delete{
+      background: linear-gradient(180deg, #fde8e8, #fff1f1);
+      border-color: #dc262660;
+      color: #dc2626;
+      position: absolute;
+      right: -60px;
+      bottom: 0;
+      width: 50px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+      user-select: none;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dc262660;
+    }
+    
+    .touch-key.delete:hover, .touch-key.delete:active{
+      transform: translateY(-1px);
+      border-color: fff1f1;
+      background: #fde8e8;
+    }
+    
+    /* Touch-Tastatur nur auf Touch-Geräten anzeigen */
+    @media (pointer: coarse) {
+      .touch-keyboard{
+        display: grid;
+      }
+      .touch-keyboard.active{
+        display: grid;
+      }
+    }
+
+    /* Modal */
+    dialog#workModal{ 
+      border:none; 
+      border-radius:18px; 
+      padding:0; 
+      width:min(90vw, 800px); 
+      max-width:90vw; 
+      background:var(--panel); 
+      color:var(--text); 
+      box-shadow: 0 30px 60px rgba(2,6,23,.18); 
+    }
+    .modal-header{ 
+      padding:16px 18px; 
+      border-bottom:1px solid var(--border); 
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center 
+    }
+    .modal-title{ 
+      font-weight:800; 
+      font-size:18px 
+    }
+    .modal-body{ 
+      padding:26px 22px 8px; 
+      text-align:center; 
+      overflow:visible; 
+    }
+    .modal-actions{ 
+      display:flex; 
+      gap:10px; 
+      justify-content:center; 
+      padding:16px 18px 24px 
+    }
+
+    /* Rechenweg-Grid (hell) */
+    .grid-math{ 
+      border-collapse: collapse; 
+      margin: 8px auto 18px; 
+      background:linear-gradient(180deg, #e0f2fe, #f0f9ff); 
+      box-shadow: var(--shadow); 
+      width:auto; 
+      max-width:100%; 
+    }
+    .grid-math td{ 
+      width:auto; 
+      min-width:28px; 
+      height:34px; 
+      text-align:center; 
+      vertical-align:middle; 
+      border:1px solid var(--border); 
+      font-weight:800; 
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
+      font-size:16px; 
+      color:var(--text); 
+      padding:2px 4px; 
+    }
+    .math-caption{ 
+      text-align:left; 
+      margin: 0 auto 8px; 
+      width:100%; 
+      color:var(--muted); 
+      font-weight:700 
+    }
+    .muted{ color:var(--muted) }
+
+  /* Stellenwert-Farben für Einer, Zehner, Hunderter, Tausender, Zehntausender, Hunderttausender */
+  .grid-math .stelle-einer{ color:#ea580c !important; }            /* orange-600 */
+  .grid-math .stelle-zehner{ color:#059669 !important; }           /* emerald-600 */
+  .grid-math .stelle-hunderter{ color:#2563eb !important; }        /* blue-600 */
+  .grid-math .stelle-tausender{ color:#7c3aed !important; }        /* violet-600 */
+  .grid-math .stelle-zehntausender{ color:#db2777 !important; }    /* pink-600 */
+  .grid-math .stelle-hunderttausender{ color:#b91c1c !important; } /* red-700 (ersetzt zweites Grün) */
+  .grid-math .stelle-million{ color:#0891b2 !important; }          /* cyan-600 */
+  .grid-math .stelle-zehnmillionen{ color:#d97706 !important; }    /* amber-600 */
+
+    /* Footer stats */
+    footer{ 
+      margin-top:26px; 
+      padding:12px; 
+      position:sticky; 
+      bottom:0; 
+      backdrop-filter: blur(6px); 
+      background: linear-gradient(0deg, rgba(224,242,254,.95), rgba(240,249,255,.85)); 
+      border-top:1px solid var(--border); 
+    }
+    .stats{ 
+      display:grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap:10px; 
+      max-width:1200px; 
+      margin:0 auto 
+    }
+    .stat{ 
+      background: linear-gradient(180deg, #e0f2fe, #f0f9ff); 
+      border:1px solid var(--border); 
+      border-radius:14px; 
+      padding:12px; 
+      text-align:center; 
+      box-shadow: var(--shadow); 
+    }
+    .stat .label{ 
+      color:var(--muted); 
+      font-size:12px; 
+      text-transform:uppercase; 
+      letter-spacing:.14em 
+    }
+    .stat .value{ 
+      font-weight:900; 
+      font-size:22px; 
+      margin-top:4px 
+    }
+    @media (max-width:700px){ 
+      .stats{ grid-template-columns: 1fr 1fr } 
+      .stat:last-child{ grid-column: span 2; }
+    }
+    footer{ 
+      margin-top:26px; 
+      padding:12px; 
+      position:sticky; 
+      bottom:0; 
+      backdrop-filter: blur(6px); 
+      background: linear-gradient(0deg, rgba(224,242,254,.95), rgba(240,249,255,.85)); 
+      border-top:1px solid var(--border); 
+    }
+    .stats{ 
+      display:grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap:10px; 
+      max-width:1200px; 
+      margin:0 auto 
+    }
+    .stat{ 
+      background: linear-gradient(180deg, #e0f2fe, #f0f9ff); 
+      border:1px solid var(--border); 
+      border-radius:14px; 
+      padding:12px; 
+      text-align:center; 
+      box-shadow: var(--shadow); 
+    }
+    .stat .label{ 
+      color:var(--muted); 
+      font-size:12px; 
+      text-transform:uppercase; 
+      letter-spacing:.14em 
+    }
+    .stat .value{ 
+      font-weight:900; 
+      font-size:22px; 
+      margin-top:4px 
+    }
+    @media (max-width:700px){ 
+      .stats{ grid-template-columns: 1fr 1fr } 
+      .stat:last-child{ grid-column: span 2; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .input-row{
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .task-input{
+        width: 280px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Multiplikationsrechner mit Lösungsweg</h1>
+    <div class="sub">Gebe eine beliebige Multiplikationsaufgabe ein und lass dir den Lösungsweg Schritt für Schritt anzeigen.</div>
+  </header>
+
+  <main>
+    <!-- Rechner-Bereich -->
+    <div class="calculation-section">
+      <div class="calc-title">Multiplikationsaufgabe eingeben</div>
+      
+      <div class="input-row">
+        <input type="text" id="taskInput" class="task-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
+      
+      <!-- Touch-Tastatur für Aufgaben-Eingabefeld -->
+      <div class="touch-keyboard" id="touchKeyboard">
+        <div class="keyboard-grid">
+          <button class="touch-key" data-key="1">1</button>
+          <button class="touch-key" data-key="2">2</button>
+          <button class="touch-key" data-key="3">3</button>
+          <button class="touch-key" data-key="4">4</button>
+          <button class="touch-key" data-key="5">5</button>
+          <button class="touch-key" data-key="6">6</button>
+          <button class="touch-key" data-key="7">7</button>
+          <button class="touch-key" data-key="8">8</button>
+          <button class="touch-key" data-key="9">9</button>
+          <button class="touch-key multiply" data-key="×">×</button>
+          <button class="touch-key" data-key="0">0</button>
+          <button class="touch-key" data-key=",">,</button>
+        </div>
+        <button class="touch-key delete" data-key="backspace">⌫</button>
+      </div>
+      
+      <div style="margin-top: 20px; width: 280px; max-width: 100%; margin-left:auto; margin-right:auto;">
+        <button class="btn primary" id="showWorkBtn" style="width:100%; margin: 0 0 10px 0;" disabled>Lösung anzeigen</button>
+        <div class="button-grid">
+          <button class="btn secondary" id="showSlowWorkBtn" disabled>langsam</button>
+          <button class="btn secondary" id="showSingleWorkBtn" disabled>einzeln</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Rechenweg-Dialog -->
+  <dialog id="workModal">
+    <div class="modal-header">
+      <div class="modal-title" id="workTitle">Lösungsweg</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn secondary" id="nextStepBtn" style="display:none;">Weiter</button>
+        <button class="btn" id="closeWork">Schließen</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="workCaption" class="math-caption"></div>
+      <div id="workContainer" style="overflow:visible; width:100%; display:flex; justify-content:center;"></div>
+    </div>
+  </dialog>
+
+  <script>
+    // --- State Variables ---
+    let activeInput = null;
+
+    // --- Eingabe-Validierung ---
+    function validateTaskInput(input) {
+      // Nur Zahlen, × und Leerzeichen erlauben
+      input.value = input.value.replace(/[^0-9×, ]/g, '');
+      checkInput();
+    }
+
+    function checkInput() {
+      const task = document.getElementById('taskInput').value.trim();
+      const showWorkBtn = document.getElementById('showWorkBtn');
+  const showSlowWorkBtn = document.getElementById('showSlowWorkBtn');
+  const showSingleWorkBtn = document.getElementById('showSingleWorkBtn');
+      
+      // Prüfen ob die Eingabe das Format "Zahl × Zahl" hat (mit oder ohne Leerzeichen)
+      const isValid = /^\d+[,.]?\d*\s*×\s*\d+[,.]?\d*$/.test(task);
+      
+      showWorkBtn.disabled = !isValid;
+  showSlowWorkBtn.disabled = !isValid;
+  if (showSingleWorkBtn) showSingleWorkBtn.disabled = !isValid;
+    }
+
+    function parseTask(taskString) {
+      // Task parsen (z.B. "123 × 456" oder "12,5×34")
+      const parts = taskString.split('×').map(part => part.trim());
+      if (parts.length !== 2) return null;
+      
+      // Komma durch Punkt ersetzen für parseFloat
+      const num1 = parseFloat(parts[0].replace(',', '.'));
+      const num2 = parseFloat(parts[1].replace(',', '.'));
+      
+      if (isNaN(num1) || isNaN(num2) || num1 <= 0 || num2 <= 0) return null;
+      
+      // Für die Rechenwegsfunktion benötigen wir ganze Zahlen
+      // Dezimalzahlen in ganze Zahlen umwandeln
+      const factor1 = parts[0].includes(',') ? Math.pow(10, parts[0].split(',')[1].length) : 1;
+      const factor2 = parts[1].includes(',') ? Math.pow(10, parts[1].split(',')[1].length) : 1;
+      
+      const int1 = Math.round(num1 * factor1);
+      const int2 = Math.round(num2 * factor2);
+      const totalFactor = factor1 * factor2;
+      
+      return {
+        num1: int1,
+        num2: int2,
+        result: int1 * int2,
+        displayResult: num1 * num2,
+        factor: totalFactor,
+        originalNum1: num1,
+        originalNum2: num2
+      };
+    }
+
+    // --- Touch-Tastatur ---
+    function setupTouchKeyboard() {
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const keyboard = document.getElementById('touchKeyboard');
+      
+      if (isTouchDevice) {
+        keyboard.classList.add('active');
+        
+        // Eingabefeld readonly machen für Touch-Geräte
+        document.getElementById('taskInput').setAttribute('readonly', 'true');
+        document.getElementById('taskInput').setAttribute('inputmode', 'none');
+      }
+    }
+
+    function handleTouchKey(key) {
+      const input = document.getElementById('taskInput');
+      
+      if (key === 'backspace') {
+        input.value = input.value.slice(0, -1);
+      } else if (key === '×') {
+        // Nur ein × erlauben, mit 1,5x Abstand links und rechts
+        if (!input.value.includes('×')) {
+          input.value += ' × ';
+        }
+      } else if (key === ',') {
+        // Komma nur hinzufügen wenn kein × nach dem letzten Komma steht
+        const lastMultiplyIndex = input.value.lastIndexOf('×');
+        const lastCommaIndex = input.value.lastIndexOf(',');
+        
+        if (lastMultiplyIndex === -1) {
+          // Noch kein ×, also erste Zahl
+          if (!input.value.includes(',')) {
+            input.value += ',';
+          }
+        } else {
+          // × vorhanden, prüfen ob nach dem × schon ein Komma ist
+          const afterMultiply = input.value.substring(lastMultiplyIndex + 1);
+          if (!afterMultiply.includes(',')) {
+            input.value += ',';
+          }
+        }
+      } else {
+        // Ziffer hinzufügen
+        input.value += key;
+      }
+      
+      validateTaskInput(input);
+    }
+
+    // --- Lösungsweg ---
+    function showWork() {
+      const taskString = document.getElementById('taskInput').value.trim();
+      const taskData = parseTask(taskString);
+      
+      if (!taskData) {
+        return;
+      }
+      
+      const grid = buildLongMultiplicationGrid(String(taskData.num1), String(taskData.num2), taskData.result);
+      
+      // Zahlen für Anzeige formatieren (Punkt durch Komma ersetzen)
+      const displayNum1 = taskData.originalNum1.toString().replace('.', ',');
+      const displayNum2 = taskData.originalNum2.toString().replace('.', ',');
+      
+      document.getElementById('workTitle').textContent = `Lösungsweg für ${displayNum1} × ${displayNum2}`;
+      document.getElementById('workCaption').textContent = '';
+      
+      const container = document.getElementById('workContainer');
+      container.innerHTML = '';
+      
+      // Container für nebeneinander liegende Elemente
+      const flexContainer = document.createElement('div');
+      flexContainer.style.display = 'flex';
+      flexContainer.style.justifyContent = 'center';
+      flexContainer.style.alignItems = 'flex-start';
+      flexContainer.style.gap = '30px';
+      flexContainer.style.flexWrap = 'wrap';
+      
+      flexContainer.appendChild(grid);
+      
+      // Rechts neben dem Rechenfeld die Erklärung/Ergebnis anzeigen
+      if (taskData.originalNum1 % 1 !== 0 || taskData.originalNum2 % 1 !== 0) {
+        // Mit Nachkommastellen: ausführliche Kommastellen-Erklärung
+        const decimalExplanation = createDecimalExplanation(taskData);
+        flexContainer.appendChild(decimalExplanation);
+      } else {
+        // Ohne Nachkommastellen: kompakte Ergebnis-Anzeige
+        const simpleResult = createSimpleResultPanel(taskData);
+        flexContainer.appendChild(simpleResult);
+      }
+      
+      container.appendChild(flexContainer);
+      
+      document.getElementById('workModal').showModal();
+      
+      // Eingabe nach dem Anzeigen des Lösungsweges löschen
+      document.getElementById('taskInput').value = '';
+      checkInput();
+    }
+
+    // --- Langsamer Lösungsweg ---
+    function showSlowWork() {
+      const taskString = document.getElementById('taskInput').value.trim();
+      const taskData = parseTask(taskString);
+      
+      if (!taskData) {
+        return;
+      }
+      
+      // Callback: Kommastellen-Erklärung erst NACH kompletter Animation anzeigen
+      const onAnimationComplete = () => {
+        const container = document.getElementById('workContainer');
+        const flex = container.firstElementChild;
+        if (!flex) return;
+        if (taskData.originalNum1 % 1 !== 0 || taskData.originalNum2 % 1 !== 0) {
+          const decimalExplanation = createDecimalExplanation(taskData);
+          flex.appendChild(decimalExplanation);
+        } else {
+          const simpleResult = createSimpleResultPanel(taskData);
+          flex.appendChild(simpleResult);
+        }
+      };
+
+      const grid = buildLongMultiplicationGridSlow(String(taskData.num1), String(taskData.num2), taskData.result, onAnimationComplete);
+      
+      // Zahlen für Anzeige formatieren (Punkt durch Komma ersetzen)
+      const displayNum1 = taskData.originalNum1.toString().replace('.', ',');
+      const displayNum2 = taskData.originalNum2.toString().replace('.', ',');
+      
+      document.getElementById('workTitle').textContent = `Lösungsweg für ${displayNum1} × ${displayNum2} (Schritt für Schritt)`;
+      document.getElementById('workCaption').textContent = '';
+      
+      const container = document.getElementById('workContainer');
+      container.innerHTML = '';
+      
+      // Container für nebeneinander liegende Elemente
+      const flexContainer = document.createElement('div');
+      flexContainer.style.display = 'flex';
+      flexContainer.style.justifyContent = 'center';
+      flexContainer.style.alignItems = 'flex-start';
+      flexContainer.style.gap = '30px';
+      flexContainer.style.flexWrap = 'wrap';
+      
+      flexContainer.appendChild(grid);
+      
+      container.appendChild(flexContainer);
+      
+      document.getElementById('workModal').showModal();
+      
+      // Eingabe nach dem Anzeigen des Lösungsweges löschen
+      document.getElementById('taskInput').value = '';
+      checkInput();
+    }
+
+    // --- Einzeln (Schritt-für-Schritt per Button) ---
+    function showSingleWork() {
+      const taskString = document.getElementById('taskInput').value.trim();
+      const taskData = parseTask(taskString);
+      
+      if (!taskData) {
+        return;
+      }
+
+      // Callback: Kommastellen-Erklärung erst am Ende
+      const onAnimationComplete = () => {
+        const container = document.getElementById('workContainer');
+        const flex = container.firstElementChild;
+        if (flex) {
+          if (taskData.originalNum1 % 1 !== 0 || taskData.originalNum2 % 1 !== 0) {
+            const decimalExplanation = createDecimalExplanation(taskData);
+            flex.appendChild(decimalExplanation);
+          } else {
+            const simpleResult = createSimpleResultPanel(taskData);
+            flex.appendChild(simpleResult);
+          }
+        }
+        // Weiter-Button ausblenden, wenn fertig
+        const nextBtn = document.getElementById('nextStepBtn');
+        if (nextBtn) nextBtn.style.display = 'none';
+      };
+
+      const grid = buildLongMultiplicationGridSingle(String(taskData.num1), String(taskData.num2), taskData.result, onAnimationComplete);
+      
+      // Zahlen für Anzeige formatieren
+      const displayNum1 = taskData.originalNum1.toString().replace('.', ',');
+      const displayNum2 = taskData.originalNum2.toString().replace('.', ',');
+      
+      document.getElementById('workTitle').textContent = `Lösungsweg für ${displayNum1} × ${displayNum2} (Einzeln)`;
+      document.getElementById('workCaption').textContent = '';
+      
+      const container = document.getElementById('workContainer');
+      container.innerHTML = '';
+      
+      const flexContainer = document.createElement('div');
+      flexContainer.style.display = 'flex';
+      flexContainer.style.justifyContent = 'center';
+      flexContainer.style.alignItems = 'flex-start';
+      flexContainer.style.gap = '30px';
+      flexContainer.style.flexWrap = 'wrap';
+      
+      flexContainer.appendChild(grid);
+      container.appendChild(flexContainer);
+      
+      document.getElementById('workModal').showModal();
+
+      // Weiter-Button sichtbar machen und Handler setzen
+      const nextBtn = document.getElementById('nextStepBtn');
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.onclick = () => advanceSingleStep();
+      
+      // Eingabe leeren
+      document.getElementById('taskInput').value = '';
+      checkInput();
+    }
+
+    // Baut das Grid wie slow, aber startet keine Autoplay-Animation
+    function buildLongMultiplicationGridSingle(aStr, bStr, resultNumber, onAnimationComplete) {
+      const grid = buildLongMultiplicationGrid(aStr, bStr, resultNumber);
+
+      const a = aStr.split('').map(n => +n);
+      const b = bStr.split('').map(n => +n);
+      const rows = grid.querySelectorAll('tr');
+
+      // Finde Aufgaben-Zeile
+      let taskRowIndex = -1;
+      rows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
+        for (let cell of cells) {
+          if (cell.innerHTML && cell.innerHTML.includes('×')) {
+            taskRowIndex = rowIndex;
+            break;
+          }
+        }
+      });
+
+      // Inhalte verstecken und data-original füllen
+      rows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell) => {
+          if (cell.innerHTML && cell.innerHTML.trim()) {
+            cell.setAttribute('data-original', cell.innerHTML);
+            if (rowIndex !== taskRowIndex) {
+              cell.innerHTML = '';
+              cell.style.opacity = '0.3';
+            }
+          }
+        });
+      });
+
+      // Sequenz generieren und global speichern
+      const sequence = [];
+      createSlowAnimationSequence(grid, a, b, sequence, taskRowIndex);
+      window.__singleSequence = sequence;
+      window.__singleIndex = 0;
+      window.__singleOnComplete = onAnimationComplete;
+
+      return grid;
+    }
+
+    // Einen Schritt weiter – carries/addition-carries werden automatisch ohne Extra-Klick durchgezogen
+    function advanceSingleStep() {
+      const seq = window.__singleSequence || [];
+      let idx = window.__singleIndex || 0;
+      const onComplete = window.__singleOnComplete;
+      if (idx >= seq.length) return;
+
+      const runStep = () => {
+        if (idx >= seq.length) {
+          if (typeof onComplete === 'function') try { onComplete(); } catch(e) { console.error(e); }
+          return;
+        }
+        const item = seq[idx];
+        const element = item.element;
+        if (element && element.getAttribute('data-original')) {
+          element.style.opacity = '1';
+          element.innerHTML = element.getAttribute('data-original');
+          let bgColor = '#fef3c7';
+          if (item.type === 'result-digit' || item.type === 'equals') bgColor = '#dcfce7';
+          if (item.type === 'carry' || item.type === 'addition-carry') bgColor = '#fed7e2';
+          element.style.background = bgColor;
+          element.style.transition = 'background 0.5s ease';
+          setTimeout(() => { element.style.background = ''; }, 500);
+        }
+        idx += 1;
+        window.__singleIndex = idx;
+
+        // Kette automatisch weiter, solange nächster Schritt ein Übertrag ist
+        const next = seq[idx];
+        if (next && (next.type === 'carry' || next.type === 'addition-carry')) {
+          // ohne Wartezeit weiter
+          runStep();
+        }
+      };
+
+      runStep();
+      // Falls wir nach Ketten-Ende wirklich fertig sind
+      if (idx >= seq.length) {
+        if (typeof onComplete === 'function') try { onComplete(); } catch(e) { console.error(e); }
+      }
+    }
+
+    // --- Rechenweg-Generator (aus der ursprünglichen Datei übernommen und angepasst) ---
+    function buildLongMultiplicationGrid(aStr, bStr, resultNumber) {
+      const a = aStr.split('').map(n => +n);
+      const b = bStr.split('').map(n => +n);
+      const aLen = a.length, bLen = b.length;
+
+      function multiplyRow(d) {
+        let carry = 0;
+        const out = [];
+        const carries = new Array(aLen).fill(null);
+        let leadingCarry = 0;
+        
+        // Von rechts nach links rechnen
+        for (let i = aLen - 1; i >= 0; i--) {
+          const prod = a[i] * d + carry;
+          out.unshift(prod % 10);
+          carry = Math.floor(prod / 10);
+          
+          // Übertrag für Position i wird bei Position i-1 gespeichert (eine Stelle links)
+          if (carry > 0 && i > 0) {
+            carries[i - 1] = carry;
+          }
+        }
+        
+        if (carry > 0) {
+          leadingCarry = carry;
+          while (carry > 0) {
+            out.unshift(carry % 10);
+            carry = Math.floor(carry / 10);
+          }
+        }
+        return { digits: out, carries: carries, leadingCarry };
+      }
+
+      // Teilprodukte inkl. verwendeter Ziffer (für Farbe nach Stellenwert)
+      const partials = [];
+      for (let k = bLen - 1; k >= 0; k--) {
+        const digit = b[k];
+        const position = bLen - 1 - k; // 0=erste Zeile (Einer), 1=zweite Zeile (Zehner), 2=dritte Zeile (Hunderter)
+        let stellenKlasse = 'muted';
+        if (position === 0) stellenKlasse = 'stelle-einer';
+        else if (position === 1) stellenKlasse = 'stelle-zehner';
+        else if (position === 2) stellenKlasse = 'stelle-hunderter';
+        else if (position === 3) stellenKlasse = 'stelle-tausender';
+        else if (position === 4) stellenKlasse = 'stelle-zehntausender';
+  else if (position === 5) stellenKlasse = 'stelle-hunderttausender';
+  else if (position === 6) stellenKlasse = 'stelle-million';
+  else if (position === 7) stellenKlasse = 'stelle-zehnmillionen';
+        
+        const result = multiplyRow(digit);
+        partials.push({ shift: (bLen - 1 - k), digits: result.digits, digit, stellenKlasse, carries: result.carries, leadingCarry: result.leadingCarry });
+      }
+
+      const resultStr = String(resultNumber);
+      // HINZUGEFÜGT: +1 für möglichen Übertrag der letzten Multiplikation
+      const totalCols = Math.max(aLen + 1 + bLen, resultStr.length, ...partials.map(p => p.digits.length + p.shift)) + 1;
+
+      function placeRow(tr, fromRight, digits, cls) {
+        const start = totalCols - digits.length - fromRight;
+        for (let c = 0; c < totalCols; c++) {
+          const td = document.createElement('td');
+          if (c >= start && c < start + digits.length) {
+            td.textContent = digits[c - start];
+            if (cls) td.classList.add(cls);
+          }
+          tr.appendChild(td);
+        }
+      }
+
+      // Berechne die Überträge für die Addition der Teilprodukte
+      function calculateCarries() {
+        const carries = [];
+        let carry = 0;
+        for (let col = totalCols - 1; col >= 0; col--) {
+          let sum = carry;
+          partials.forEach(p => {
+            const digitPos = col - (totalCols - p.digits.length - p.shift);
+            if (digitPos >= 0 && digitPos < p.digits.length) {
+              sum += p.digits[digitPos];
+            }
+          });
+          carry = Math.floor(sum / 10);
+          // Übertrag geht immer eine Spalte nach links (col-1).
+          // Ausnahme: ganz linke Spalte (col==0) – dort in Spalte 0 ablegen (zusätzliche linke Spalte).
+          if (carry > 0) {
+            const target = (col > 0) ? (col - 1) : 0;
+            carries[target] = carry;
+          }
+        }
+        return carries;
+      }
+
+      const carries = calculateCarries();
+
+      const table = document.createElement('table');
+      table.className = 'grid-math';
+
+      // Übertrag-Zeilen oberhalb der Tabelle (für jede Multiplikation)
+      const orderedPartials = [...partials].reverse(); // Umgekehrte Reihenfolge
+      
+      orderedPartials.forEach((p, partialIndex) => {
+        const carryRowTr = document.createElement('tr');
+        for (let c = 0; c < totalCols; c++) {
+          const td = document.createElement('td');
+          td.style.border = 'none';
+          td.style.fontSize = '10px';
+          td.style.color = 'var(--muted)';
+          td.style.height = '18px';
+          td.style.padding = '0';
+          
+          // Position der ersten Zahl in der Kopfzeile finden
+          const aStartPos = Math.max(0, totalCols - bLen - 1 - aLen);
+          
+          // Ist diese Spalte über der ersten Zahl?
+          if (c >= aStartPos && c < aStartPos + aLen) {
+            const positionInA = c - aStartPos; // 0 = linkeste Ziffer von a
+            
+            // Direkt den Übertrag an dieser Position anzeigen
+            if (positionInA < p.carries.length && p.carries[positionInA] !== null) {
+              td.innerHTML = `<span class="${p.stellenKlasse}" style="font-size:10px; opacity:0.7;">${p.carries[positionInA]}</span>`;
+            }
+          }
+          // leadingCarry ganz links vor a eintragen, falls vorhanden
+          if (p.leadingCarry && c === aStartPos - 1 && c >= 0) {
+            td.innerHTML = `<span class="${p.stellenKlasse}" style="font-size:10px; opacity:0.7;">${p.leadingCarry}</span>`;
+          }
+          carryRowTr.appendChild(td);
+        }
+        table.appendChild(carryRowTr);
+      });
+
+      // Kopfzeile: a × b  (jedes b-Digit mit Stellenwert-Farbe)
+      const header = document.createElement('tr');
+      for (let c = 0; c < totalCols; c++) header.appendChild(document.createElement('td'));
+      let pos = totalCols - bLen;
+      for (let i = 0; i < bLen; i++) {
+        const d = b[i];
+        const position = bLen - 1 - i; // Position von rechts: 0=rechteste (Einer), 1=mittlere (Zehner), 2=linkeste (Hunderter)
+        let stellenKlasse = 'muted';
+        if (position === 0) stellenKlasse = 'stelle-einer';
+        else if (position === 1) stellenKlasse = 'stelle-zehner';
+        else if (position === 2) stellenKlasse = 'stelle-hunderter';
+        else if (position === 3) stellenKlasse = 'stelle-tausender';
+        else if (position === 4) stellenKlasse = 'stelle-zehntausender';
+  else if (position === 5) stellenKlasse = 'stelle-hunderttausender';
+  else if (position === 6) stellenKlasse = 'stelle-million';
+  else if (position === 7) stellenKlasse = 'stelle-zehnmillionen';
+        
+        header.children[pos + i].innerHTML = `<span class="${stellenKlasse}">${d}</span>`;
+      }
+      if (pos - 1 >= 0) header.children[pos - 1].innerHTML = `<span class="muted">×</span>`;
+      const aStart = Math.max(0, pos - 1 - aLen);
+      for (let i = 0; i < aLen; i++) {
+        header.children[aStart + i].textContent = a[i];
+      }
+      table.appendChild(header);
+
+      // Trennlinie nach der Kopfzeile
+      const headerSeparatorTr = document.createElement('tr');
+      for (let c = 0; c < totalCols; c++) {
+        const td = document.createElement('td');
+        td.style.borderBottom = '1px solid var(--border-strong)';
+        td.style.height = '2px';
+        headerSeparatorTr.appendChild(td);
+      }
+      table.appendChild(headerSeparatorTr);
+
+      // Teilprodukte: Farbe nach Stellenwert
+      partials.forEach(p => {
+        const tr = document.createElement('tr');
+        placeRow(tr, p.shift, p.digits, p.stellenKlasse);
+        table.appendChild(tr);
+      });
+
+      // Additions-Übertragszeile (direkt über dem Endergebnis)
+      const carryTr = document.createElement('tr');
+      carryTr.setAttribute('data-addition-carries', 'true');
+      for (let c = 0; c < totalCols; c++) {
+        const td = document.createElement('td');
+        // etwas kleinere Schrift
+        if (carries[c]) {
+          td.innerHTML = `<span class="muted" style="font-size:10px">${carries[c]}</span>`;
+        }
+        // Doppelte Linie unterhalb der Additions-Übertragszeile
+        td.style.borderBottom = '3px double var(--border-strong)';
+        carryTr.appendChild(td);
+      }
+      table.appendChild(carryTr);
+
+      // Ergebniszeile mit '=' links
+      const resultTr = document.createElement('tr');
+      for (let c = 0; c < totalCols; c++) resultTr.appendChild(document.createElement('td'));
+      resultTr.children[0].innerHTML = '<span class="muted">=</span>';
+      const rStart = totalCols - resultStr.length;
+      for (let i = 0; i < resultStr.length; i++) {
+        const td = resultTr.children[rStart + i];
+        td.innerHTML = `<span style="font-weight: 900; color: #0f172a;">${resultStr[i]}</span>`;
+      }
+      table.appendChild(resultTr);
+
+      return table;
+    }
+
+    // --- Langsame Multiplikationsgrid ---
+    function buildLongMultiplicationGridSlow(aStr, bStr, resultNumber, onAnimationComplete) {
+      // Erstelle das normale Grid - OHNE es zu verändern
+      const grid = buildLongMultiplicationGrid(aStr, bStr, resultNumber);
+      
+      const a = aStr.split('').map(n => +n);
+      const b = bStr.split('').map(n => +n);
+      
+      // Sammle alle Zellen und verstecke sie (außer der Aufgabe)
+      const rows = grid.querySelectorAll('tr');
+      const animationSequence = [];
+      
+      // Finde die Aufgaben-Zeile (enthält ×)
+      let taskRowIndex = -1;
+      rows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
+        for (let cell of cells) {
+          if (cell.innerHTML && cell.innerHTML.includes('×')) {
+            taskRowIndex = rowIndex;
+            break;
+          }
+        }
+      });
+      
+      // Verstecke alle Zellen außer der Aufgabe
+      rows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell, colIndex) => {
+          if (cell.innerHTML && cell.innerHTML.trim()) {
+            cell.setAttribute('data-original', cell.innerHTML);
+            
+            if (rowIndex !== taskRowIndex) {
+              // Nicht die Aufgabe - verstecken
+              cell.innerHTML = '';
+              cell.style.opacity = '0.3';
+            }
+          }
+        });
+      });
+      
+      // Erstelle die Animationssequenz basierend auf schriftlicher Multiplikation
+      createSlowAnimationSequence(grid, a, b, animationSequence, taskRowIndex);
+      
+      // Starte die Animation
+      setTimeout(() => {
+        executeSlowAnimation(animationSequence, 0, onAnimationComplete);
+      }, 1000);
+      
+      return grid;
+    }
+
+    function createSlowAnimationSequence(grid, a, b, sequence, taskRowIndex) {
+      const rows = grid.querySelectorAll('tr');
+      
+      // 1. Für jede Ziffer von b (von rechts nach links) - Teilprodukte
+      for (let bIndex = b.length - 1; bIndex >= 0; bIndex--) {
+        const bDigit = b[bIndex];
+        
+        // Finde die entsprechende Teilprodukt-Zeile
+        let partialRowIndex = -1;
+        let foundPartials = 0;
+        
+        for (let rowIndex = taskRowIndex + 1; rowIndex < rows.length - 1; rowIndex++) {
+          const row = rows[rowIndex];
+          let hasContent = false;
+          
+          for (let cell of row.children) {
+            if (cell.getAttribute('data-original') && cell.getAttribute('data-original').trim()) {
+              hasContent = true;
+              break;
+            }
+          }
+          
+          if (hasContent) {
+            if (foundPartials === (b.length - 1 - bIndex)) {
+              partialRowIndex = rowIndex;
+              break;
+            }
+            foundPartials++;
+          }
+        }
+        
+        if (partialRowIndex >= 0) {
+          // Simuliere die Multiplikation: bDigit × jede Ziffer von a (VON RECHTS NACH LINKS!)
+          let carry = 0;
+          
+          for (let aIndex = a.length - 1; aIndex >= 0; aIndex--) {
+            const aDigit = a[aIndex];
+            const product = aDigit * bDigit + carry;
+            const resultDigit = product % 10;
+            carry = Math.floor(product / 10);
+            
+            // 1. Finde die Zelle für diese Ergebnisziffer (von rechts nach links suchen!)
+            const partialRow = rows[partialRowIndex];
+            let foundResultCell = false;
+            
+            // Suche von rechts nach links in der Teilprodukt-Zeile
+            for (let colIndex = partialRow.children.length - 1; colIndex >= 0 && !foundResultCell; colIndex--) {
+              const cell = partialRow.children[colIndex];
+              const original = cell.getAttribute('data-original');
+              if (original && original.includes(resultDigit.toString()) && !cell.hasAttribute('data-used')) {
+                // Prüfe, ob diese Zelle an der richtigen Position ist
+                const expectedCol = calculateExpectedColumn(aIndex, bIndex, a.length, b.length, partialRow.children.length);
+                if (Math.abs(colIndex - expectedCol) <= 1) { // Kleine Toleranz für Position
+                  cell.setAttribute('data-used', 'true');
+                  sequence.push({
+                    type: 'partial-digit',
+                    element: cell,
+                    calculation: `${bDigit} × ${aDigit}${carry > 0 && carry !== Math.floor(product/10) ? ` + ${carry - Math.floor(product/10)}` : ''} = ${product} → ${resultDigit}`,
+                    order: (b.length - 1 - bIndex) * 1000 + (a.length - 1 - aIndex) * 10 + 1
+                  });
+                  foundResultCell = true;
+                }
+              }
+            }
+            
+            // 2. Übertrag direkt nach der Ziffer (nur wenn noch Stellen links sind!)
+            if (carry > 0 && aIndex > 0) {
+              // Bestimme die Stellenwert-Klasse für diese b-Ziffer
+              const position = b.length - 1 - bIndex; // Position von rechts
+              let stellenKlasse = 'muted';
+              if (position === 0) stellenKlasse = 'stelle-einer';
+              else if (position === 1) stellenKlasse = 'stelle-zehner';
+              else if (position === 2) stellenKlasse = 'stelle-hunderter';
+              else if (position === 3) stellenKlasse = 'stelle-tausender';
+              else if (position === 4) stellenKlasse = 'stelle-zehntausender';
+              else if (position === 5) stellenKlasse = 'stelle-hunderttausender';
+              else if (position === 6) stellenKlasse = 'stelle-million';
+              else if (position === 7) stellenKlasse = 'stelle-zehnmillionen';
+              
+              // Suche den Übertrag mit der passenden Stellenwert-Klasse
+              let foundCarry = false;
+              for (let carryRowIndex = 0; carryRowIndex < taskRowIndex && !foundCarry; carryRowIndex++) {
+                const carryRow = rows[carryRowIndex];
+                // Auch hier von rechts nach links suchen!
+                for (let colIndex = carryRow.children.length - 1; colIndex >= 0 && !foundCarry; colIndex--) {
+                  const cell = carryRow.children[colIndex];
+                  const original = cell.getAttribute('data-original');
+                  
+                  if (original && original.includes(carry.toString()) && 
+                      original.includes(stellenKlasse) && 
+                      !cell.hasAttribute('data-used')) {
+                    cell.setAttribute('data-used', 'true');
+                    sequence.push({
+                      type: 'carry',
+                      element: cell,
+                      calculation: `Übertrag: ${carry} (${stellenKlasse})`,
+                      order: (b.length - 1 - bIndex) * 1000 + (a.length - 1 - aIndex) * 10 + 2
+                    });
+                    foundCarry = true;
+                  }
+                }
+              }
+            }
+          }
+          
+          // 3. Führender Übertrag (falls noch einer übrig ist)
+          // Jetzt in der oberen Carry-Zeile (links vor a) suchen und animieren – nicht in der Teilprodukt-Zeile.
+          if (carry > 0) {
+            // Bestimme die Stellenwert-Klasse für diese b-Ziffer
+            const position = b.length - 1 - bIndex; // Position von rechts
+            let stellenKlasse = 'muted';
+            if (position === 0) stellenKlasse = 'stelle-einer';
+            else if (position === 1) stellenKlasse = 'stelle-zehner';
+            else if (position === 2) stellenKlasse = 'stelle-hunderter';
+            else if (position === 3) stellenKlasse = 'stelle-tausender';
+            else if (position === 4) stellenKlasse = 'stelle-zehntausender';
+            else if (position === 5) stellenKlasse = 'stelle-hunderttausender';
+            else if (position === 6) stellenKlasse = 'stelle-million';
+            else if (position === 7) stellenKlasse = 'stelle-zehnmillionen';
+
+            // Trage den führenden Übertrag aus der passenden oberen Carry-Zeile ein (die gehört zu dieser Teilprodukt-Zeile)
+            // Suche von links nach dem leadingCarry-Markup in den Zeilen oberhalb taskRowIndex
+            let foundTopCarry = false;
+            for (let carryRowIndex = 0; carryRowIndex < taskRowIndex && !foundTopCarry; carryRowIndex++) {
+              const carryRow = rows[carryRowIndex];
+              for (let colIndex = 0; colIndex < carryRow.children.length && !foundTopCarry; colIndex++) {
+                const cell = carryRow.children[colIndex];
+                const original = cell.getAttribute('data-original');
+                if (original && original.includes(stellenKlasse) && original.includes(carry.toString()) && !cell.hasAttribute('data-used')) {
+                  cell.setAttribute('data-used', 'true');
+                  sequence.push({
+                    type: 'carry',
+                    element: cell,
+                    calculation: `Führender Übertrag: ${carry}`,
+                    // Übertrag minimal VOR der letzten Ziffer der Zeile animieren
+                    order: (b.length - 1 - bIndex) * 1000 + (a.length) * 10 + 0.9
+                  });
+                  foundTopCarry = true;
+                }
+              }
+            }
+
+            // Zusätzlich: die linkeste Ziffer in der Teilprodukt-Zeile sichtbar machen (der führende Übertrag als Ziffer)
+            const partialRow = rows[partialRowIndex];
+            for (let colIndex = 0; colIndex < partialRow.children.length; colIndex++) {
+              const cell = partialRow.children[colIndex];
+              const original = cell.getAttribute('data-original');
+              if (original && original.includes(carry.toString()) && !cell.hasAttribute('data-used')) {
+                cell.setAttribute('data-used', 'true');
+                sequence.push({
+                  type: 'partial-digit',
+                  element: cell,
+                  calculation: `Führender Übertrag als Ziffer: ${carry}`,
+                  // letzte Ziffer der Zeile kommt direkt nach dem vorgezogenen Übertrag
+                  order: (b.length - 1 - bIndex) * 1000 + (a.length) * 10 + 1
+                });
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      // 2. Result-Digits hinzufügen
+      // rows ist bereits am Anfang der Funktion definiert
+      const resultRowIndex = rows.length - 1;
+      const resultRow = rows[resultRowIndex];
+  const additionCarryRow = rows[resultRowIndex - 1];
+      
+      // Sammle alle Ergebnisziffern von RECHTS nach LINKS
+      const resultCells = [];
+      for (let colIndex = resultRow.children.length - 1; colIndex >= 0; colIndex--) {
+        const cell = resultRow.children[colIndex];
+        const original = cell.getAttribute('data-original');
+        
+        // Extrahiere den reinen Text aus dem HTML
+        let extractedText = '';
+        if (original && original.trim() && original !== 'null') {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = original;
+          extractedText = tempDiv.textContent || tempDiv.innerText || '';
+        }
+        
+        // Prüfe ob der extrahierte Text eine reine Ziffer ist
+        const isDigit = /^\d+$/.test(extractedText.trim());
+        
+        if (isDigit) {
+          resultCells.push({ cell, colIndex });
+        }
+      }
+      
+      // Füge Result-Digits zur Sequenz hinzu (rechts → links: Einer zuerst)
+      for (let i = 0; i < resultCells.length; i++) {
+        const item = resultCells[i]; // i=0 ist die rechteste Ziffer (Einer)
+        const orderValue = 10000 + i; // steigende Order: Einer (10000), Zehner (10001), ...
+
+        // Falls ein Additions-Übertrag direkt über dieser Ziffer existiert, animiere ihn unmittelbar davor
+        if (additionCarryRow) {
+          const carryCell = additionCarryRow.children[item.cell.cellIndex];
+          if (carryCell && carryCell.getAttribute('data-original')) {
+            sequence.push({
+              type: 'addition-carry',
+              element: carryCell,
+              calculation: 'Additions-Übertrag',
+              order: orderValue - 0.1
+            });
+          }
+        }
+
+        sequence.push({
+          type: 'result-digit',
+          element: item.cell,
+          calculation: `Endergebnis Stelle (von rechts) ${i + 1}`,
+          order: orderValue
+        });
+      }
+
+      // Gleichheitszeichen am Ende wieder einblenden (erst ganz zum Schluss)
+      const equalsCell = resultRow.children[0];
+      if (equalsCell && equalsCell.getAttribute('data-original') && equalsCell.getAttribute('data-original').includes('=')) {
+        sequence.push({
+          type: 'equals',
+          element: equalsCell,
+          calculation: '=',
+          order: 10000 + resultCells.length + 0.99
+        });
+      }
+      
+      // Sortiere die Sequenz nach der Reihenfolge
+      sequence.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      // CARRY-LOGIK WIEDER AKTIVIERT - sollte jetzt funktionieren
+      // Jetzt da wir eine extra Spalte haben, sollten alle Carries korrekt platziert werden
+    }
+
+    function calculateExpectedColumn(aIndex, bIndex, aLen, bLen, totalCols) {
+      // Berechne die erwartete Spaltenposition basierend auf der Multiplikationslogik
+      const shift = bLen - 1 - bIndex;
+      const colFromRight = aLen - 1 - aIndex + shift;
+      return totalCols - 1 - colFromRight;
+    }
+
+    function executeSlowAnimation(sequence, index, onComplete) {
+      if (index >= sequence.length) {
+        if (typeof onComplete === 'function') {
+          try { onComplete(); } catch (e) { console.error(e); }
+        }
+        return;
+      }
+      
+      const item = sequence[index];
+      const element = item.element;
+      
+      // DEBUG: Zeige was gerade animiert wird
+      if (item.type === 'result-digit') {
+        const value = element.getAttribute('data-original');
+        console.log(`ANIMATING step ${index}: type=${item.type}, order=${item.order}, value="${value}"`);
+      }
+      
+      if (element && element.getAttribute('data-original')) {
+        // Element sichtbar machen
+        element.style.opacity = '1';
+        element.innerHTML = element.getAttribute('data-original');
+        
+        // Verschiedene Farben je nach Typ
+        let bgColor = '#fef3c7'; // Standard gelb
+        if (item.type === 'result-digit' || item.type === 'equals') bgColor = '#dcfce7'; // Grün für Endergebnis/=
+        if (item.type === 'carry' || item.type === 'addition-carry') bgColor = '#fed7e2'; // Rosa für Übertrag
+        
+        element.style.background = bgColor;
+        element.style.transition = 'background 0.5s ease';
+        
+        setTimeout(() => {
+          element.style.background = '';
+
+          // Verzögerung dynamisch wählen: vor einem Übertrag (carry/addition-carry) keine 3s Pause
+          const nextItem = sequence[index + 1];
+          // Standard-Verzögerung: 3s, Summen (result-digit) unten: 2s
+          let nextDelay = (nextItem && nextItem.type === 'result-digit') ? 2500 : 3000;
+          // Vor einem Übertrag keine Pause
+          if (nextItem && (nextItem.type === 'carry' || nextItem.type === 'addition-carry')) {
+            nextDelay = 0;
+          }
+          // Spezieller Fall (Langsam): führender Übertrag -> letzte Ziffer der Teilprodukt-Zeile
+          // Nur eine kurze Pause zwischen dem Übertrag und der letzten Ziffer
+          const isLeadingCarry = item && item.type === 'carry' && item.calculation && item.calculation.toLowerCase().includes('führender übertrag');
+          const isFollowingFinalDigit = nextItem && nextItem.type === 'partial-digit' && nextItem.calculation && nextItem.calculation.toLowerCase().includes('führender übertrag als ziffer');
+          if (isLeadingCarry && isFollowingFinalDigit) {
+            nextDelay = 600; // kurze Pause
+          }
+          // Nach einem Übertrag: Standard-Pause beibehalten
+
+          setTimeout(() => {
+            executeSlowAnimation(sequence, index + 1, onComplete);
+          }, nextDelay);
+        }, 500);
+      } else {
+        // Element überspringen
+        setTimeout(() => {
+          executeSlowAnimation(sequence, index + 1, onComplete);
+        }, 100);
+      }
+    }
+
+    function executeAnimation(sequence, index) {
+      if (index >= sequence.length) return;
+      
+      const item = sequence[index];
+      const element = item.element;
+      
+      if (element && element.getAttribute('data-original')) {
+        // Element sichtbar machen
+        element.style.opacity = '1';
+        element.innerHTML = element.getAttribute('data-original');
+        
+        // Verschiedene Farben je nach Typ
+        let bgColor = '#fef3c7'; // Standard gelb
+        if (item.type === 'result-digit') bgColor = '#dcfce7'; // Grün für Endergebnis
+        if (item.type === 'carry' || item.type === 'addition-carry') bgColor = '#fed7e2'; // Rosa für Übertrag
+        
+        element.style.background = bgColor;
+        element.style.transition = 'background 0.5s ease';
+        
+        setTimeout(() => {
+          element.style.background = '';
+          
+          // Nächstes Element nach 3 Sekunden
+          setTimeout(() => {
+            executeAnimation(sequence, index + 1);
+          }, 3000);
+        }, 500);
+      } else {
+        // Element überspringen
+        setTimeout(() => {
+          executeAnimation(sequence, index + 1);
+        }, 100);
+      }
+    }
+
+    // --- Kommastellenberechnung ---
+    function createDecimalExplanation(taskData) {
+      const container = document.createElement('div');
+      container.style.marginTop = '0';
+      container.style.textAlign = 'left';
+      container.style.minWidth = '300px';
+      container.style.maxWidth = '400px';
+      
+      // Nachkommastellen ermitteln
+      const num1Str = taskData.originalNum1.toString();
+      const num2Str = taskData.originalNum2.toString();
+      
+      const decimals1 = num1Str.includes('.') ? num1Str.split('.')[1].length : 0;
+      const decimals2 = num2Str.includes('.') ? num2Str.split('.')[1].length : 0;
+      const totalDecimals = decimals1 + decimals2;
+      
+      // Titel
+      const title = document.createElement('div');
+      title.style.fontSize = '16px';
+      title.style.fontWeight = '800';
+      title.style.color = 'var(--muted)';
+      title.style.marginBottom = '15px';
+      title.textContent = 'Kommastellenberechnung:';
+      container.appendChild(title);
+      
+      // Zahlen mit markierten Nachkommastellen
+      const numberDisplay = document.createElement('div');
+      numberDisplay.style.fontSize = '18px';
+      numberDisplay.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+      numberDisplay.style.marginBottom = '10px';
+      
+      const displayNum1 = num1Str.replace('.', ',');
+      const displayNum2 = num2Str.replace('.', ',');
+      
+      if (decimals1 > 0) {
+        const parts1 = displayNum1.split(',');
+        const spacedDecimals1 = parts1[1].split('').map(digit => 
+          `<span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px; color: #92400e; margin: 0 1px;">${digit}</span>`
+        ).join('');
+        numberDisplay.innerHTML += `<span style="letter-spacing: 2px;">${parts1[0]},${spacedDecimals1}</span> (${decimals1} Nachkommastelle${decimals1 > 1 ? 'n' : ''})`;
+      } else {
+        numberDisplay.innerHTML += `<span style="letter-spacing: 2px;">${displayNum1}</span> (0 Nachkommastellen)`;
+      }
+      
+      numberDisplay.innerHTML += '<br>';
+      
+      if (decimals2 > 0) {
+        const parts2 = displayNum2.split(',');
+        const spacedDecimals2 = parts2[1].split('').map(digit => 
+          `<span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px; color: #92400e; margin: 0 1px;">${digit}</span>`
+        ).join('');
+        numberDisplay.innerHTML += `<span style="letter-spacing: 2px;">${parts2[0]},${spacedDecimals2}</span> (${decimals2} Nachkommastelle${decimals2 > 1 ? 'n' : ''})`;
+      } else {
+        numberDisplay.innerHTML += `<span style="letter-spacing: 2px;">${displayNum2}</span> (0 Nachkommastellen)`;
+      }
+      
+      container.appendChild(numberDisplay);
+      
+      // Berechnung
+      const calculation = document.createElement('div');
+      calculation.style.fontSize = '16px';
+      calculation.style.margin = '10px 0';
+      calculation.style.fontWeight = '700';
+      calculation.textContent = `${decimals1} + ${decimals2} = ${totalDecimals} Nachkommastellen im Ergebnis`;
+      container.appendChild(calculation);
+      
+      // Ergebnis mit Komma
+      const resultDisplay = document.createElement('div');
+      resultDisplay.style.fontSize = '18px';
+      resultDisplay.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+      resultDisplay.style.marginTop = '15px';
+      resultDisplay.style.fontWeight = '900';
+      
+      const resultStr = taskData.result.toString();
+      if (totalDecimals > 0) {
+        const resultWithDecimal = taskData.displayResult.toFixed(totalDecimals).replace('.', ',');
+        const parts = resultWithDecimal.split(',');
+        const spacedResultDecimals = parts[1].split('').map(digit => 
+          `<span style="background: #fef3c7; padding: 2px 4px; border-radius: 4px; color: #92400e; margin: 0 1px;">${digit}</span>`
+        ).join('');
+        resultDisplay.innerHTML = `Ergebnis: <span style="letter-spacing: 2px;">${parts[0]},${spacedResultDecimals}</span>`;
+      } else {
+        resultDisplay.innerHTML = `Ergebnis: <span style="letter-spacing: 2px;">${taskData.displayResult}</span>`;
+      }
+      
+      container.appendChild(resultDisplay);
+      
+      return container;
+    }
+
+    // --- Kompakte Ergebnis-Anzeige (für Aufgaben ohne Nachkommastellen) ---
+    function createSimpleResultPanel(taskData) {
+      const container = document.createElement('div');
+      container.style.marginTop = '0';
+      container.style.textAlign = 'left';
+      container.style.minWidth = '300px';
+      container.style.maxWidth = '400px';
+      // Einheitliches Layout wie bei createDecimalExplanation -> nur Ergebnis-Zeile
+      const resultDisplay = document.createElement('div');
+      resultDisplay.style.fontSize = '18px';
+      resultDisplay.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+      resultDisplay.style.marginTop = '15px';
+      resultDisplay.style.fontWeight = '900';
+      // Gleiches Markup wie dort bei totalDecimals=0
+      resultDisplay.innerHTML = `Ergebnis: <span style="letter-spacing: 2px;">${taskData.displayResult}</span>`;
+      container.appendChild(resultDisplay);
+
+      return container;
+    }
+
+    // --- Event Listeners ---
+    
+    // Eingabefeld
+    document.getElementById('taskInput').addEventListener('input', (e) => {
+      validateTaskInput(e.target);
+    });
+    
+    // Focus-Event für Touch-Tastatur
+    document.getElementById('taskInput').addEventListener('focus', (e) => {
+      activeInput = e.target;
+    });
+    
+    // Enter-Taste im Eingabefeld
+    document.getElementById('taskInput').addEventListener('keypress', (e) => {
+      // Nur erlaubte Zeichen: Ziffern, ×, Komma, Leerzeichen
+      if (e.key === 'Enter' && !document.getElementById('showWorkBtn').disabled) {
+        showWork();
+        return;
+      }
+      
+      const allowedChars = /[0-9×, ]/;
+      if (!allowedChars.test(e.key)) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Nur ein × erlauben
+      if (e.key === '×' && e.target.value.includes('×')) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Komma-Logik
+      if (e.key === ',') {
+        const currentValue = e.target.value;
+        const lastMultiplyIndex = currentValue.lastIndexOf('×');
+        
+        if (lastMultiplyIndex === -1) {
+          // Noch kein ×, also erste Zahl
+          if (currentValue.includes(',')) {
+            e.preventDefault();
+            return;
+          }
+        } else {
+          // × vorhanden, prüfen ob nach dem × schon ein Komma ist
+          const afterMultiply = currentValue.substring(lastMultiplyIndex + 1);
+          if (afterMultiply.includes(',')) {
+            e.preventDefault();
+            return;
+          }
+        }
+      }
+    });
+    
+    // Buttons
+  document.getElementById('showWorkBtn').addEventListener('click', showWork);
+  document.getElementById('showSlowWorkBtn').addEventListener('click', showSlowWork);
+  const singleBtn = document.getElementById('showSingleWorkBtn');
+  if (singleBtn) singleBtn.addEventListener('click', showSingleWork);
+    
+    // Modal
+    document.getElementById('closeWork').addEventListener('click', () => {
+      document.getElementById('workModal').close();
+    });
+    
+    // Touch-Tastatur
+    document.getElementById('touchKeyboard').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('touch-key')) return;
+      
+      const key = e.target.dataset.key;
+      handleTouchKey(key);
+    });
+    
+    // ESC-Taste
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const workModal = document.getElementById('workModal');
+        if (workModal && workModal.open) workModal.close();
+      }
+    });
+    
+    // --- Initialisierung ---
+    setupTouchKeyboard();
+    checkInput();
+  </script>
+</body>
+</html>

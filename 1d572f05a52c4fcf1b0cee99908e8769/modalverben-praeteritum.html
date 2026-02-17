@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modalverben – Übungen (Präteritum & Präsens)</title>
+  <style>
+    :root{--bg:#f7f7fb;--card:#ffffff;--ink:#222;--muted:#667;--ok:#21a179;--bad:#d64545;--accent:#4f46e5}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
+    header{padding:24px 20px 8px}
+    header h1{margin:0 0 6px;font-size:clamp(22px,3.6vw,34px)}
+    header p{margin:0;color:var(--muted)}
+    .wrap{max-width:1100px;margin:0 auto;padding:12px 20px 56px}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.06);padding:18px;margin:14px 0}
+    h2{margin:4px 0 10px;font-size:clamp(18px,2.6vw,24px);color:var(--ink);transition:color .2s ease}
+    .title-help{color:var(--bad)!important}
+    .title-ok{color:var(--ok)!important}
+    .grid{display:grid;gap:14px}
+    .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    button{border:0;border-radius:12px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+    button.secondary{background:#e6e7ff;color:#262b6f}
+    button.ghost{background:transparent;color:var(--accent)}
+    table{border-collapse:collapse;width:100%;background:#fff}
+    th,td{border:1px solid #e6e6ef;padding:8px 10px;text-align:left}
+    th{background:#f1f2ff}
+    input[type="text"], select{width:100%;box-sizing:border-box;padding:8px 10px;border:1px solid #d9d9e6;border-radius:10px;background:#fff}
+    .inline{width:auto;display:inline-block;min-width:160px}
+    .item{display:grid;grid-template-columns:1fr minmax(180px,280px);gap:10px;align-items:center}
+    .feedback{margin-top:8px;font-size:14px}
+    .right{outline:2px solid var(--ok)!important;background:#f3fff9}
+    .wrong{background:#fff4f4}
+    .solution{display:none;margin-top:6px;color:#0b6}
+    .show .solution{display:block}
+    .subtle{font-size:13px;color:var(--muted)}
+    .hint{color:var(--bad)}
+    .congrats{margin-top:16px;padding:12px 14px;border-radius:12px;background:#f3fff9;color:var(--ok);font-weight:700;display:none}
+    .congrats.show{display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Modalverben – Übungen</h1>
+    <p>Aufgaben 1–4. Zuerst <strong>Fehler anzeigen</strong>, danach <strong>Lösungen zeigen</strong>.</p>
+  </header>
+  <div class="wrap">
+
+    <!-- Aufgabe 1 -->
+    <section class="card" id="aufg1">
+      <h2>Aufgabe 1 – Modalverben im Präteritum: Ergänzen Sie die Tabelle.</h2>
+      <p class="subtle">Verben: <em>wollen, können, müssen, dürfen</em>. Schreiben Sie die richtige <strong>Präteritum</strong>-Form.</p>
+      <div class="grid">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>wollen</th>
+              <th>können</th>
+              <th>müssen</th>
+              <th>dürfen</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="controls">
+          <button data-action="mark" data-target="aufg1">Fehler anzeigen</button>
+          <button class="secondary" data-action="solve" data-target="aufg1">Lösungen zeigen</button>
+          <button class="ghost" data-action="reset" data-target="aufg1">Zurücksetzen</button>
+        </div>
+        <div class="feedback" id="fb-aufg1"></div>
+        <div id="a1-solution" class="solution"></div>
+      </div>
+    </section>
+
+    <!-- Aufgabe 2 -->
+    <section class="card" id="aufg2">
+      <h2>Aufgabe 2 – Wählen Sie das richtige Modalverb im <em>Präteritum</em>.</h2>
+      <p class="subtle">Wählen Sie die korrekte gebeugte Form (z. B. <em>wollte</em>, <em>konntest</em> …).</p>
+      <div class="grid" id="a2-list"></div>
+      <div class="controls">
+        <button data-action="mark" data-target="aufg2">Fehler anzeigen</button>
+        <button class="secondary" data-action="solve" data-target="aufg2">Lösungen zeigen</button>
+        <button class="ghost" data-action="reset" data-target="aufg2">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-aufg2"></div>
+    </section>
+
+    <!-- Aufgabe 3 -->
+    <section class="card" id="aufg3">
+      <h2>Aufgabe 3 – Präsens <em>oder</em> Präteritum? Wählen Sie die richtige Form.</h2>
+      <p class="subtle">Die Situation entscheidet über die Zeitform. Wählen Sie die richtige gebeugte Form.</p>
+      <div class="grid" id="a3-list"></div>
+      <div class="controls">
+        <button data-action="mark" data-target="aufg3">Fehler anzeigen</button>
+        <button class="secondary" data-action="solve" data-target="aufg3">Lösungen zeigen</button>
+        <button class="ghost" data-action="reset" data-target="aufg3">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-aufg3"></div>
+    </section>
+
+    <!-- Aufgabe 4 -->
+    <section class="card" id="aufg4">
+      <h2>Aufgabe 4 – Lückentext: Tragen Sie die passenden Modalverben ein.</h2>
+      <p class="subtle">Schreiben Sie die korrekte Form (Präsens oder Präteritum) von <em>dürfen, können, müssen, wollen, sollen, mögen</em>.</p>
+      <div class="grid" id="a4-list"></div>
+      <div class="controls">
+        <button data-action="mark" data-target="aufg4">Fehler anzeigen</button>
+        <button class="secondary" data-action="solve" data-target="aufg4">Lösungen zeigen</button>
+        <button class="ghost" data-action="reset" data-target="aufg4">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-aufg4"></div>
+    </section>
+
+    <div id="congrats" class="congrats">Super! Alle Aufgaben wurden ohne Lösungshilfe korrekt gelöst! 🎉</div>
+
+  </div>
+
+  <script>
+  // ===== Helpers =====
+  const el = sel => document.querySelector(sel);
+  const make = (tag, attrs={}) => Object.assign(document.createElement(tag), attrs);
+  const clean = s => (s||'').toString().trim().toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+  const allFilled = (section)=>[...section.querySelectorAll('input,select')]
+    .every(n=> (n.tagName==='SELECT'? n.value!=='' : clean(n.value)!==''));
+  const setHeadingClass = (box, cls)=>{
+    const h = box.querySelector('h2'); if(!h) return;
+    h.classList.remove('title-help','title-ok');
+    if(cls) h.classList.add(cls);
+  };
+  const updateGlobalCongrats = ()=>{
+    const sections = ['aufg1','aufg2','aufg3','aufg4'].map(id=>el('#'+id));
+    const allOk = sections.every(sec=> sec && sec.dataset.usedHelp!=='true' && sec.dataset.allCorrect==='true');
+    const c = el('#congrats');
+    if(allOk){ c.classList.add('show'); }
+    else { c.classList.remove('show'); }
+  };
+
+  // ===== Aufgabe 1 – Tabelle =====
+  const persons = ["ich","du","er/sie/es/man","wir","ihr","sie/Sie"];
+  const a1Solutions = {
+    "ich":{wollen:"wollte",koennen:"konnte",muessen:"musste",duerfen:"durfte"},
+    "du":{wollen:"wolltest",koennen:"konntest",muessen:"musstest",duerfen:"durftest"},
+    "er/sie/es/man":{wollen:"wollte",koennen:"konnte",muessen:"musste",duerfen:"durfte"},
+    "wir":{wollen:"wollten",koennen:"konnten",muessen:"mussten",duerfen:"durften"},
+    "ihr":{wollen:"wolltet",koennen:"konntet",muessen:"musstet",duerfen:"durftet"},
+    "sie/Sie":{wollen:"wollten",koennen:"konnten",muessen:"mussten",duerfen:"durften"}
+  };
+  const tbody = el('#table-body');
+  persons.forEach(p=>{
+    const tr = make('tr');
+    tr.appendChild(make('th',{textContent:p}));
+    ["wollen","koennen","muessen","duerfen"].forEach(key=>{
+      const td = make('td');
+      const inp = make('input',{type:'text',placeholder:'...'});
+      inp.dataset.solution = a1Solutions[p][key];
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  // ===== Aufgabe 2 – Dropdowns (Präteritum) =====
+  const a2Data = [
+    ["Ich ____ schon mit fünf Jahren schwimmen.","konnte","können"],
+    ["Wir ____ gestern länger in der Schule bleiben.","mussten","müssen"],
+    ["Er ____ nicht ins Kino gehen, weil er krank war.","durfte","dürfen"],
+    ["Ihr ____ das schwierige Rätsel allein lösen.","konntet","können"],
+    ["Sie (Sg.) ____ kein Geld für das Ticket bezahlen.","musste","müssen"],
+    ["Meine Eltern ____ am Wochenende wandern.","wollten","wollen"],
+    ["Du ____ deiner Schwester beim Umzug helfen.","solltest","sollen"],
+    ["Die Kinder ____ heute früher ins Bett.","mussten","müssen"],
+    ["Ich ____ die Suppe nicht, sie war zu scharf.","mochte","mögen"],
+    ["Ihr ____ während der Klassenarbeit nicht sprechen.","durftet","dürfen"],
+  ];
+  const praetByLemma = {
+    "wollen":["wollte","wolltest","wollten","wolltet"],
+    "können":["konnte","konntest","konnten","konntet"],
+    "müssen":["musste","musstest","mussten","musstet"],
+    "dürfen":["durfte","durftest","durften","durftet"],
+    "sollen":["sollte","solltest","sollten","solltet"],
+    "mögen":["mochte","mochtest","mochten","mochtet"]
+  };
+  window.praetByLemma = praetByLemma;
+  const a2List = el('#a2-list');
+  a2Data.forEach(([txt,sol,lemma])=>{
+    const wrap = make('div',{className:'item'});
+    const [left,right] = txt.split('____');
+    const container = make('div');
+    container.append(left);
+    const sel = make('select',{className:'inline'});
+    sel.dataset.lemma = lemma;
+    sel.appendChild(make('option',{value:'',textContent:'— wählen —'}));
+    (praetByLemma[lemma]||[]).forEach(f=> sel.appendChild(make('option',{value:f,textContent:f})) );
+    sel.dataset.solution = sol;
+    container.appendChild(sel); container.append(right||'');
+    wrap.appendChild(container);
+    wrap.appendChild(make('div',{className:'solution subtle',textContent:'Lösung: '+sol}));
+    a2List.appendChild(wrap);
+  });
+
+  // ===== Aufgabe 3 – Präsens ODER Präteritum =====
+  const a3Data = [
+    ["Heute ____ ich früher nach Hause gehen.","will", ["will","willst","will","wollen","wollt","wollte"]],
+    ["Gestern ____ wir das Experiment wiederholen.","mussten", ["muss","musst","muss","müssen","müsst","musste","mussten"]],
+    ["Er ____ noch nicht Auto fahren, er ist erst 16.","darf", ["darf","darfst","dürfen","dürft","durfte"]],
+    ["Letzte Woche ____ ihr die Präsentation halten.","solltet", ["soll","sollst","sollen","sollt","sollte","solltet"]],
+    ["Ich ____ keine Milch, nur Haferdrink.","mag", ["mag","magst","mögen","mögt","mochte","mochten"]],
+    ["Früher ____ ich sehr schnell rennen.","konnte", ["kann","kannst","kann","können","könnt","konnte"]],
+    ["Morgen ____ wir über das Thema sprechen.","können", ["kann","kannst","kann","können","könnt"]],
+    ["Als Kind ____ sie nicht alleine zu Hause bleiben.","durfte", ["darf","darfst","dürfen","dürft","durfte"]],
+    ["Jetzt ____ du die Hausaufgaben abgeben.","musst", ["muss","musst","muss","müssen","müsst"]],
+    ["Vorhin ____ er nicht mitkommen.","wollte", ["will","willst","will","wollen","wollt","wollte"]],
+  ];
+  const a3List = el('#a3-list');
+  a3Data.forEach(([txt,sol,options])=>{
+    const wrap = make('div',{className:'item'});
+    const [left,right] = txt.split('____');
+    const container = make('div');
+    container.append(left);
+    const sel = make('select',{className:'inline'});
+    sel.appendChild(make('option',{value:'',textContent:'— wählen —'}));
+    options.forEach(o=> sel.appendChild(make('option',{value:o,textContent:o})) );
+    sel.dataset.solution = sol;
+    container.appendChild(sel); container.append(right||'');
+    wrap.appendChild(container);
+    wrap.appendChild(make('div',{className:'solution subtle',textContent:'Lösung: '+sol}));
+    a3List.appendChild(wrap);
+  });
+
+  // ===== Aufgabe 4 – Lückentext =====
+  const a4Data = [
+    ["Wir ____ heute leider im Büro bleiben.","müssen"],
+    ["Ich ____ dir morgen die Bücher bringen.","kann"],
+    ["Er ____ gestern nicht kommen, er war krank.","konnte"],
+    ["Ihr ____ hier nicht parken!","dürft"],
+    ["Sie ____ kein Fleisch, sie ist Vegetarierin.","mag"],
+    ["Du ____ bitte früher anrufen.","sollst"],
+    ["Sie ____ warten, der Zug hat Verspätung.","müssen"],
+    ["Ich ____ schon als Kind sehr gut schwimmen.","konnte"],
+    ["Wir ____ jetzt los, sonst kommen wir zu spät.","müssen"],
+    ["Er ____ damals nicht ins Ausland reisen.","durfte"],
+  ];
+  const lemmaLists = {
+    "wollen":["will","willst","will","wollen","wollt","wollte","wolltest","wollten","wolltet"],
+    "können":["kann","kannst","kann","können","könnt","konnte","konntest","konnten","konntet"],
+    "müssen":["muss","musst","muss","müssen","müsst","musste","musstest","mussten","musstet"],
+    "dürfen":["darf","darfst","darf","dürfen","dürft","durfte","durftest","durften","durftet"],
+    "mögen":["mag","magst","mag","mögen","mögt","mochte","mochtest","mochten","mochtet"],
+    "sollen":["soll","sollst","soll","sollen","sollt","sollte","solltest","sollten","solltet"]
+  };
+  function findLemma(form){
+    const f=clean(form);
+    for(const [lemma, list] of Object.entries(lemmaLists)){
+      if(list.map(clean).includes(f)) return lemma;
+    }
+    return "Modalverb";
+  }
+  const a4List = el('#a4-list');
+  a4Data.forEach(([txt,sol])=>{
+    const wrap = make('div',{className:'item'});
+    const [left,right] = txt.split('____');
+    const container = make('div');
+    container.append(left);
+    const inp = make('input',{type:'text',className:'inline',placeholder:'Form eintragen'});
+    inp.dataset.solution = sol;
+    container.appendChild(inp);
+    const lemma = findLemma(sol);
+    const hint = make('span',{className:'subtle',style:'margin-left:8px',textContent:`(Verb: ${lemma})`});
+    container.appendChild(hint);
+    container.append(right||'');
+    wrap.appendChild(container);
+    wrap.appendChild(make('div',{className:'solution subtle',textContent:'Lösung: '+sol+` (Verb: ${lemma})`}));
+    a4List.appendChild(wrap);
+  });
+
+  // ===== Korrektur-Logik (für alle Abschnitte) =====
+  function handle(action, targetId){
+    const box = el('#'+targetId);
+    const inputs = box.querySelectorAll('input, select');
+    const fb = el('#fb-'+targetId);
+
+    if(action==='reset'){
+      inputs.forEach(n=>{n.value=''; n.classList.remove('wrong','right');});
+      box.classList.remove('show');
+      delete box.dataset.usedHelp;
+      delete box.dataset.allCorrect;
+      setHeadingClass(box, null);
+      fb.textContent='';
+      updateGlobalCongrats();
+      return;
+    }
+
+    if(action==='mark'){
+      let wrong=0, right=0, empty=0;
+      inputs.forEach(n=>{
+        const val = n.tagName==='SELECT' ? n.value : clean(n.value);
+        const sol = clean(n.dataset.solution||'');
+        if(!val){ empty++; n.classList.remove('wrong','right'); return; }
+        if(clean(val)===sol){ right++; n.classList.add('right'); n.classList.remove('wrong'); }
+        else { wrong++; n.classList.add('wrong'); n.classList.remove('right'); }
+      });
+      fb.innerHTML = `Richtig: <strong>${right}</strong> · Falsch: <strong>${wrong}</strong> · Leer: <strong>${empty}</strong>.`;
+      // Überschrift grün, wenn alles korrekt und keine Lösungshilfe für diese Aufgabe genutzt
+      if(empty===0 && wrong===0 && box.dataset.usedHelp!=='true'){
+        box.dataset.allCorrect = 'true';
+        setHeadingClass(box,'title-ok');
+      } else {
+        delete box.dataset.allCorrect;
+        if(box.dataset.usedHelp!=='true') setHeadingClass(box,null);
+      }
+      updateGlobalCongrats();
+      return;
+    }
+
+    if(action==='solve'){
+      // Nur Lösungen zeigen, wenn alles ausgefüllt ist
+      if(!allFilled(box)){
+        const emptyCount = [...inputs].filter(n=> (n.tagName==='SELECT'? n.value==='' : clean(n.value)==='')).length;
+        fb.innerHTML = `<span class="hint">Bitte erst alle Felder ausfüllen (noch ${emptyCount}).</span>`;
+        return;
+      }
+
+      // Merke: Lösungshilfe genutzt → Titel rot, keine automatische Grün-Markierung mehr
+      box.dataset.usedHelp = 'true';
+      setHeadingClass(box,'title-help');
+
+      if(targetId==='aufg1'){
+        const solDiv = box.querySelector('#a1-solution');
+        const head = `<thead><tr><th></th><th>wollen</th><th>können</th><th>müssen</th><th>dürfen</th></tr></thead>`;
+        const rows = persons.map(p=>{
+          const r = a1Solutions[p];
+          return `<tr><th>${p}</th><td>${r.wollen}</td><td>${r.koennen}</td><td>${r.muessen}</td><td>${r.duerfen}</td></tr>`;
+        }).join('');
+        solDiv.innerHTML = `<h3>Lösungstabelle</h3><table>${head}<tbody>${rows}</tbody></table>`;
+        box.classList.add('show');
+        fb.innerHTML = 'Lösungstabelle eingeblendet. (Hinweis: Markierungen erhalten Sie mit "Fehler anzeigen".)';
+        updateGlobalCongrats();
+        return;
+      }
+
+      // Standardfall (Aufgaben 2–4): nur markieren und Lösungen einblenden
+      let right=0, wrong=0;
+      inputs.forEach(n=>{
+        const val = n.tagName==='SELECT' ? n.value : clean(n.value);
+        const sol = clean(n.dataset.solution||'');
+        if(clean(val)===sol){ right++; n.classList.add('right'); n.classList.remove('wrong'); }
+        else { wrong++; n.classList.add('wrong'); n.classList.remove('right'); }
+      });
+      box.classList.add('show');
+      fb.innerHTML = `Vorher richtig: <strong>${right}</strong> · Vorher falsch: <strong>${wrong}</strong>. Lösungen eingeblendet.`;
+      updateGlobalCongrats();
+      return;
+    }
+  }
+
+  document.body.addEventListener('click', (e)=>{
+    const b = e.target.closest('button[data-action]');
+    if(!b) return;
+    handle(b.dataset.action, b.dataset.target);
+  });
+  </script>
+</body>
+</html>

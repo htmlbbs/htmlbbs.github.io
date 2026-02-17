@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesepfad: Reklamation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        .section { display: none; background-color: #f0f8ff; padding: 15px; margin-bottom: 20px; border-radius: 10px; }
+        .question { margin-top: 10px; }
+        .feedback { display: none; font-weight: bold; }
+        button { margin-top: 10px; padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Lesepfad: Reklamation</h1>
+
+    <div class="section" id="section1" style="display: block;">
+        <p><strong>Was ist eine Reklamation?</strong></p>
+        <p>Eine Reklamation bedeutet, dass du eine Ware zurückgeben oder umtauschen möchtest. Das passiert, wenn die Ware kaputt oder falsch ist. Beispiel: Du kaufst eine Uhr, aber sie geht nicht. Dann kannst du eine Reklamation machen.</p>
+        <div class="question">
+            <p>1. Was ist eine Reklamation?</p>
+            <input type="radio" name="q1" value="a"> a) Eine Bestellung <br>
+            <input type="radio" name="q1" value="b"> b) Eine Beschwerde über eine kaputte Ware <br>
+        </div>
+        <div class="question">
+            <p>2. Wann kann man eine Reklamation machen?</p>
+            <input type="radio" name="q2" value="a"> a) Wenn die Ware defekt ist <br>
+            <input type="radio" name="q2" value="b"> b) Wenn man eine andere Farbe möchte <br>
+        </div>
+        <button onclick="checkAnswers(1, ['b', 'a'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback1">Richtig! Weiter zum nächsten Abschnitt.</p>
+    </div>
+
+    <div class="section" id="section2">
+        <p><strong>Welche Regeln gelten für eine Reklamation?</strong></p>
+        <p>In Deutschland hast du das Recht, eine Ware zu reklamieren, wenn sie kaputt oder fehlerhaft ist. Meistens hast du zwei Jahre Zeit. Es ist wichtig, den Kassenbon oder die Rechnung zu haben. Ohne diese kann es schwer sein, eine Reklamation zu machen.</p>
+        <div class="question">
+            <p>1. Wie lange kann man eine Ware reklamieren?</p>
+            <input type="radio" name="q3" value="a"> a) Zwei Jahre <br>
+            <input type="radio" name="q3" value="b"> b) Ein Monat <br>
+        </div>
+        <div class="question">
+            <p>2. Was braucht man oft für eine Reklamation?</p>
+            <input type="radio" name="q4" value="a"> a) Einen Kassenbon oder eine Rechnung <br>
+            <input type="radio" name="q4" value="b"> b) Einen neuen Artikel <br>
+        </div>
+        <button onclick="checkAnswers(2, ['a', 'a'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback2">Richtig! Weiter zum nächsten Abschnitt.</p>
+    </div>
+
+    <div class="section" id="section3">
+        <p><strong>In welchen Fällen kann ich eine Ware reklamieren und in welchen nicht?</strong></p>
+        <p>Du kannst eine Ware reklamieren, wenn sie kaputt oder fehlerhaft ist. Wenn du aber eine Ware kaufst und später nicht mehr magst, kannst du sie nicht reklamieren. Beispiel: Deine neuen Schuhe sind nach zwei Tagen kaputt – du kannst reklamieren. Aber wenn dir die Farbe nicht gefällt, geht das nicht.</p>
+        <div class="question">
+            <p>1. Wann kann man eine Ware reklamieren?</p>
+            <input type="radio" name="q5" value="a"> a) Wenn sie kaputt ist <br>
+            <input type="radio" name="q5" value="b"> b) Wenn man sie nicht mehr mag <br>
+        </div>
+        <div class="question">
+            <p>2. Wann kann man <u>keine</u> Reklamation machen?</p>
+            <input type="radio" name="q6" value="a"> a) Wenn die Ware defekt ist <br>
+            <input type="radio" name="q6" value="b"> b) Wenn man die Farbe nicht mag <br>
+        </div>
+        <button onclick="checkAnswers(3, ['a', 'b'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback3">Richtig! Weiter zum nächsten Abschnitt.</p>
+    </div>
+
+    <div class="section" id="section4">
+        <p><strong>Wie kann ich eine Reklamation machen?</strong></p>
+        <p>Du kannst eine Reklamation im Geschäft, telefonisch, mit einem Brief oder per E-Mail machen. Im Geschäft sprichst du mit einem Verkäufer. Am Telefon erklärst du dein Problem. Per Brief oder E-Mail schreibst du deine Reklamation. Wichtig ist, dass du freundlich bleibst und genau erklärst, was nicht stimmt.</p>
+        <div class="question">
+            <p>1. Wie kann man eine Reklamation machen?</p>
+            <input type="radio" name="q7" value="a"> a) Im Geschäft, telefonisch, mit einem Brief oder per E-Mail <br>
+            <input type="radio" name="q7" value="b"> b) Nur im Geschäft <br>
+        </div>
+        <div class="question">
+            <p>2. Warum sollte man bei einer Reklamation freundlich sein?</p>
+            <input type="radio" name="q8" value="a"> a) Weil der Verkäufer dann eher hilft <br>
+            <input type="radio" name="q8" value="b"> b) Weil man sonst keine Reklamation machen darf <br>
+        </div>
+        <button onclick="checkAnswers(4, ['a', 'a'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback4">Richtig! Weiter zum nächsten Abschnitt.</p>
+    </div>
+	
+	    <div class="section" id="section5">
+        <p><strong>Wie schreibe ich eine Reklamation per Mail?</strong></p>
+        <p>Eine Reklamation per E-Mail sollte sachlich und höflich sein. Du musst dein Problem genau beschreiben und alle wichtigen Informationen angeben, damit der Verkäufer alles versteht. Du kannst auch Fotos hinzufügen. Eine gute E-Mail erhöht die Chance auf eine gute Lösung.</p>
+        <div class="question">
+            <p>1. Warum ist eine genaue Beschreibung wichtig?</p>
+            <input type="radio" name="q9" value="a"> a) Damit der Verkäufer das Problem besser versteht <br>
+            <input type="radio" name="q9" value="b"> b) Damit man schneller eine Antwort bekommt <br>
+        </div>
+        <div class="question">
+            <p>2. Wie sollte man eine Reklamations-E-Mail formulieren?</p>
+            <input type="radio" name="q10" value="a"> a) Kurz und unfreundlich <br>
+            <input type="radio" name="q10" value="b"> b) Höflich und genau <br>
+        </div>
+        <button onclick="checkAnswers(5, ['a', 'b'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback5">Richtig! Weiter zum nächsten Abschnitt.</p>
+    </div>
+	
+    <div class="section" id="section6">
+        <p><strong>Wie schreibe ich eine gute E-Mail mit einer Reklamation?</strong></p>
+        <p>Schreibe zuerst einen klaren Betreff, zum Beispiel: „Reklamation: Defektes Handy – Bestellnummer 12345“. Erkläre, was du gekauft hast, wann du es gekauft hast und was nicht funktioniert. Schreibe, ob du eine Reparatur, einen Umtausch oder dein Geld zurück möchtest. Beende die E-Mail mit „Mit freundlichen Grüßen“ und deinem Namen.</p>
+        <div class="question">
+            <p>1. Welche Nummer muss in der Reklamation stehen?</p>
+            <input type="radio" name="q11" value="a"> a) Meine Handynummer <br>
+            <input type="radio" name="q11" value="b"> b) Die Bestellnummer <br>
+        </div>
+        <div class="question">
+            <p>2. Welches Datum muss ich in der E-Mail schreiben?</p>
+            <input type="radio" name="q12" value="a"> a) Wann ich das Handy gekauft habe <br>
+            <input type="radio" name="q12" value="b"> b) Wann das Handy gebaut wurde <br>
+        </div>
+        <button onclick="checkAnswers(6, ['b', 'a'])">Antworten prüfen</button>
+        <p class="feedback" id="feedback6">Richtig! Hier ist das Passwort für die nächste Aufgabe: <i>sprechen</i><br>Gib das Passwort in der Klassenmap ein..</p>
+
+    <script>
+        function checkAnswers(section, correctAnswers) {
+            let inputs = document.querySelectorAll('#section' + section + ' input[type=radio]:checked');
+            if (inputs.length < correctAnswers.length) {
+                alert("Bitte beantworte alle Fragen.");
+                return;
+            }
+            let correct = Array.from(inputs).every((input, index) => input.value === correctAnswers[index]);
+            if (correct) {
+                document.getElementById("feedback" + section).style.display = "block";
+                let nextSection = document.getElementById("section" + (section + 1));
+                if (nextSection) {
+                    nextSection.style.display = "block";
+                }
+            } else {
+                alert("Nicht ganz richtig! Versuche es noch einmal.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktionswochen in der Gastronomie</title>
+    <link rel="stylesheet" href="https://h5p.org/sites/all/modules/h5p/h5p.css">
+    <script src="https://h5p.org/sites/all/modules/h5p/h5p.js"></script>
+</head>
+<body>
+
+    <h1>Aktionswochen in der Gastronomie</h1>
+
+    <div class="h5p-content">
+        <script>
+            H5P.init();
+            var content = {
+                "title": "Aktionswochen in der Gastronomie",
+                "content": [
+                    {
+                        "type": "MultipleChoice",
+                        "params": {
+                            "question": "Was ist ein Merkmal einer Aktionswoche in der Gastronomie?",
+                            "choices": [
+                                "Sie hat immer ein festgelegtes Thema.",
+                                "Sie findet nur an Wochenenden statt.",
+                                "Sie wird immer von einem einzigen Restaurant durchgeführt.",
+                                "Sie ist unabhängig von der Saison."
+                            ],
+                            "correctAnswer": 0,
+                            "score": 100,
+                            "feedback": [
+                                "Richtig! Aktionswochen haben in der Regel ein festgelegtes Thema.",
+                                "Falsch! Aktionswochen können auch unter der Woche stattfinden.",
+                                "Falsch! Viele Restaurants können an einer Aktionswoche teilnehmen.",
+                                "Falsch! Aktionswochen können saisonabhängig sein."
+                            ]
+                        }
+                    },
+                    {
+                        "type": "FillIn",
+                        "params": {
+                            "text": "Eine Aktionswoche in der Gastronomie sollte immer ___________ und ___________ sein.",
+                            "answers": [
+                                "zielgerichtet",
+                                "themenbezogen"
+                            ],
+                            "feedback": [
+                                "Richtig! Die Aktionswoche sollte zielgerichtet und themenbezogen sein.",
+                                "Falsch! Überlege, welche Merkmale für eine Aktionswoche wichtig sind."
+                            ]
+                        }
+                    },
+                    {
+                        "type": "TrueFalse",
+                        "params": {
+                            "question": "Aktionswochen in der Gastronomie sind immer erfolgreich.",
+                            "correctAnswer": false,
+                            "feedback": [
+                                "Richtig! Der Erfolg hängt von vielen Faktoren ab.",
+                                "Falsch! Der Erfolg kann variieren."
+                            ]
+                        }
+                    }
+                ]
+            };
+            H5P.newRunnable(content, H5P.jQuery('.h5p-content')[0], {
+                disable: false
+            });
+        </script>
+    </div>
+
+</body>
+</html>

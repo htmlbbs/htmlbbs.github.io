@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online-Quiz zur Workshop-Moderation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .options li {
+            margin-bottom: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .options li:hover {
+            background-color: #f0f0f0;
+        }
+        .options li.selected {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Online-Quiz zur Workshop-Moderation</h1>
+
+        <div class="question">
+            <div class="question-number">1. Was ist die Hauptaufgabe eines Workshop-Moderators?</div>
+            <ul class="options">
+                <li data-answer="incorrect">A) Die Teilnehmer zu unterhalten</li>
+                <li data-answer="correct">B) Ein neutraler Vermittler zu sein und die Teilnehmer bei der Erarbeitung von Lösungen zu unterstützen</li>
+                <li data-answer="incorrect">C) Den Workshop zu planen, ohne die Teilnehmer einzubeziehen</li>
+                <li data-answer="incorrect">D) Die Ergebnisse des Workshops zu veröffentlichen</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">2. Welche Methode fördert die Kreativität der Teilnehmer, indem sie Ideen ohne Bewertung sammelt?</div>
+            <ul class="options">
+                <li data-answer="incorrect">A) Präsentation</li>
+                <li data-answer="incorrect">B) Rollenspiel</li>
+                <li data-answer="correct">C) Brainstorming</li>
+                <li data-answer="incorrect">D) Gruppenarbeit</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">3. Welche Technik wird verwendet, um Ideen und Ergebnisse visuell darzustellen?</div>
+            <ul class="options">
+                <li data-answer="incorrect">A) Feedback-Runden</li>
+                <li data-answer="correct">B) Visualisierung</li>
+                <li data-answer="incorrect">C) Gruppenarbeit</li>
+                <li data-answer="incorrect">D) Rollenspiele</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">4. Was ist ein Vorteil der Gruppenarbeit in Workshops?</div>
+            <ul class="options">
+                <li data-answer="correct">A) Sie fördert die Zusammenarbeit und den Austausch von Wissen</li>
+                <li data-answer="incorrect">B) Sie reduziert die Diskussionszeit</li>
+                <li data-answer="incorrect">C) Sie eliminiert die Notwendigkeit eines Moderators</li>
+                <li data-answer="incorrect">D) Sie garantiert sofortige Lösungen</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">5. Welche Technik eignet sich am besten, um unterschiedliche Perspektiven zu einem Thema zu erkunden?</div>
+            <ul class="options">
+                <li data-answer="incorrect">A) Brainstorming</li>
+                <li data-answer="correct">B) Rollenspiele</li>
+                <li data-answer="incorrect">C) Präsentationen</li>
+                <li data-answer="incorrect">D) Feedback-Runden</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">6. Welche der folgenden Voraussetzungen ist entscheidend für eine erfolgreiche Workshop-Moderation?</div>
+            <ul class="options">
+                <li data-answer="correct">A) Ein klares Ziel des Workshops</li>
+                <li data-answer="incorrect">B) Eine große Teilnehmerzahl</li>
+                <li data-answer="incorrect">C) Eine kurze Dauer des Workshops</li>
+                <li data-answer="incorrect">D) Eine formelle Kleidung des Moderators</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">7. Welche kommunikativen Fähigkeiten sollten ein Workshop-Moderator besitzen?</div>
+            <ul class="options">
+                <li data-answer="correct">A) Gute Kommunikationsfähigkeiten, um den Workshop zu leiten und Konflikte zu lösen</li>
+                <li data-answer="incorrect">B) Fähigkeit, alleine zu arbeiten</li>
+                <li data-answer="incorrect">C) Fähigkeit, Präsentationen zu erstellen</li>
+                <li data-answer="incorrect">D) Fähigkeit, technische Geräte zu bedienen</li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <div class="question-number">8. Welche persönlichen Kompetenzen sind für einen Workshop-Moderator wichtig?</div>
+            <ul class="options">
+                <li data-answer="correct">A) Empathie, Flexibilität, Durchsetzungsvermögen und gute Selbstorganisation</li>
+                <li data-answer="incorrect">B) Technische Expertise in einem bestimmten Fachgebiet</li>
+                <li data-answer="incorrect">C) Fähigkeit, schnell zu tippen</li>
+                <li data-answer="incorrect">D) Fähigkeit, komplexe mathematische Formeln zu lösen</li>
+            </ul>
+        </div>
+
+        <button id="submit">Quiz abschicken</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('submit').addEventListener('click', function() {
+            const questions = document.querySelectorAll('.question');
+            let score = 0;
+
+            questions.forEach(question => {
+                const selectedOption = question.querySelector('.options li.selected');
+                if (selectedOption) {
+                    if (selectedOption.getAttribute('data-answer') === 'correct') {
+                        score++;
+                    }
+                }
+            });
+
+            const resultElement = document.getElementById('result');
+            resultElement.style.display = 'block';
+            resultElement.innerHTML = `<h2>Dein Ergebnis: ${score} von ${questions.length}</h2>`;
+
+            // Markiere die richtigen Antworten nach dem Abschicken
+            questions.forEach(question => {
+                const options = question.querySelectorAll('.options li');
+                options.forEach(option => {
+                    if (option.getAttribute('data-answer') === 'correct') {
+                        option.style.backgroundColor = '#d4edda';
+                        option.style.borderColor = '#c3e6cb';
+                    } else if (option.classList.contains('selected')) {
+                        option.style.backgroundColor = '#f8d7da';
+                        option.style.borderColor = '#f5c6cb';
+                    }
+                });
+            });
+        });
+
+        // Funktion zum Auswählen einer Antwortoption
+        document.querySelectorAll('.options li').forEach(option => {
+            option.addEventListener('click', function() {
+                const options = this.parentElement.querySelectorAll('li');
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>

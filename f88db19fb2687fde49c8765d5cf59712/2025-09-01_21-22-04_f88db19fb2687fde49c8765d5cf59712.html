@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Lernpfad für Erzieher*innen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .quiz {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:disabled {
+            background-color: #ccc;
+        }
+        .answer {
+            margin-top: 5px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="section" id="section1">
+    <h3>Familie in der Neuzeit & Industrialisierung</h3>
+    <p>Die Neuzeit war eine Zeit des Wandels, in der sich die gesellschaftlichen Strukturen und Rollen innerhalb der Familie veränderten. Neue wirtschaftliche und soziale Herausforderungen führten dazu, dass herkömmliche Familienrollen hinterfragt wurden.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>1. Warum konnte die Familie in der Neuzeit ihre erziehende Rolle oft nicht mehr vollständig erfüllen?</p>
+            <div class="answer"><input type="radio" name="q1" value="A"> A) Weil Bildung nicht mehr wichtig war</div>
+            <div class="answer"><input type="radio" name="q1" value="B"> B) Weil Kinder immer früher verheiratet wurden</div>
+            <div class="answer"><input type="radio" name="q1" value="C"> C) Weil Frauen arbeiten mussten und Kinder oft unbeaufsichtigt waren</div>
+            <div class="answer"><input type="radio" name="q1" value="D"> D) Weil die Kirche Kinder in Klöster schickte</div>
+        </div>
+        <div>
+            <p>2. Wer gründete die ersten Betreuungseinrichtungen für Kinder?</p>
+            <div class="answer"><input type="radio" name="q2" value="A"> A) Maria Montessori</div>
+            <div class="answer"><input type="radio" name="q2" value="B"> B) Johann Heinrich Pestalozzi</div>
+            <div class="answer"><input type="radio" name="q2" value="C"> C) Friedrich Fröbel</div>
+            <div class="answer"><input type="radio" name="q2" value="D"> D) Alice Salomon</div>
+        </div>
+        <div>
+            <p>3. In welchen Bereichen sollten Kinder nach Fröbel Erfahrungen sammeln?</p>
+            <div class="answer"><input type="radio" name="q3" value="A"> A) Religion, Kunst, Wirtschaft</div>
+            <div class="answer"><input type="radio" name="q3" value="B"> B) Musik, Natur, Sprache, Bewegung, Sinneswahrnehmung</div>
+            <div class="answer"><input type="radio" name="q3" value="C"> C) Handwerk, Technik, Politik</div>
+            <div class="answer"><input type="radio" name="q3" value="D"> D) Mathematik, Philosophie, Sport</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section1')">Überprüfen</button>
+        <p id="feedback1" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section2">
+    <h3>Familie im Kaiserreich & Alice Salomon</h3>
+    <p>Im deutschen Kaiserreich wurden rechtliche und soziale Grundlagen für die Familie geschaffen, die das tägliche Leben und die Struktur der Haushalte beeinflussten. In dieser Zeit entstanden auch wichtige Institutionen und Reformen, die die Rolle der Frau und der Familie in der Gesellschaft neu definierten.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>4. Ab wann waren Ehen in Deutschland nur noch gültig, wenn sie vor einem Standesbeamten geschlossen wurden?</p>
+            <div class="answer"><input type="radio" name="q4" value="A"> A) 1806</div>
+            <div class="answer"><input type="radio" name="q4" value="B"> B) 1876</div>
+            <div class="answer"><input type="radio" name="q4" value="C"> C) 1900</div>
+            <div class="answer"><input type="radio" name="q4" value="D"> D) 1919</div>
+        </div>
+        <div>
+            <p>5. Welche Unterschiede bestanden zwischen bürgerlichen und proletarischen Familien im Kaiserreich?</p>
+            <div class="answer"><input type="radio" name="q5" value="A"> A) Bürgerliche Familien lebten in Armut, proletarische Familien im Wohlstand</div>
+            <div class="answer"><input type="radio" name="q5" value="B"> B) Proletarische Familien lebten in Armut und Not, bürgerliche Familien hatten Personal und großzügigen Wohnraum</div>
+            <div class="answer"><input type="radio" name="q5" value="C"> C) Beide hatten ähnliche Lebensbedingungen</div>
+            <div class="answer"><input type="radio" name="q5" value="D"> D) Nur proletarische Familien durften Bildung genießen</div>
+        </div>
+        <div>
+            <p>6. Wer gründete 1908 die erste „Soziale Frauenschule“ in Berlin?</p>
+            <div class="answer"><input type="radio" name="q6" value="A"> A) Clara Zetkin</div>
+            <div class="answer"><input type="radio" name="q6" value="B"> B) Alice Salomon</div>
+            <div class="answer"><input type="radio" name="q6" value="C"> C) Johanna Haarer</div>
+            <div class="answer"><input type="radio" name="q6" value="D"> D) Rosa Luxemburg</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section2')">Überprüfen</button>
+        <p id="feedback2" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section3">
+    <h3>Familie in der Weimarer Republik</h3>
+    <p>Die Weimarer Republik war geprägt von politischen und sozialen Umbrüchen, die auch die Familienstrukturen beeinflussten. In dieser Zeit wurden neue Gesetze und Reformen eingeführt, um die Lebensbedingungen und Rechte von Familien zu verbessern.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>7. Welche Ziele verfolgte die Familienpolitik in der Weimarer Republik?</p>
+            <div class="answer"><input type="radio" name="q7" value="A"> A) Ausbau von Gesundheitsämtern, Gleichberechtigung, Kinderschutz</div>
+            <div class="answer"><input type="radio" name="q7" value="B"> B) Förderung der Monarchie</div>
+            <div class="answer"><input type="radio" name="q7" value="C"> C) Einführung der Kinderarbeit</div>
+            <div class="answer"><input type="radio" name="q7" value="D"> D) Abschaffung von Bildungseinrichtungen</div>
+        </div>
+        <div>
+            <p>8. Was regelte das Reichsjugendwohlfahrtsgesetz?</p>
+            <div class="answer"><input type="radio" name="q8" value="A"> A) Den Bau von Kindergärten</div>
+            <div class="answer"><input type="radio" name="q8" value="B"> B) Den Schutz von Kindern und Jugendlichen</div>
+            <div class="answer"><input type="radio" name="q8" value="C"> C) Den Militärdienst für Jugendliche</div>
+            <div class="answer"><input type="radio" name="q8" value="D"> D) Die Einführung des Frauenwahlrechts</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section3')">Überprüfen</button>
+        <p id="feedback3" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section4">
+    <h3>Familie im Nationalsozialismus</h3>
+    <p>Im Nationalsozialismus wurde die Familie stark von ideologischen Vorstellungen geprägt. Die staatlichen Vorgaben beeinflussten die Erziehung und Familienstruktur maßgeblich und stellten die Familie als Instrument für politische Ziele dar.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>9. Welche Erziehungsgrundsätze vertrat Johanna Haarer?</p>
+            <div class="answer"><input type="radio" name="q9" value="A"> A) Liebevolle Erziehung mit viel Nähe</div>
+            <div class="answer"><input type="radio" name="q9" value="B"> B) Schwarze Pädagogik: Härte, Strenge, Distanz</div>
+            <div class="answer"><input type="radio" name="q9" value="C"> C) Freie Entfaltung der Kinder</div>
+            <div class="answer"><input type="radio" name="q9" value="D"> D) Demokratische Mitbestimmung</div>
+        </div>
+        <div>
+            <p>10. Welche Rolle spielte die Familie im Nationalsozialismus?</p>
+            <div class="answer"><input type="radio" name="q10" value="A"> A) Sie war vor allem Rückzugsort vor Politik</div>
+            <div class="answer"><input type="radio" name="q10" value="B"> B) Sie war ein Instrument zur Bevölkerungspolitik</div>
+            <div class="answer"><input type="radio" name="q10" value="C"> C) Sie wurde als unwichtig betrachtet</div>
+            <div class="answer"><input type="radio" name="q10" value="D"> D) Sie wurde vollständig durch staatliche Erziehung ersetzt</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section4')">Überprüfen</button>
+        <p id="feedback4" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section5">
+    <h3>Familie in der BRD (Nachkriegszeit – 1970er Jahre)</h3>
+    <p>Nach dem Zweiten Weltkrieg erlebte die Bundesrepublik Deutschland zahlreiche gesellschaftliche Veränderungen, die auch die Familienstrukturen beeinflussten. Neue Gesetze und soziale Bewegungen führten zu einem Wandel in den Rollen und Erwartungen innerhalb der Familie.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>11. Was besagte der Gehorsamsparagraf (§1354 BGB) bis 1958?</p>
+            <div class="answer"><input type="radio" name="q11" value="A"> A) Kinder mussten den Eltern gehorchen</div>
+            <div class="answer"><input type="radio" name="q11" value="B"> B) Ehefrauen mussten den Ehemännern gehorchen</div>
+            <div class="answer"><input type="radio" name="q11" value="C"> C) Männer mussten für den Haushalt sorgen</div>
+            <div class="answer"><input type="radio" name="q11" value="D"> D) Jugendliche mussten in die Armee</div>
+        </div>
+        <div>
+            <p>12. Was brachte die Antibabypille ab den 1960er-Jahren?</p>
+            <div class="answer"><input type="radio" name="q12" value="A"> A) Mehr Selbstbestimmung für Frauen in der Familienplanung</div>
+            <div class="answer"><input type="radio" name="q12" value="B"> B) Ein Verbot von Kinderbetreuung</div>
+            <div class="answer"><input type="radio" name="q12" value="C"> C) Mehr Abhängigkeit von Männern</div>
+            <div class="answer"><input type="radio" name="q12" value="D"> D) Rückkehr zum klassischen Rollenmodell</div>
+        </div>
+        <div>
+            <p>13. Welche neuen Lebensformen entstanden in den 1960er-Jahren in der BRD?</p>
+            <div class="answer"><input type="radio" name="q13" value="A"> A) Klösterliche Gemeinschaften</div>
+            <div class="answer"><input type="radio" name="q13" value="B"> B) Studenten-WGs und Kommunen</div>
+            <div class="answer"><input type="radio" name="q13" value="C"> C) Adlige Großfamilien</div>
+            <div class="answer"><input type="radio" name="q13" value="D"> D) Landkommunen im Kaiserreichsstil</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section5')">Überprüfen</button>
+        <p id="feedback5" class="hidden"></p>
+    </div>
+</div>
+
+<div class="section hidden" id="section6">
+    <h3>Familie in der DDR & Margot Honecker</h3>
+    <p>Die Familienpolitik der DDR war geprägt von staatlichen Vorgaben, die die Erziehung und Betreuung von Kindern beeinflussten. Institutionen wie Krippen und Kindergärten spielten eine zentrale Rolle in der Umsetzung dieser politischen Ziele.</p>
+    <div class="quiz">
+        <h4>Quiz</h4>
+        <div>
+            <p>14. Welches Ziel verfolgte die Familienpolitik der DDR?</p>
+            <div class="answer"><input type="radio" name="q14" value="A"> A) Stärkung der Individualität</div>
+            <div class="answer"><input type="radio" name="q14" value="B"> B) Erziehung zu sozialistischen Persönlichkeiten</div>
+            <div class="answer"><input type="radio" name="q14" value="C"> C) Förderung des Kapitalismus</div>
+            <div class="answer"><input type="radio" name="q14" value="D"> D) Abschaffung von Kinderbetreuung</div>
+        </div>
+        <div>
+            <p>15. Welche Rolle spielten Krippen und Kindergärten in der DDR?</p>
+            <div class="answer"><input type="radio" name="q15" value="A"> A) Sie existierten kaum</div>
+            <div class="answer"><input type="radio" name="q15" value="B"> B) Sie dienten zur flächendeckenden Betreuung und ideologischen Prägung</div>
+            <div class="answer"><input type="radio" name="q15" value="C"> C) Sie wurden nur privat betrieben</div>
+            <div class="answer"><input type="radio" name="q15" value="D"> D) Sie waren ausschließlich für bürgerliche Familien gedacht</div>
+        </div>
+        <div>
+            <p>16. Was bezeichnet man als „Honecker-Buckel“?</p>
+            <div class="answer"><input type="radio" name="q16" value="A"> A) Ein Rückgang der Scheidungsquote</div>
+            <div class="answer"><input type="radio" name="q16" value="B"> B) Einen Anstieg der Geburtenrate durch Familienförderung</div>
+            <div class="answer"><input type="radio" name="q16" value="C"> C) Ein Gesetz zur Wehrpflicht</div>
+            <div class="answer"><input type="radio" name="q16" value="D"> D) Eine pädagogische Reform</div>
+        </div>
+        <button class="button" onclick="checkAnswers('section6')">Überprüfen</button>
+        <p id="feedback6" class="hidden"></p>
+    </div>
+</div>
+
+<script>
+    function checkAnswers(sectionId) {
+        let correctAnswers = {
+            section1: ['C', 'C', 'B'],
+            section2: ['B', 'B', 'B'],
+            section3: ['A', 'B'],
+            section4: ['B', 'B'],
+            section5: ['B', 'A', 'B'],
+            section6: ['B', 'B', 'B']
+        };
+
+        let feedbackElement = document.getElementById(`feedback${sectionId.charAt(sectionId.length - 1)}`);
+        let sectionElement = document.getElementById(sectionId);
+        let inputs = sectionElement.querySelectorAll('input[type="radio"]');
+        let userAnswers = Array.from(inputs).filter(input => input.checked).map(input => input.value);
+
+        if (userAnswers.length === correctAnswers[sectionId].length && userAnswers.every(val => correctAnswers[sectionId].includes(val))) {
+            feedbackElement.textContent = "Richtig! Du kannst zum nächsten Abschnitt weitergehen.";
+            feedbackElement.className = "correct";
+            feedbackElement.classList.remove("hidden");
+            let nextSection = document.getElementById(`section${parseInt(sectionId.charAt(sectionId.length - 1)) + 1}`);
+            if (nextSection) {
+                nextSection.classList.remove("hidden");
+            }
+        } else {
+            feedbackElement.textContent = "Falsch. Bitte versuche es erneut.";
+            feedbackElement.className = "incorrect";
+            feedbackElement.classList.remove("hidden");
+        }
+    }
+</script>
+
+</body>
+</html>

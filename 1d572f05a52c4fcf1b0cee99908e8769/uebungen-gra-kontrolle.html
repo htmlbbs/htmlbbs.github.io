@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grundrechenarten – interaktive Kontrolle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f0f9ff;
+      --panel:#e0f2fe;
+      --panel-2:#bae6fd;
+      --text:#0c4a6e;
+      --muted:#0369a1;
+      --accent:#38bdf8;
+      --accent-2:#0ea5e9;
+      --border:#7dd3fc;
+      --border-strong:#0ea5e9;
+      --shadow:0 10px 30px rgba(15,23,42,.18);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e0f2fe 0, #f0f9ff 40%, #e5e7eb 100%);
+      color:var(--text);
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+    }
+
+    .page{
+      width:min(1200px, 96vw);
+      margin:16px auto;
+      background:rgba(255,255,255,.9);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:16px 20px 12px;
+      display:flex;
+      flex-direction:column;
+      max-height:96vh;
+    }
+
+    header{
+      position:relative;
+      padding-right:40px;
+    }
+
+    h1{
+      margin:0 0 4px;
+      font-size:clamp(20px, 2.6vw, 26px);
+      font-weight:800;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      color:var(--text);
+    }
+
+    .sub{
+      margin:0 0 10px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .reset-btn{
+      position:absolute;
+      right:0;
+      top:0;
+      border:none;
+      background:var(--panel-2);
+      color:var(--muted);
+      border-radius:999px;
+      padding:4px 10px;
+      cursor:pointer;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      box-shadow:0 2px 6px rgba(15,23,42,.25);
+    }
+    .reset-btn:hover{ background:var(--accent); color:white; }
+
+    main{
+      flex:1;
+      overflow:auto;
+      padding:4px 0 4px;
+    }
+
+    .group-title{
+      margin:18px 4px 6px;
+      font-size:16px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+      gap:10px;
+      margin-bottom:6px;
+    }
+
+    .task{
+      border-radius:14px;
+      border:1px solid var(--border);
+      padding:8px 10px;
+      background:linear-gradient(180deg, #e0f2fe, #f0f9ff);
+      cursor:pointer;
+      text-align:left;
+      box-shadow:0 4px 12px rgba(15,23,42,.12);
+      position:relative;
+      transition:border-color .15s ease, transform .12s ease, box-shadow .15s ease;
+    }
+
+    .task:hover{
+      border-color:var(--border-strong);
+      transform:translateY(-1px);
+      box-shadow:0 8px 18px rgba(15,23,42,.16);
+    }
+
+    .task h3{
+      margin:0 0 4px;
+      font-size:14px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    .eq{
+      font-weight:800;
+      font-size:15px;
+      color:var(--text);
+      margin-bottom:6px;
+    }
+
+    .status-chip{
+      display:inline-block;
+      font-size:11px;
+      border-radius:999px;
+      padding:2px 8px;
+      border:1px solid rgba(15,23,42,.08);
+      background:rgba(255,255,255,.75);
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .status-chip.correct{
+      background:#22c55e;
+      border-color:#16a34a;
+      color:#052e16;
+    }
+
+    .status-chip.wrong{
+      background:#fca5a5;
+      border-color:#ef4444;
+      color:#450a0a;
+    }
+
+    footer{
+      border-top:1px solid rgba(148,163,184,.4);
+      padding-top:6px;
+      margin-top:4px;
+    }
+
+    .stats{
+      display:flex;
+      gap:10px;
+      font-size:12px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .stat{
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .stat .label{ color:var(--muted); }
+    .stat .value{ font-weight:800; }
+
+    dialog{
+      border:none;
+      border-radius:16px;
+      padding:0;
+      max-width:420px;
+      width:calc(100% - 32px);
+      box-shadow:0 20px 50px rgba(15,23,42,.35);
+    }
+
+    dialog::backdrop{
+      background:rgba(15,23,42,.55);
+      backdrop-filter:blur(4px);
+    }
+
+    .modal-header{
+      padding:10px 14px;
+      border-bottom:1px solid rgba(148,163,184,.5);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:var(--panel);
+    }
+
+    .modal-title{
+      font-weight:800;
+      font-size:16px;
+      color:var(--text);
+    }
+
+    .modal-body{
+      padding:20px 16px 10px;
+      text-align:center;
+    }
+
+    .rechnung{
+      color:var(--muted);
+      font-weight:700;
+      margin-bottom:6px;
+    }
+
+    .loesung{
+      font-size:20px;
+      font-weight:800;
+      margin-top:4px;
+      color:var(--text);
+    }
+
+    .modal-actions{
+      padding:10px 14px 16px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+    }
+
+    .btn{
+      border-radius:999px;
+      padding:6px 14px;
+      border:1px solid var(--border);
+      background:var(--panel-2);
+      cursor:pointer;
+      font-size:14px;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .btn.primary{
+      background:linear-gradient(180deg, #e7f6ed, #eafaf0);
+      border-color:#16a34a80;
+    }
+    .btn.danger{
+      background:linear-gradient(180deg, #fee2e2, #fee2e2);
+      border-color:#ef4444aa;
+    }
+    .btn:hover{ transform:translateY(-1px); }
+    .btn:active{ transform:translateY(0); }
+    .btn:disabled{
+      opacity:.7;
+      cursor:not-allowed;
+    }
+
+    #solutionInput{
+      width:260px;
+      max-width:100%;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      font-size:18px;
+      text-align:center;
+    }
+
+    @media (max-width:700px){
+      .grid{
+        grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+      }
+      .page{
+        margin:8px;
+        padding:12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <button class="reset-btn" id="resetBtn" title="Alle Ergebnisse zurücksetzen">↻ Reset</button>
+      <h1>Grundrechenarten – interaktive Kontrolle</h1>
+      <p class="sub">
+        Klicke auf eine Aufgabe, gib deine Lösung ein und prüfe, ob sie stimmt.
+        Komma bitte mit „,“ schreiben (z.B. <strong>3,75</strong>).
+      </p>
+    </header>
+
+    <main>
+      <div id="lists"></div>
+    </main>
+
+    <footer>
+      <div class="stats" aria-live="polite">
+        <div class="stat"><div class="label">Richtig</div><div class="value" id="stat-correct">0</div></div>
+        <div class="stat"><div class="label">Falsch</div><div class="value" id="stat-wrong">0</div></div>
+        <div class="stat"><div class="label">% richtig (alle)</div><div class="value" id="stat-pct-all">0%</div></div>
+        <div class="stat"><div class="label">% richtig (geprüft)</div><div class="value" id="stat-pct-checked">0%</div></div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <dialog id="solutionModal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Aufgabe</div>
+      <button class="btn" id="closeModal">Schließen</button>
+    </div>
+    <div class="modal-body">
+      <div class="rechnung" id="modalEq"></div>
+      <input type="text" id="solutionInput" placeholder="Deine Lösung eingeben" autocomplete="off" />
+      <div class="loesung" id="feedback"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" id="btnCheck">Lösung prüfen</button>
+      <button class="btn danger" id="btnShow">Lösung anzeigen</button>
+    </div>
+  </dialog>
+
+  <script>
+    // --- Daten: Aufgaben des Arbeitsblatts ---
+
+    const datasets = {
+      "Addition": [
+        {id:1, eq:"24 + 18", result:42},
+        {id:2, eq:"36 + 27", result:63},
+        {id:3, eq:"48 + 35", result:83},
+        {id:4, eq:"57 + 29", result:86},
+        {id:5, eq:"12,5 + 8,7", result:21.2},
+        {id:6, eq:"25,6 + 14,2", result:39.8},
+        {id:7, eq:"18,75 + 6,8", result:25.55},
+        {id:8, eq:"42,3 + 17,5", result:59.8},
+        {id:9, eq:"145 + 260", result:405},
+        {id:10, eq:"380 + 415", result:795},
+        {id:11, eq:"525 + 275", result:800},
+        {id:12, eq:"780 + 145", result:925},
+        {id:13, eq:"12,45 + 14,65", result:27.1},
+        {id:14, eq:"38,7 + 42,8", result:81.5},
+        {id:15, eq:"125,6 + 87,35", result:212.95},
+        {id:16, eq:"248,45 + 315,2", result:563.65},
+        {id:17, eq:"145 + 2350 + 78", result:2573},
+        {id:18, eq:"2480 + 325 + 1640", result:4445},
+        {id:19, eq:"5750 + 38 + 4125", result:9913},
+        {id:20, eq:"12450 + 845 + 65", result:13360},
+        {id:21, eq:"125,45 + 230,8 + 3,57", result:359.82},
+        {id:22, eq:"340,6 + 415,72 + 18,3", result:774.62},
+        {id:23, eq:"578,25 + 632,9 + 45,75", result:1256.9},
+        {id:24, eq:"1250,5 + 3480,75 + 26,842", result:4758.092},
+        {id:25, eq:"2345,67 + 1234,89 + 58,4", result:3638.96}
+      ],
+
+      "Subtraktion": [
+        {id:1, eq:"58 - 23", result:35},
+        {id:2, eq:"95 - 48", result:47},
+        {id:3, eq:"120 - 35", result:85},
+        {id:4, eq:"230 - 78", result:152},
+        {id:5, eq:"18,5 - 7,2", result:11.3},
+        {id:6, eq:"42,6 - 15,8", result:26.8},
+        {id:7, eq:"56,75 - 12,4", result:44.35},
+        {id:8, eq:"89,3 - 27,5", result:61.8},
+        {id:9, eq:"480 - 125", result:355},
+        {id:10, eq:"950 - 415", result:535},
+        {id:11, eq:"1200 - 375", result:825},
+        {id:12, eq:"1450 - 620", result:830},
+        {id:13, eq:"45,6 - 12,45", result:33.15},
+        {id:14, eq:"83,7 - 28,48", result:55.22},
+        {id:15, eq:"141,8 - 52,35", result:89.45},
+        {id:16, eq:"272,5 - 121,28", result:151.22},
+        {id:17, eq:"4850 - 1320 - 125", result:3405},
+        {id:18, eq:"6400 - 3750 - 85", result:2565},
+        {id:19, eq:"7900 - 4625 - 38", result:3237},
+        {id:20, eq:"9250 - 5780 - 1440", result:2030},
+        {id:21, eq:"345,75 - 125,45 - 18,3", result:202},
+        {id:22, eq:"890,9 - 578,25 - 45,75", result:266.9},
+        {id:23, eq:"3480,75 - 1250,5 - 26,842", result:2203.408},
+        {id:24, eq:"4567,89 - 2345,67 - 58,4", result:2163.82},
+        {id:25, eq:"8450,3 - 4250,18 - 125,05", result:4075.07}
+      ],
+
+      "Multiplikation": [
+        {id:1, eq:"12 · 4", result:48},
+        {id:2, eq:"18 · 6", result:108},
+        {id:3, eq:"14 · 8", result:112},
+        {id:4, eq:"25 · 7", result:175},
+        {id:5, eq:"2,4 · 5", result:12},
+        {id:6, eq:"3,6 · 4", result:14.4},
+        {id:7, eq:"4,5 · 6", result:27},
+        {id:8, eq:"6,2 · 3", result:18.6},
+        {id:9, eq:"18 · 12,5", result:225},
+        {id:10, eq:"24 · 14,75", result:354},
+        {id:11, eq:"35,2 · 16", result:563.2},
+        {id:12, eq:"48,5 · 15,4", result:746.9},
+        {id:13, eq:"12,75 · 8", result:102},
+        {id:14, eq:"6,25 · 18,5", result:115.625},
+        {id:15, eq:"14,58 · 6,25", result:91.125},
+        {id:16, eq:"18,735 · 4,8", result:89.928},
+        {id:17, eq:"125 · 18,75", result:2343.75},
+        {id:18, eq:"240 · 14,6", result:3504},
+        {id:19, eq:"350,8 · 25", result:8770},
+        {id:20, eq:"420,75 · 16", result:6732},
+        {id:21, eq:"12,58 · 24,5", result:308.21},
+        {id:22, eq:"23,47 · 18,6", result:436.542},
+        {id:23, eq:"45,625 · 7,5", result:342.1875},
+        {id:24, eq:"125,54 · 14,8", result:1857.992},
+        {id:25, eq:"234,875 · 12,5", result:2935.9375}
+      ],
+
+      "Division": [
+        {id:1, eq:"84 : 6", result:14},
+        {id:2, eq:"96 : 8", result:12},
+        {id:3, eq:"135 : 5", result:27},
+        {id:4, eq:"228 : 12", result:19},
+        {id:5, eq:"24,6 : 6", result:4.1},
+        {id:6, eq:"37,5 : 5", result:7.5},
+        {id:7, eq:"48,6 : 9", result:5.4},
+        {id:8, eq:"62,4 : 8", result:7.8},
+        {id:9, eq:"560 : 14", result:40},
+        {id:10, eq:"945 : 15", result:63},
+        {id:11, eq:"1248 : 12", result:104},
+        {id:12, eq:"1764 : 14", result:126},
+        {id:13, eq:"245,7 : 9", result:27.3},
+        {id:14, eq:"366,6 : 6", result:61.1},
+        {id:15, eq:"484,8 : 4", result:121.2},
+        {id:16, eq:"725 : 25", result:29},
+        {id:17, eq:"3560 : 18", result:197.78},
+        {id:18, eq:"5430 : 14", result:387.86},
+        {id:19, eq:"12480 : 22", result:567.27},
+        {id:20, eq:"15750 : 24", result:656.25},
+        {id:21, eq:"578,25 : 14", result:41.3},
+        {id:22, eq:"890,9 : 18", result:49.49},
+        {id:23, eq:"3480,75 : 26", result:133.88},
+        {id:24, eq:"4567,89 : 15", result:304.53},
+        {id:25, eq:"8450,3 : 12", result:704.19}
+      ],
+
+      "Klammer-Punkt-Strich": [
+        {id:1, eq:"25 + 12 · 3", result:61},
+        {id:2, eq:"48 - 6 · 5", result:18},
+        {id:3, eq:"18 + 4 · 7", result:46},
+        {id:4, eq:"72 - 9 · 3", result:45},
+        {id:5, eq:"15 + 8 · 4", result:47},
+        {id:6, eq:"90 - 12 · 4", result:42},
+        {id:7, eq:"36 + 18 : 3", result:42},
+        {id:8, eq:"54 - 8 · 6", result:6},
+        {id:9, eq:"25 + 48 : 6", result:33},
+        {id:10, eq:"120 - 15 · 5", result:45},
+        {id:11, eq:"(75 - 25) : (5 + 5)", result:5},
+        {id:12, eq:"6 · (14 + 6) - 12", result:108},
+        {id:13, eq:"125 : (15 - 10) + 24", result:49},
+        {id:14, eq:"(48 : 6) · (5 + 7)", result:96},
+        {id:15, eq:"140 - (18 · 4 - 22)", result:90}
+      ]
+    };
+
+    // --- Zustand / Logik ---
+
+    const taskState = new Map(); // key: "group|index" -> {checked, correct}
+    let currentModal = { group: null, index: null };
+
+    function keyFor(group, idx){
+      return `${group}|${idx}`;
+    }
+
+    function renderLists(){
+      const container = document.getElementById('lists');
+      container.innerHTML = '';
+
+      Object.entries(datasets).forEach(([groupName, tasks])=>{
+        const title = document.createElement('div');
+        title.className = 'group-title';
+        title.textContent = groupName;
+        container.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+
+        tasks.forEach((t, i)=>{
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'task';
+          card.dataset.group = groupName;
+          card.dataset.index = i;
+
+          const h3 = document.createElement('h3');
+          h3.textContent = `Aufgabe ${t.id}`;
+          const eq = document.createElement('div');
+          eq.className = 'eq';
+          eq.textContent = t.eq;
+
+          const chip = document.createElement('span');
+          chip.className = 'status-chip';
+          const st = taskState.get(keyFor(groupName, i));
+          if(!st){
+            chip.textContent = 'noch nicht geprüft';
+          }else if(st.correct){
+            chip.textContent = 'richtig ✔';
+            chip.classList.add('correct');
+          }else{
+            chip.textContent = 'falsch ✘';
+            chip.classList.add('wrong');
+          }
+
+          card.appendChild(h3);
+          card.appendChild(eq);
+          card.appendChild(chip);
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+      });
+
+      attachCardHandlers();
+      updateStats();
+    }
+
+    function attachCardHandlers(){
+      document.querySelectorAll('.task').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const group = btn.dataset.group;
+          const index = Number(btn.dataset.index);
+          openModal(group, index);
+        });
+      });
+    }
+
+    function openModal(group, index){
+      currentModal = { group, index };
+      const t = datasets[group][index];
+      document.getElementById('modalTitle').textContent = `${group} – Aufgabe ${t.id}`;
+      document.getElementById('modalEq').textContent = t.eq + " =";
+      document.getElementById('solutionInput').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('solutionModal').showModal();
+      document.getElementById('solutionInput').focus();
+    }
+
+    function closeModal(){
+      const dlg = document.getElementById('solutionModal');
+      if(dlg.open) dlg.close();
+    }
+
+    function checkSolution(){
+      const { group, index } = currentModal;
+      if(!group) return;
+      const t = datasets[group][index];
+      const inputRaw = document.getElementById('solutionInput').value.trim();
+      if(!inputRaw){
+        document.getElementById('feedback').textContent = "Bitte zuerst eine Zahl eingeben.";
+        return;
+      }
+      const cleaned = inputRaw.replace(/,/g,'.');
+      const userValue = parseFloat(cleaned);
+      const correct = userValue === t.result;
+
+      const fb = document.getElementById('feedback');
+      if(correct){
+        fb.textContent = "Richtig! ✓";
+      }else{
+        fb.textContent = "Das stimmt noch nicht.";
+      }
+
+      taskState.set(keyFor(group, index), {checked:true, correct});
+      renderLists();
+    }
+
+    function showSolution(){
+      const { group, index } = currentModal;
+      if(!group) return;
+      const t = datasets[group][index];
+      const fb = document.getElementById('feedback');
+      fb.textContent = "Lösung: " + t.result.toLocaleString('de-DE');
+      taskState.set(keyFor(group, index), {checked:true, correct:false});
+      renderLists();
+    }
+
+    function updateStats(){
+      let total = 0, checked = 0, correct = 0;
+      Object.entries(datasets).forEach(([group, tasks])=>{
+        tasks.forEach((_, i)=>{
+          total++;
+          const st = taskState.get(keyFor(group, i));
+          if(st){
+            checked++;
+            if(st.correct) correct++;
+          }
+        });
+      });
+      const wrong = checked - correct;
+      const pctAll = total ? Math.round((correct/total)*100) : 0;
+      const pctChecked = checked ? Math.round((correct/checked)*100) : 0;
+
+      document.getElementById('stat-correct').textContent = correct;
+      document.getElementById('stat-wrong').textContent = wrong;
+      document.getElementById('stat-pct-all').textContent = pctAll + "%";
+      document.getElementById('stat-pct-checked').textContent = pctChecked + "%";
+    }
+
+    function resetAll(){
+      taskState.clear();
+      renderLists();
+    }
+
+    // Event-Listener
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('btnCheck').addEventListener('click', checkSolution);
+    document.getElementById('btnShow').addEventListener('click', showSolution);
+
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        closeModal();
+      }
+    });
+
+    // Start
+    renderLists();
+  </script>
+</body>
+</html>

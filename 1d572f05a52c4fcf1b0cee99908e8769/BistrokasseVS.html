@@ -1,0 +1,2685 @@
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+
+<style>
+#kassendisplay, #kassendisplay table { font-size:12px; line-height: 1.35; }
+
+  :root{
+    --size: 340px;
+    --bg: #deddde;
+    --q1: #da9a1c;
+    --q2: #93b420;
+    --q3: #a0423d;
+    --q4: #41859d;
+    --s1: #9e342a;
+    --s2: #928f22;
+    --s3: #2f3879;
+    --s4: #44673f;
+    --line: #555;
+    --frame: #7a7a7a;
+    --inneredge: rgba(0,0,0,.18);
+    --small: 24.1%;
+  }
+
+  .logo{
+    width:var(--size);
+    aspect-ratio:1;
+    position:relative;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    background:
+      linear-gradient(var(--line),var(--line)) 50%/100% 0px no-repeat,
+      linear-gradient(var(--line),var(--line)) 50%/0px 100% no-repeat;
+    box-shadow:0 0 0 1px var(--frame);
+  }
+  .q{width:100%;height:100%;}
+  .q1{background:var(--q1);}
+  .q2{background:var(--q2);}
+  .q3{background:var(--q3);}
+  .q4{background:var(--q4);}
+  .sq{
+    position:absolute;
+    width:var(--small);
+    height:var(--small);
+    box-shadow:0 0 0 0px var(--inneredge) inset;
+  }
+  .s1{ right:50%; bottom:50%; background:var(--s1); }
+  .s2{ left:50%;  bottom:50%; background:var(--s2); }
+  .s3{ right:50%; top:50%;    background:var(--s3); }
+  .s4{ left:50%;  top:50%;    background:var(--s4); }
+</style>
+<style id="abrechnungBetragTabelle_css">
+#abrechnungBetragTabelle tr {
+  line-height: 2 !important;
+  height: 2em !important;
+}
+</style>
+<style id="bon_kassenabrechnung_css">
+#kassenOverlay .modal {
+  text-transform: uppercase !important;
+  background: #fff !important;
+  color: #222 !important;
+  font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace !important;
+  width: 260px !important;
+  border-radius: 0 !important;
+  padding: 10px 0 10px 0 !important;
+  box-shadow: none !important;
+  border: 2px dashed #888;
+  text-align: center;
+}
+#kassenOverlay .modal header {
+  display: block !important;
+  text-align: center !important;
+  margin-bottom: 0 !important;
+  border: none !important;
+}
+#kassenOverlay .modal h2 {
+  font-family: inherit !important;
+  color: #222 !important;
+  font-size: 15px !important;
+  font-weight: bold !important;
+  margin: 0 0 6px 0 !important;
+  letter-spacing: 1px;
+  text-align: center !important;
+}
+#kassenOverlay .modal .close {
+  display: none !important;
+}
+#kassenOverlay #abrechnungInfo {
+  font-family: inherit !important;
+  font-size: 12px !important;
+  color: #222 !important;
+  margin-bottom: 8px !important;
+  text-align: center !important;
+  letter-spacing: 0.5px;
+}
+#kassenOverlay .modal .content {
+  margin-top: 8px !important;
+  padding: 0 12px !important;
+}
+#kassenOverlay .modal .content p {
+  background: none !important;
+  color: #222 !important;
+  font-family: inherit !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 2px 0 !important;
+  font-size: 12px !important;
+  text-align: left !important;
+  border: none !important;
+}
+</style>
+<style>
+/* Orange Markierung für letzte Artikelliste-Zeile im Display */
+#kassendisplay tr[style*="background:#F1C142"],
+#kassendisplay tr[style*="background: #F1C142"] {
+  /* Nur links und rechts 8px "Schatten" */
+  box-shadow:
+    -5px 0 0 0 #F1C142,  /* links */
+     5px 0 0 0 #F1C142;   /* rechts */
+  border-radius: 0px;
+  position: relative;
+  z-index: 0;
+}
+
+/* Schatten für Pfand-Zeile bei Heißgetränken (helleres Orange) */
+#kassendisplay tr[style*="background:#F2D279"],
+#kassendisplay tr[style*="background: #F2D279"] {
+  box-shadow:
+    -5px 0 0 0 #F2D279,  /* links */
+     5px 0 0 0 #F2D279;   /* rechts */
+  border-radius: 0px;
+  position: relative;
+  z-index: 0;
+}
+
+</style>
+<style id="kassendisplay_nowrap_css">
+  /* Verhindere Zeilenumbrüche in der Artikelliste und kürze lange Namen */
+  #kassendisplay table { table-layout: fixed; }
+  #kassendisplay td { white-space: nowrap !important; }
+  #kassendisplay td.namecol { overflow: hidden; text-overflow: ellipsis; }
+  /* Optional etwas Puffer rechts, falls Ellipsis abgeschnitten wirkt */
+  #kassendisplay td.namecol { padding-right:4px; }
+</style>
+
+<style id="loginbtn_custom">
+  #loginBtn{
+    padding:10px 40px;
+    background:#93E6C5;
+    color:#064e3b;
+    border:1px solid #86efac;
+    border-radius:8px;
+    transition: background .15s, transform .05s;
+  }
+  #loginBtn:hover{
+    background:#A7F3D0; }
+
+  #loginBtn:active{
+    background:#86DFBB;
+    transform: translateY(1px);
+  }
+</style>
+<style id="button_radius_css">
+  td[style*="background"] {
+    border-radius: 3px;
+  }
+</style>
+<style>
+<!--
+ @font-face {
+   font-family: "Cambria Math";
+   src: local("Cambria Math"), url("CambriaMath.woff2") format("woff2");
+   panose-1: 2 4 5 3 5 4 6 3 2 4;
+ }
+ @font-face {
+   font-family: "Aptos";
+   src: local("Aptos"), url("Aptos.woff2") format("woff2");
+ }
+ p.MsoNormal, li.MsoNormal, div.MsoNormal {margin-top:0cm; font-family:"Aptos",sans-serif;}
+
+</style>
+<style id="scroll_hide_native_css">
+#kassendisplay::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none !important; }
+</style>
+<style id="display_extra_right_padding">
+#kassendisplay {padding-left: 40px !important;  padding-right: 53px !important; }
+</style>
+<style>
+.kassa {
+  width: 95vw;
+  max-width: 95vw;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+</style>
+<style id="scroll_hide_ff_css">
+#kassendisplay { scrollbar-width: none; }
+</style>
+<style id="display_scroll_buttons_css">
+.display-wrap{position:relative;width:100%;height:116pt;overflow:hidden;}
+.scroll-buttons{position:absolute; right:0; top:8px; bottom:8px; width:44px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:auto;}
+.scroll-buttons button{
+  width:44px; height:44px; border:none; border-radius:6px;
+  background:#404040; color:#777; font-size:28px; font-weight:700; cursor:pointer;
+  touch-action: none;
+}
+.scroll-buttons button:active{ transform: translateY(1px); }
+</style>
+<style id="scrollbtns_bg_css">
+.scroll-buttons{
+  background-color: #404040 !important;
+}
+</style>
+<style id="scrollstripe_fullheight_css">
+/* Streifen rechts soll die komplette Höhe und die oberen/unteren Ränder des Displayfeldes abdecken */
+.display-wrap{
+  display:flex !important;           /* Anzeige + Buttonstreifen nebeneinander */
+  align-items:stretch !important;    /* gleiche Höhe */
+}
+#kassendisplay{
+  flex:1 1 auto !important;          /* nimmt verbleitende Breite */
+}
+.scroll-buttons{
+  background:#404040 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important; /* Buttons mittig im Streifen */
+  align-self:stretch !important;     /* volle Höhe der Zeile */
+  height:100% !important;            /* falls Container eine Höhe hat */
+  padding:6px 6px !important;        /* optischer Rand im Streifen */
+  box-sizing:border-box !important;
+  min-width:48px;                    /* Breite des Streifens */
+}
+/* Entfernt evtl. unerwünschte Zwischenabstände */
+.scroll-buttons > *{ margin: 0.15rem 0; }
+</style>
+<style id="hide_native_scrollbar_css">
+#kassendisplay {
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE/Edge Legacy */
+}
+#kassendisplay::-webkit-scrollbar { /* Chrome, Safari, Edge (Chromium) */
+  display: none;
+}
+</style>
+<style id="scrollstripe_flush_css">
+.scroll-buttons{
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+</style>
+<style id="stripe_nowhite_css">
+.display-wrap{ gap:0 !important; } /* falls ein gap von flex entsteht */
+.scroll-buttons{
+  margin-right:-8px !important; /* deckt evtl. Zellen-Padding/Border */
+  background:#404040 !important;
+}
+</style>
+<style id="scrollbtns_topbottom_css">
+.scroll-buttons{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:space-between !important; /* oben/unten verteilen */
+  align-items:center !important;
+  background:#404040 !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+</style>
+<style id="scrollbtns_fix_css">
+.scroll-buttons{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  background:#404040 !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+.scroll-buttons button{
+  transform: scale(0.7);      /* 70% der Größe */
+  transform-origin: center;
+}
+</style>
+<style id="display_message_bar_css">
+.display-wrap{ position:relative; }
+.display-message{
+  font-family: monospace;
+  position:absolute; left:35; right:48px; bottom:0;
+  padding:4px 8px; background:#EEEEEE; border-top:3px solid #D49A10;
+  font:11px sans-serif; line-height:1.6; box-sizing:border-box;
+  white-space: pre-line;
+  display:none; pointer-events:none;
+  color:#222; font-weight:200;
+  text-shadow:0 0px 0 rgba(255,255,255,0.4);
+  text-transform: uppercase;
+}
+#kassendisplay{ padding-bottom:30px !important; } /* Platz für die Leiste */
+</style>
+<style id="totals_right_bar_css">
+  :root { --display-right-strip: 48px; }
+  .totals-right-bar{
+    position:absolute; right:0; top:0; bottom:0;
+    width:var(--display-right-strip); background:#404040;
+  }
+</style>
+<style id="left_bars_css">
+.display-left-bar {
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:35px;
+  background:#404040;
+}
+.totals-left-bar {
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:35px;
+  background:#404040;
+}
+</style>
+<style id="totals_labels_indent_css">
+  #totals > div:nth-child(odd) { padding-left: 52px; }
+</style>
+<style id="help_modal_css">
+/* Hilfe-Button (oranger Kreis mit Fragezeichen) */
+.help-btn{
+  font-family: 'Arial';
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:34px; height:34px; border:none; border-radius:50%;
+  background:#ebb623;; color:#FFF; font-weight:600; font-size:20px;
+  text-align:center; cursor:pointer;
+}
+.help-btn:hover{ filter:brightness(0.95); }
+
+/* Overlay + zentriertes Popup */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.5);
+  display:none; align-items:center; justify-content:center;
+  z-index:10000;
+}
+.modal{
+  background:#fff; border-radius:8px; padding:16px 18px;
+  width:min(640px, 92vw); box-shadow:0 10px 30px rgba(0,0,0,.35);
+  font-family:Aptos, sans-serif; color:#111;
+}
+/* Nur Kassenabrechnung-Popup: Cambria Math, schwarz auf weiß, schmal */
+#kassenOverlay .modal {
+  background: #fff !important;
+  color: #000 !important;
+  font-family: 'Cambria Math', Cambria, serif !important;
+  width: min(340px, 90vw) !important;
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+#kassenOverlay .modal .content p {
+  background: none !important;
+  color: #000 !important;
+  font-family: inherit !important;
+  border-radius: 0;
+  padding: 0 4px !important;
+  box-sizing: border-box;
+  width: 100%;
+}
+#kassenOverlay .modal h2 {
+  font-family: inherit !important;
+  color: #000 !important;
+}
+.modal header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+.modal h2{ font-size:18px; margin:0; }
+.modal .close{
+  background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1;
+}
+.modal .content{ display:grid; gap:6px; }
+.modal .content p{ margin:0; padding:6px 8px; background:#f6f6f6; border-radius:4px; }
+</style>
+<style id="datetime_css">
+#datetimeBox {
+  position:absolute;
+  right:54px;
+  top:50%;
+  transform:translateY(-50%);
+  text-align:left;        /* linksbündig für gleiche Ausrichtung */
+  font-family: monospace; /* nur für Datum/Uhrzeit */
+  font-weight:600;
+  color:#fff;
+  line-height:1.1;
+}
+#datetimeBox div {
+  font-size:14px;
+  display:block;
+  min-width:40px; /* genug Platz für DD.MM. und hh:mm */
+}
+</style>
+<style id="vkbd_css">
+  .vkbd { margin-top:8px; display:grid; gap:8px; user-select:none; touch-action:manipulation; }
+  .vkbd-row { display:grid; grid-auto-flow:column; gap:8px; justify-content:center; }
+  .vkbd button{
+    min-width: 34px; padding:8px 0; font-weight:700;
+    border:none; border-radius:8px; background:#eee;
+    box-shadow:0 1px 0 rgba(0,0,0,.15) inset; cursor:pointer;
+  }
+  .vkbd button:active{ transform:translateY(1px); }
+  .vkbd button.clear{ background:#ADADAD; color:#fff; }
+  .vkbd button.back{ background:#ADADAD; color:#fff; }
+  .vkbd button.shift{ background:#eee; font-weight:800; }
+  .vkbd button.active{ outline: 0px solid #aaa; background:#ADADAD; }
+  .vkbd .spacer{ width:12px; }
+  .vkbd .space{ min-width: 140px; }
+  @media (max-width: 420px){
+    .vkbd button{ min-width:30px; padding:7px 0; }
+    .vkbd .space{ min-width:110px; }
+  }
+</style>
+<style id="vviewport_fit_css">
+/* === VisualViewport Hybrid Autofit === */
+html, body { height:100%; margin:0; }
+body { overflow:hidden; background:#333; }
+
+.kassa{
+  position: absolute !important;
+  left: 0; top: 0;
+  margin: 0 !important;
+  max-width: none !important;
+  width: max-content !important;
+  transform-origin: top left;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Tables: remove inter-cell gaps that can form seams */
+table{ border-collapse: collapse !important; border-spacing: 0 !important; }
+td, th{ padding: 0 !important; }
+</style></head>
+<body style="background:#333333;">
+<div align="center" class="kassa">
+<table style="border-collapse:collapse;">
+<tr style="height:1.0cm">
+<td colspan="12" style="border:solid #404040 6.0pt; border-bottom:solid #404040 3.0pt; background:#404040; padding:0 8px; height:1.0cm; color:white; font-family:Aptos, sans-serif; white-space:nowrap; position:relative;">
+<div style="display:flex; align-items:center; gap:16px;">
+  <a href="#" id="kassenBtn" aria-label="Kassenabrechnung öffnen" title="Kassenabrechnung" style="display:inline-block; vertical-align:middle; margin-right:0px; margin-left:1px;">
+    <div class="logo" role="img" aria-label="Logo aus 4 großen und 4 kleinen Quadraten, kleine am Mittelpunkt anstoßend" style="width:34px; min-width:34px; aspect-ratio:1;">
+      <div class="q q1"></div>
+      <div class="q q2"></div>
+      <div class="q q3"></div>
+      <div class="q q4"></div>
+      <div class="sq s1"></div>
+      <div class="sq s2"></div>
+      <div class="sq s3"></div>
+      <div class="sq s4"></div>
+    </div>
+  </a>
+  <span style="font-weight:bold; font-size:12pt; vertical-align:middle;">Bistrokasse BBS Ritterplan</span>
+  <div id="datetimeBox">
+    <div id="dateNow">--.--</div>
+    <div id="timeNow">--:--</div>
+  </div>
+  <button aria-label="Hilfe öffnen" class="help-btn" id="helpBtn" title="Hilfe">?</button>
+</div>
+<div aria-labelledby="kassenTitle" aria-modal="true" class="modal-overlay" id="kassenOverlay" role="dialog" style="display:none;">
+  <div class="modal">
+    <header>
+        <h2 id="kassenTitle">KASSENABRECHNUNG</h2>
+        <button aria-label="Schließen" class="close" id="kassenClose">×</button>
+      </header>
+      <div id="abrechnungInfo" style="font-family:inherit; font-size:16px; color:#222; margin-bottom:8px; text-align:left;">
+        Berufsbildende Schulen Ritterplan Göttingen<br>
+        Ritterplan 6 - 37073 Göttingen - Bistrokasse 1<br>
+        Abrechungszeitpunkt: <span id="abrechnungDatum">--.--.----</span>, <span id="abrechnungUhrzeit">--:--</span> Uhr<br>
+        Verkäufer*in: <span id="abrechnungUserName"></span>
+      </div>
+    </header>
+    <div aria-live="polite" class="content" id="abrechnungContent">
+        <script>
+          function updateAbrechnungInfo() {
+            var now = new Date();
+            var d = now.getDate().toString().padStart(2, '0') + '.' +
+                    (now.getMonth()+1).toString().padStart(2, '0') + '.' +
+                    now.getFullYear();
+            var t = now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('abrechnungDatum').textContent = d;
+            document.getElementById('abrechnungUhrzeit').textContent = t;
+            document.getElementById('abrechnungUserName').textContent = userName;
+            
+            // Einnahmen anzeigen
+            var einnahmenSpan = document.getElementById('einnahmen');
+            if (einnahmenSpan && typeof window.einnahmenSumme !== 'undefined') {
+              einnahmenSpan.textContent = window.einnahmenSumme.toFixed(2).replace('.', ',') + ' €';
+            }
+            document.getElementById("buchungen").textContent = window.buchungen;
+            // Kassenbestand berechnen und anzeigen
+            var anfangsbestandSpan = document.getElementById('anfangsbestand');
+            var kassenbestandSpan = document.getElementById('kassenbestand');
+            if (anfangsbestandSpan && kassenbestandSpan && typeof window.einnahmenSumme !== 'undefined') {
+              var anfangsbestand = parseFloat(anfangsbestandSpan.textContent.replace(',', '.'));
+              var kassenbestand = anfangsbestand + window.einnahmenSumme;
+              kassenbestandSpan.textContent = kassenbestand.toFixed(2).replace('.', ',') + ' €';
+            }
+
+          }
+          // Beim Öffnen des Popups aktualisieren
+          document.getElementById('kassenBtn').addEventListener('click', function(){
+            setTimeout(updateAbrechnungInfo, 10);
+          });
+        </script>
+        <div style="font-size:10px; color:#888; text-align:center;"><hr style="border-style: dashed; size: 1px; color: #DDD;"></div>
+        <table id="abrechnungBetragTabelle" style="width:100%; border:none; background:none; font-size:12px; margin-bottom:6px;">
+          <tr>
+            <td style="text-align:left; border:none; background:none;">ANFANGSBESTAND (Wechselgeld):</td>
+            <td style="text-align:right; border:none; background:none; width:70px;"><span id="anfangsbestand">50,00 €</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left; border:none; background:none;">KASSENBESTAND (SOLL):</td>
+            <td style="text-align:right; border:none; background:none; width:70px;"><span id="kassenbestand">--,-- €</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left; border:none; background:none;">KASSENSALDO (SOLL):</td>
+            <td style="text-align:right; border:none; background:none; width:70px;"><span id="einnahmen">--,-- €</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left; border:none; background:none;">ANZAHL BUCHUNGEN (Verkäufe):</td>
+            <td style="text-align:right; border:none; background:none; width:70px;"><span id="buchungen">--</span></td>
+          </tr>
+        </table>
+        <div style="font-size:10px; color:#888; text-align:center;"><hr style="border-style: dashed; size: 1px; color: #DDD;">KASSENSALDO = KASSENBESTAND &#8722 ANFANGSBESTAND<br>
+        SOLL: Beträge laut Eingabe. Zählung ist nötig.</div>
+    </div>
+  </div>
+</div>
+</td>
+</tr>
+<tr style="height:58pt;">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">NUDELSALAT
+  SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BELEGTES
+  BRÖTCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">DESSERT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">KUCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SALAT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MITTAGESSEN
+  SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">3,00</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LAUGENSTANGE
+  FRISCHKÄSE SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td align="right" colspan="5" rowspan="2" style="border-top:none;
+  border-left:none;border-bottom:solid #404040 3.0pt;border-right:solid #404040 6.0pt;
+  padding:0pt 0pt 0pt 0pt;height:58pt; background:#FFFFFF; text-align:right;"><div class="display-wrap">
+<div aria-hidden="true" class="display-left-bar"></div><div id="kassendisplay" style="width:100%;height:100%;box-sizing:border-box;overflow:auto;white-space:pre-line;padding:0 0px;"></div><div aria-atomic="true" aria-live="polite" class="display-message" id="displayMessage"></div>
+<div class="scroll-buttons"><button aria-label="Nach oben" id="scroll_up" title="Nach oben" type="button">▲</button><button aria-label="Nach unten" id="scroll_down" title="Nach unten" type="button">▼</button></div></div></td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58.1pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LAUGENSTANGE
+  PUR</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">PIZZAZUNGE
+  SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">WAFFEL
+  PUDERZUCKER SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SNACK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SCHOKO-CROISSANT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">KÄSE-BRÖTCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">CAMPING-WECKE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<tr style="height:58pt">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MILCH MIX</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MEHRWEG
+  KAFFEEBECHER</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">3,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">HEISSGETRÄNK
+  SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">EIG. BECHER</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">HEISSGETRÄNK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">PFANDTASSE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SCHOOLWATER
+  FLASCHE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MEHRWEG-</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BOX</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">5,50</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">FRUCHTSAFT
+  SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td colspan="5" style="border-top:none;border-left:none;border-bottom:solid #404040 3.0pt;border-right:solid #404040 6.0pt;background:#FFFFFF;padding:6px 10px;height:58pt; position:relative">
+<div aria-hidden="true" class="totals-left-bar"></div>
+<div id="totals" style="display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:18px;row-gap:6px;font-family:Aptos, sans-serif;width:95.5%;box-sizing:border-box;padding-right:var(--display-right-strip);">
+<div style="font-weight:700;font-size:16px;">Summe</div><div style="text-align:right;font-weight:700;font-size:16px;"><span id="summe_value">0,00 €</span></div>
+<div style="font-size:14px;">Gegeben</div><div style="text-align:right;font-size:14px;"><span id="bezahlt_value">—</span></div>
+<div style="font-size:14px;">Retour</div><div style="text-align:right;font-size:14px;"><span id="rueckgeld_value">—</span></div>
+</div>
+<div aria-hidden="true" class="totals-right-bar"></div>
+</td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BIENENWACHS-TUCH</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">3,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MUFFIN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">GEBÄCK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SUS</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">0,60</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#00B050;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">PFAND-RÜCKNAHME</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">-1,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#FFC000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">ABMELDEN</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#ADADAD;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">KASSENLADE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">ÖFFNEN</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#215E99;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BARENTNAHME</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#215E99;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">WECHSELGELD</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">EINZAHLUNG</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 6.0pt;background:#4C94D8;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LETZTER</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BELEG</span></b></p>
+</td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">NUDELSALAT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,30</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BELEGTES
+  BRÖTCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,30</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">DESSERT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">KUCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SALAT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MITTAGESSEN LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">4,00</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LAUGENSTANGE
+  FRISCHKÄSE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,80</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">7</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">8</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">9</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:#E97132">CL</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 6.0pt;background:#BFBFBF;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BON</span></b></p>
+</td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58.1pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LAUGENSTANGE
+  PUR</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">PIZZAZUNGE<br>
+  LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">WAFFEL
+  PUDERZUCKER LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SNACK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,80</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SCHOKO-CROISSANT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,80</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">KÄSE-BRÖTCHEN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">CAMPING-WECKE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">4</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">5</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">6</span></b></p>
+</td>
+<td style="width:58.15pt; border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SOFORT<br/>
+  STORNO</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 6.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">ABBR.</span></b></p>
+</td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MILCH MIX</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,80</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MEHRWEG
+  KAFFEEBECHER</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">3,50</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">HEISSGETRÄNK
+  LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">EIG. BECHER</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">HEISSGETRÄNK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">PFANDTASSE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">SCHOOLWATER
+  FLASCHE</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">2,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MEHRWEG-</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BOX</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">5,50</span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">FRUCHTSAFT</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">1</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">2</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 3.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">3</span></b></p>
+</td>
+<td colspan="2" style="width:4.0cm;border-top:none;border-left:none;
+  border-bottom:solid #404040 3.0pt;border-right:solid #404040 6.0pt;
+  background:#215E99;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="151">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">ZWISCHENSUMME</span></b></p>
+</td>
+</tr>
+<tr style="height:58pt">
+<td style="width:58pt;border-top:none;border-left:solid #404040 6.0pt;
+  border-bottom:solid #404040 6.0pt;border-right:solid #404040 3.0pt;
+  background:#C00000;padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BIENENWACHS-TUCH</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">3,00</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">MUFFIN</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">1,20</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:#C00000;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">GEBÄCK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">LK</span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">0,80</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:#404040;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58.15pt;border-top:none;border-left:none;
+  border-bottom:solid #404040 6.0pt;border-right:solid #404040 3.0pt;
+  background:#404040;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="78">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white"> </span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">0</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">,</span></b></p>
+</td>
+<td style="width:58pt;border-top:none;border-left:none;border-bottom:
+  solid #404040 6.0pt;border-right:solid #404040 3.0pt;background:white;
+  padding:0cm 1.4pt 0cm 1.4pt;height:58pt">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:18.0pt;color:black">X</span></b></p>
+</td>
+<td colspan="2" style="width:4.0cm;border-top:none;border-left:none;
+  border-bottom:solid #404040 6.0pt;border-right:solid #404040 6.0pt;
+  background:#4C94D8;padding:0cm 1.4pt 0cm 1.4pt;height:58pt" width="151">
+<p align="center" class="MsoNormal" style="margin-bottom:0cm;text-align:center;
+  line-height:normal"><b><span style="font-size:7.0pt;color:white">BAR</span></b></p>
+</td>
+</tr>
+</tr></table>
+</div>
+<script>
+(function(){
+  // --- State ---
+  window.items = [];                 // {name, price}
+  window.centsPay = 0;               // right-to-left input as integer cents
+  window.bezahltCommitted = null;    // number in EUR, committed with BAR
+  window.rueckgeldCommitted = null;  // number in EUR, computed at BAR
+  window.transactionFinished = false;  // after BAR, next action resets
+  let overlayActive = false;
+  let overlayPrevText = "";
+  let qtyMultiplier = null; // Merker für Multiplikator
+  window.einnahmenSumme = 0; // Einnahmen-Variable initialisiert
+  window.buchungen = 0;
+
+  // --- Helpers ---
+  function euro(n){
+    const v = Number(n)||0;
+    const sign = v < 0 ? "-" : "";
+    const abs = Math.abs(v);
+    return sign + abs.toFixed(2).replace('.', ',') + " \u20AC";
+  }
+  function getSum(){
+    // Korrigiert: PFAND-Gesamtpreis zählt für die Summe (nicht nur 1 €)
+    return items.reduce((s, it) => {
+      if (it && it.isNote) return s;
+      if (it && it.isPfand) return s + (Number(it.totalPfand) || Number(it.price) || 0);
+      return s + (Number(it.price)||0) * (it.qty || 1);
+    }, 0);
+  }
+
+  function showOverlayUntilNextInput(msgLines){
+  try{
+    const disp = document.getElementById("kassendisplay");
+    if (!disp) return;
+    overlayPrevText = disp.textContent;
+    overlayActive = true;
+    disp.textContent = Array.isArray(msgLines) ? msgLines.join("\n") : String(msgLines);
+  } catch(e){}
+}
+function tryDismissOverlay(){
+  if (!overlayActive) return false;
+  const disp = document.getElementById("kassendisplay");
+  if (disp) disp.textContent = overlayPrevText || "";
+  overlayActive = false;
+  overlayPrevText = "";
+  return true;
+}
+
+
+  function setupDisplayScroller(){
+  const disp = document.getElementById("kassendisplay");
+  const up = document.getElementById("scroll_up");
+  const down = document.getElementById("scroll_down");
+  if (!disp || !up || !down) return;
+
+  // Präzise Zeilenhöhe (Float). Durchschnitt über mehrere Zeilen, um Subpixel zu erfassen.
+  const getLineHeight = () => {
+    const cs = getComputedStyle(disp);
+    let lh = parseFloat(cs.lineHeight);
+    if (!isFinite(lh) || String(cs.lineHeight).toLowerCase() === "normal"){
+      const probe = document.createElement("div");
+      probe.style.position = "absolute";
+      probe.style.visibility = "hidden";
+      probe.style.whiteSpace = "normal";
+      probe.style.padding = "0";
+      probe.style.margin = "0";
+      probe.style.lineHeight = cs.lineHeight;
+      probe.style.font = cs.font;
+      // 10 Zeilen erzeugen
+      probe.textContent = "X\nX\nX\nX\nX\nX\nX\nX\nX\nX";
+      document.body.appendChild(probe);
+      const h = probe.getBoundingClientRect().height;
+      document.body.removeChild(probe);
+      lh = h / 10;
+    }
+    return lh;
+  };
+
+  // Wir tracken den "Zeilenindex" statt pixelbasiert zu runden, damit jede Zeile erreichbar ist.
+  let lineIndex = 0;
+  const syncIndexFromScroll = () => {
+    const lh = getLineHeight();
+    lineIndex = Math.round(disp.scrollTop / lh);
+  };
+  const scrollToIndex = (idx) => {
+    const lh = getLineHeight();
+    const maxScroll = disp.scrollHeight - disp.clientHeight;
+    const target = Math.min(maxScroll, Math.max(0, idx * lh));
+    // Am unteren Ende nicht snappen, damit die letzten Zeilen sichtbar werden
+    disp.scrollTop = (target >= maxScroll - 0.5) ? maxScroll : Math.round(target);
+  };
+
+  // Initial index
+  syncIndexFromScroll();
+
+  const step = (dir) => {
+    syncIndexFromScroll();
+    lineIndex += dir;
+    scrollToIndex(lineIndex);
+  };
+  // --- Pointer-basierte Steuerung für Maus & Touch ---
+  const REPEAT_MS = 90;       // schnelleres Repeat
+  let holdTimer = null;
+
+  function startHold(dir){
+    stopHold();
+    // Sofort ein Schritt => Tippen scrollt direkt
+    step(dir);
+    holdTimer = setInterval(()=>step(dir), REPEAT_MS);
+  }
+  function stopHold(){
+    if (holdTimer){ clearInterval(holdTimer); holdTimer = null; }
+  }
+
+  // Fallback: Click (z. B. für sehr alte Browser)
+  up.addEventListener('click',  (e)=>{ e.preventDefault(); step(-1); }, {passive:false});
+  down.addEventListener('click',(e)=>{ e.preventDefault(); step( 1); }, {passive:false});
+
+  // Pointer Events vereinheitlichen Touch & Maus
+  [['pointerdown', -1, up],   ['pointerdown', 1, down]].forEach(([evt, dir, el])=>{
+    el.addEventListener(evt, (e)=>{
+      e.preventDefault();
+      try { el.setPointerCapture(e.pointerId); } catch(_) {}
+      startHold(dir);
+    }, {passive:false});
+  });
+
+  ['pointerup','pointercancel','pointerleave'].forEach(evt=>{
+    up.addEventListener(evt,   (e)=>{ stopHold(); try{ up.releasePointerCapture(e.pointerId);}catch(_){} }, {passive:true});
+    down.addEventListener(evt, (e)=>{ stopHold(); try{ down.releasePointerCapture(e.pointerId);}catch(_){} }, {passive:true});
+  });
+}
+
+// --- Writers ---
+  function writeSum(){
+    const sumEl = document.getElementById("summe_value");
+    if (sumEl) sumEl.textContent = euro(getSum());
+  }
+  function writeGezahlt(){
+    const el = document.getElementById("bezahlt_value");
+    if (!el) return;
+    if (transactionFinished && bezahltCommitted != null){
+      el.textContent = euro(bezahltCommitted);
+      return;
+    }
+    if (centsPay > 0){
+      el.textContent = euro(centsPay/100);
+    } else {
+      el.textContent = "\u2014";
+    }
+  }
+  function writeRueckgeld(){
+    const el = document.getElementById("rueckgeld_value");
+    if (!el) return;
+    if (transactionFinished && rueckgeldCommitted != null){
+      el.textContent = euro(rueckgeldCommitted);
+      return;
+    }
+    el.textContent = "\u2014";
+  }
+  function renderList(){
+    const disp = document.getElementById("kassendisplay");
+    if (!disp) return;
+
+    let html = '<table style="width:100%; border-collapse:collapse;font-family:monospace;">';
+    items.forEach((it, idx) => {
+      // Zeilen-Hervorhebung ermitteln
+      const isLast = idx === items.length - 1;
+      const nextIsPosPfandLast = (idx === items.length - 2) && items[idx+1] && items[idx+1].isPfand && (items[idx+1].price > 0);
+      const isLastPosPfand = isLast && it && it.isPfand && (it.price > 0);
+      let rowStyle = '';
+      if (nextIsPosPfandLast) {
+        // Heißgetränk-Hauptzeile (oben) kräftiges Orange
+        rowStyle = 'background:#F1C142;';
+      } else if (isLastPosPfand) {
+        // Untere Pfandzeile (helleres Orange)
+        rowStyle = 'background:#F2D279;';
+      } else if (isLast) {
+        // Normaler zuletzt hinzugefügter Artikel oder Pfandrücknahme
+        rowStyle = 'background:#F1C142;';
+      }
+      // Spezialfall: PFAND (eingerückt, mit Zähler nur bei Rücknahme)
+      if (it && it.isPfand) {
+        const isRuecknahme = (it.price < 0) || ((it.totalPfand||0) < 0) || /RÜCK|RUECK/i.test(it.name || "");
+        let qtyStr = "";
+        if (isRuecknahme) {
+          // Nur bei Rücknahme den Zähler zeigen
+          let qty = 1;
+            if (it.totalPfand && it.price) {
+              const ratio = it.totalPfand / it.price; // beide negativ bei Rücknahme -> positiv
+              if (ratio && isFinite(ratio)) qty = Math.abs(ratio);
+            }
+          qtyStr = (qty > 1) ? `${qty}x` : "1x";
+        }
+        html += `<tr style="${rowStyle}">
+          <td style="width: 23px;text-align:left;color:#888;">${qtyStr}</td>
+          <td class="namecol" style="text-align:left;padding-left:22px;color:#888;">${it.name}</td>
+          <td style="width: 45px;text-align:right;color:#888;">${euro(Math.abs(it.price))}</td>
+          <td style="width: 52px;text-align:right;color:#888;">${euro(it.totalPfand || it.price)}</td>
+        </tr>`;
+        return;
+      }
+      // Spezialfall: Zwischensumme (wie Pfand, ohne qty)
+      if (it && it.isNote && it.name === "ZWISCHENSUMME") {
+        html += `<tr>
+          <td style="width: 23px;"></td>
+          <td class="namecol" style="text-align:left;padding-left:22px;color:#888;">${it.name}</td>
+          <td style="width: 45px;text-align:right;color:#888;"></td>
+          <td style="width: 52px;text-align:right;color:#888;">${euro(it.price)}</td>
+        </tr>`;
+        return;
+      }
+      const qty = (it.qty && it.qty > 1) ? String(it.qty) + "x" : "1x";
+      const name = (it && it.name) ? it.name : "Artikel";
+      const price = Number(it.price)||0;
+      const total = price * (it.qty || 1);
+  html += `<tr style="${rowStyle}">
+        <td style="width: 23px;text-align:left;">${qty}</td>
+        <td class="namecol" style="text-align:left;">${name}</td>
+        <td style="width: 45px;text-align:right;">${euro(price)}</td>
+        <td style="width: 52px;text-align:right;">${euro(total)}</td>
+      </tr>`;
+    });
+    html += '</table>';
+
+    disp.innerHTML = html;
+    disp.scrollTop = disp.scrollHeight;
+
+    // Multiplikator-Anzeige, falls aktiv
+    if (qtyMultiplier && qtyMultiplier > 1) {
+      const disp = document.getElementById("kassendisplay");
+      if (disp) {
+        disp.innerHTML += `<div style="font-family:monospace;font-size:13px;color:#AAA;padding:2px 0 0 2px;">${qtyMultiplier}x Artikel wählen...</div>`;
+      }
+    }
+  }
+  // Zeigt eine temporäre Meldung an, ohne das HTML im Display zu zerstören
+  let _showMessageTimer = null;
+  function showMessage(txt, ms=1200){
+    try{
+      const msgEl = document.getElementById("displayMessage");
+      if(!msgEl) return;
+      if (_showMessageTimer){
+        clearTimeout(_showMessageTimer);
+        _showMessageTimer = null;
+      }
+      msgEl.style.display = 'block';
+      msgEl.setAttribute('aria-hidden','false');
+      msgEl.textContent = String(txt);
+      _showMessageTimer = setTimeout(()=>{
+        msgEl.textContent = '';
+        msgEl.style.display = 'none';
+        msgEl.setAttribute('aria-hidden','true');
+        _showMessageTimer = null;
+      }, ms);
+    }catch(e){}
+  }
+function renderTotals(){
+    writeSum();
+    writeGezahlt();
+    writeRueckgeld();
+  }
+
+  // --- Reset on next action after BAR ---
+  function resetIfFinished(){
+    if (!transactionFinished) return false;
+    // Start a new Rechnung: clear items and inputs
+    items.splice(0, items.length);
+    centsPay = 0;
+    bezahltCommitted = null;
+    rueckgeldCommitted = null;
+    transactionFinished = false;
+    renderList();
+    renderTotals();
+    return true;
+  }
+
+  // --- Product handling ---
+  function getNameFromCell(td){
+    const clone = td.cloneNode(true);
+    const ps = clone.querySelectorAll("p");
+    if (ps.length) ps[ps.length-1].remove();
+    return clone.textContent.replace(/\s+/g," ").trim();
+  }
+  function parseNumberDE(txt){
+    if (!txt) return 0;
+    const s = String(txt).replace(/\./g, "").replace(",", ".");
+    const n = parseFloat(s);
+    return isFinite(n) ? n : 0;
+  }
+  function parsePriceFromCell(td){
+    const lastP = td.querySelector("p:last-child");
+    return parseNumberDE(lastP ? lastP.textContent : td.textContent);
+  }
+  function setupProductClicks(){
+    const tds = Array.from(document.getElementsByTagName("td"));
+    const norm = s => (s||"").replace(/\s+/g,' ').trim().toUpperCase();
+    const isKeyLabel = (s) => {
+      const n = norm(s);
+      return /^[0-9]$/.test(n) || n === "," || n === "X" || n === "CL" || n === "BAR"
+             || n === "SOFORT STORNO" || n === "ABBR." || n === "ABBR" || n === "ABBRECHEN"
+             || n === "ZWISCHENSUMME" || n === "BON" || n === "KASSENLADE ÖFFNEN" || n === "KASSENLADE OEFFNEN"
+             || n === "LETZTER BELEG" || n.includes("LETZTER")|| n === "BARENTNAHME" || n === "WECHSELGELD EINZAHLUNG";
+    };
+    for (const td of tds){
+      const labelRaw = (td.innerText || td.textContent || "");
+      const label = norm(labelRaw);
+
+      if (isKeyLabel(label)) continue;
+
+      if (label.includes("PFAND") && (label.includes("RÜCK") || label.includes("RUECK"))){
+        td.style.cursor = "pointer";
+        td.addEventListener("click", (ev)=>{
+          ev.preventDefault(); ev.stopPropagation();
+          if (typeof resetIfFinished === "function") resetIfFinished();
+          let qty = 1;
+          if (qtyMultiplier && qtyMultiplier > 1) {
+            qty = qtyMultiplier;
+            qtyMultiplier = null;
+          }
+          items.push({name: "- PFANDRÜCKNAHME", price: -1.00, isPfand:true, totalPfand: -1.00 * qty});
+          renderList(); renderTotals();
+        });
+        continue;
+      }
+
+      const st = (td.getAttribute("style")||"").toLowerCase();
+      const isBlue = st.includes("background:#4c94d8");
+      const isRed  = st.includes("background:#c00000");
+      if (!(isBlue || isRed)) continue;
+
+      const price = parsePriceFromCell(td);
+      if (!isFinite(price)) continue;
+
+      // --- Spezialfall: HEISSGETRÄNK PFANDTASSE ---
+      const isHeissPfand = (() => {
+        const name = getNameFromCell(td).toUpperCase();
+        return (
+          name.includes("HEISSGETRÄNK") &&
+          name.includes("PFANDTASSE") &&
+          !name.includes("EIG. BECHER")
+        );
+      })();
+
+      td.style.cursor = "pointer";
+      td.addEventListener("click", (ev)=>{
+        ev.preventDefault(); ev.stopPropagation();
+        if (typeof resetIfFinished === "function") resetIfFinished();
+        let qty = 1;
+        if (qtyMultiplier && qtyMultiplier > 1) {
+          qty = qtyMultiplier;
+          qtyMultiplier = null;
+        }
+        if (isHeissPfand) {
+          items.push({name:getNameFromCell(td)||"Artikel", price, qty});
+          items.push({name:"PFAND", price:1.00, isPfand:true, totalPfand:1.00*qty});
+        } else {
+          items.push({name:getNameFromCell(td)||"Artikel", price, qty});
+        }
+        renderList();
+        renderTotals();
+      });
+    }
+  }
+
+  // --- Keypad handling ---
+  function setupKeypad(){
+  const tds = Array.from(document.getElementsByTagName("td"));
+  const norm = s => (s||"").replace(/\s+/g,' ').trim().toUpperCase();
+  const isKeyLabel = (s) => {
+    const n = norm(s);
+    return /^[0-9]$/.test(n) || n === "," || n === "X" || n === "CL" || n === "BAR"
+        || n === "SOFORT STORNO" || n === "ABBR." || n === "ABBR" || n === "ABBRECHEN"
+        || n === "ZWISCHENSUMME" || n === "BON" || n === "KASSENLADE ÖFFNEN" || n === "KASSENLADE OEFFNEN"
+        || n === "LETZTER BELEG" || n.includes("LETZTER") || n === "BARENTNAHME" || n === "WECHSELGELD EINZAHLUNG";
+  };
+  for (const td of tds){
+    const raw = (td.innerText || td.textContent || "");
+    const label = norm(raw);
+    if (!isKeyLabel(label)) continue;
+    td.style.cursor = "pointer";
+    td.addEventListener("click", (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      handleKey(label);
+    });
+  }
+}
+
+  function handleKey(k){
+  const norm = s => (s||"").replace(/\s+/g,' ').trim().toUpperCase();
+
+  // Wenn Overlay offen: nächste Taste schließt nur das Overlay
+  if (typeof overlayActive !== "undefined" && overlayActive){
+    if (typeof tryDismissOverlay === "function") tryDismissOverlay();
+    return;
+  }
+
+  // Nach BAR/Abbruch: erste Eingabe startet neue Rechnung
+  if (transactionFinished){
+    if (typeof resetIfFinished === "function") resetIfFinished();
+  }
+
+  const K = norm(k);
+
+  // --- Funktions-/Overlay-Tasten ---
+  if (K === "KASSENLADE ÖFFNEN" || K === "KASSENLADE OEFFNEN"){
+    if (typeof showMessage === "function") showMessage("Kassenlade geöffnet. \n Bitte schließen!", 2500);
+    return;
+  }
+    if (K === "LETZTER BELEG"){
+    if (typeof showMessage === "function") showMessage("Speicherfehler:\nLetzter Beleg kann nicht angezeigt werden.", 2500);
+    return;
+  }
+  if (K === "BON"){
+    if (typeof showMessage === "function") showMessage("Kassenbon wird gedruckt.\nBitte warten.", 2500);
+    return;
+  }
+  if (K === "ZWISCHENSUMME"){
+    items.push({name:"ZWISCHENSUMME", price:getSum(), isNote:true});
+    renderList();
+    return;
+  }
+  if (K === "BARENTNAHME"){
+    if (typeof showMessage === "function") showMessage("Entnommenen Bargeldbetrag eingeben.\nAnschließend mit BAR bestätigen.", 2500);
+    return;
+  }
+  if (K === "WECHSELGELD EINZAHLUNG"){
+    if (typeof showMessage === "function") showMessage("Eingezahlten Bargeldbetrag eingeben.\nAnschließend mit BAR bestätigen.", 2500);
+    return;
+  }
+
+  // --- Ziffernblock ---
+  if (/^[0-9]$/.test(K)){
+    const d = parseInt(K,10);
+    if (qtyMultiplier !== null) {
+      qtyMultiplier = Math.min(999, qtyMultiplier * 10 + d);
+      renderList();
+      return;
+    }
+    centsPay = Math.min(999999999, centsPay*10 + d);
+    writeGezahlt();
+    return;
+  }
+  if (K === ","){ return; }
+
+  // --- X als Multiplikator ---
+  if (K === "X"){
+    if (centsPay > 0 && qtyMultiplier === null) {
+      qtyMultiplier = centsPay;
+      centsPay = 0;
+      writeGezahlt();
+      renderList();
+    }
+    return;
+  }
+
+  if (K === "CL"){
+    centsPay = 0; bezahltCommitted=null; rueckgeldCommitted=null; transactionFinished=false;
+    qtyMultiplier = null;
+    renderTotals();
+    renderList();
+    return;
+  }
+
+  // --- Artikel-/Storno-Logik ---
+  if (K === "SOFORT STORNO"){
+    // Spezialfall: Letzter Artikel ist PFAND, davor HEISSGETRÄNK PFANDTASSE
+    if (items.length > 1) {
+      const last = items[items.length-1];
+      const prev = items[items.length-2];
+      if (last && last.isPfand && prev && typeof prev.name === "string" &&
+          prev.name.toUpperCase().includes("HEISSGETRÄNK") &&
+          prev.name.toUpperCase().includes("PFANDTASSE") &&
+          !prev.name.toUpperCase().includes("EIG. BECHER")) {
+        items.pop(); // PFAND entfernen
+        items.pop(); // HEISSGETRÄNK PFANDTASSE entfernen
+        renderList(); renderTotals();
+        return;
+      }
+    }
+    if (items.length>0){ items.pop(); renderList(); renderTotals(); }
+    return;
+  }
+  if (K === "ABBR." || K === "ABBR" || K === "ABBRECHEN"){
+    if (typeof showMessage === "function"){
+      const disp = document.getElementById("kassendisplay");
+      showMessage("Aktuelle Eingabe abgebrochen.\nArtikel werden gelöscht.", 1500);
+      setTimeout(()=>{
+        items.splice(0, items.length);
+        centsPay=0; bezahltCommitted=null; rueckgeldCommitted=null; transactionFinished=false;
+        if (disp) disp.textContent = "";
+        renderTotals();
+      }, 1500);
+    }
+    return;
+  }
+
+  // --- BAR ---
+  if (K === "BAR"){
+    const sum = getSum();
+
+    // Negativsumme (Pfand): BAR immer erlaubt; Auszahlung = paid - sum
+    if (sum <= 0){
+      const paid = (centsPay||0)/100;
+      bezahltCommitted = paid;
+      rueckgeldCommitted = paid - sum; // minus minus = Auszahlung
+      // Zusatz: Negativbetrag von Einnahmen abziehen
+      if (typeof window.einnahmenSumme === 'undefined') window.einnahmenSumme = 0;
+      window.einnahmenSumme -= Math.abs(sum);
+      window.buchungen++;
+      transactionFinished = true;
+        // Orange Markierung entfernen
+        const disp = document.getElementById("kassendisplay");
+        if (disp) {
+          const rows = disp.querySelectorAll('tr[style*="background:#F1C142"], tr[style*="background: #F1C142"], tr[style*="background:#F2D279"], tr[style*="background: #F2D279"]');
+          rows.forEach(row => row.style.background = "");
+        }
+    // Betrag bei "Retour" fett darstellen
+    const retourEl = document.getElementById("rueckgeld_value");
+    if (retourEl) retourEl.style.fontWeight = "bold";
+      renderTotals();
+      return;
+    }
+
+    // Normale Summe >= 0
+    if (centsPay === 0){
+      if (typeof showMessage === "function") showMessage("FEHLER:\nBetrag eingeben!", 2500);
+      return;
+    }
+    const paid = centsPay/100;
+    if (paid < sum){
+      if (typeof showMessage === "function") showMessage("FEHLER:\nGegebener Betrag ist zu gering!", 2500);
+      return;
+    }
+    bezahltCommitted = paid;
+    rueckgeldCommitted = bezahltCommitted - sum;
+    window.einnahmenSumme = (window.einnahmenSumme || 0) + sum;
+    window.buchungen++;
+    transactionFinished = true;
+      // Orange Markierung entfernen
+      const disp = document.getElementById("kassendisplay");
+      if (disp) {
+        const rows = disp.querySelectorAll('tr[style*="background:#F1C142"], tr[style*="background: #F1C142"], tr[style*="background:#F2D279"], tr[style*="background: #F2D279"]');
+        rows.forEach(row => row.style.background = "");
+      }
+    // Betrag bei "Retour" fett darstellen
+    const retourEl = document.getElementById("rueckgeld_value");
+    if (retourEl) retourEl.style.fontWeight = "bold";
+    renderTotals();
+    return;
+  }}
+  // --- Init ---
+  function init(){
+        setupDisplayScroller();
+setupProductClicks();
+    setupKeypad();
+    renderList();
+    renderTotals();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+
+})();;
+</script>
+<script id="fix_display_parent_padding_js">
+document.addEventListener('DOMContentLoaded', function(){
+  var dw = document.querySelector('.display-wrap');
+  if (dw){
+    var td = dw.closest ? dw.closest('td') : (function(n){ while(n && n.tagName!=='TD'){ n=n.parentNode; } return n; })(dw);
+    if (td){
+      td.style.paddingRight = '0px';
+      // Hintergrund ebenfalls dunkelgrau, damit kein weißer Rand sichtbar ist
+      // (falls der Bereich außerhalb des Streifens sichtbar wäre)
+      td.style.backgroundColor = td.style.backgroundColor || '#404040';
+    }
+  }
+});
+</script>
+<script id="fix_display_parent_padding_js3">
+document.addEventListener('DOMContentLoaded', function(){
+  var dw = document.querySelector('.display-wrap');
+  if (dw){
+    var td = dw.closest ? dw.closest('td') : (function(n){ while(n && n.tagName!=='TD'){ n=n.parentNode; } return n; })(dw);
+    if (td){
+      td.style.paddingRight = '0px';   // nur Abstand entfernen, Hintergrund bleibt weiß
+    }
+  }
+});
+</script>
+<script id="display_message_manager_js">
+(function(){
+  const TIMEOUT_MS = 2500;
+  let clearTimer = null;
+  const disp = document.getElementById('kassendisplay');
+  const bar  = document.getElementById('displayMessage');
+  if (!disp || !bar) return;
+
+  function looksLikeArticleLine(txt){
+    if (!txt) return false;
+    txt = String(txt).trim();
+    if (!txt) return false;
+    // price "1,20", "12,30 €", "+1,00", "-0,50"
+    const priceRe = /(\b|^)[+-]?\d+[\.,]\d{2}(\s*€)?(\b|$)/;
+    // quantities "2 x", "x2"
+    const qtyRe = /(\b\d+\s*[xX]\b|\bx\s*\d+\b)/;
+    return priceRe.test(txt) || qtyRe.test(txt);
+  }
+
+  function setMsg(txt){
+    txt = (txt||"").trim();
+    if (txt){
+      if (bar.textContent.trim() === txt && bar.style.display === 'block') return;
+      bar.textContent = txt;
+      bar.style.display = 'block';
+      armAutoClear();
+    } else {
+      bar.textContent = '';
+      bar.style.display = 'none';
+      disarmAutoClear();
+    }
+  }
+
+  function clearDisplayMessages(){
+    // remove any non-article nodes inside display
+    const nodes = Array.from(disp.childNodes);
+    for (const n of nodes){
+      let txt = '';
+      if (n.nodeType === 3) txt = n.nodeValue || '';
+      else if (n.nodeType === 1) txt = n.innerText || n.textContent || '';
+      txt = (txt||'').trim();
+      if (!txt) continue;
+      if (!looksLikeArticleLine(txt)){
+        try { n.remove(); } catch(e){}
+      }
+    }
+  }
+
+  function hideMsg(){
+    setMsg('');
+    clearDisplayMessages();
+    try { if (typeof window.tryDismissOverlay === 'function') window.tryDismissOverlay(); } catch(e){}
+  }
+
+  function onAnyInput(){ hideMsg(); }
+
+  function armAutoClear(){
+    disarmAutoClear();
+    window.addEventListener('pointerdown', onAnyInput, {capture:true, once:true});
+    window.addEventListener('keydown', onAnyInput, {capture:true, once:true});
+    clearTimer = setTimeout(hideMsg, TIMEOUT_MS);
+  }
+  function disarmAutoClear(){
+    if (clearTimer){ clearTimeout(clearTimer); clearTimer = null; }
+  }
+
+  // Mutation observer to capture messages injected into kassendisplay
+  const mo = new MutationObserver(function(muts){
+    for (const m of muts){
+      if (m.type === 'childList'){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          let txt = '';
+          if (n.nodeType === 3) txt = n.nodeValue || '';
+          else if (n.nodeType === 1) txt = n.innerText || n.textContent || '';
+          txt = (txt||'').trim();
+          if (!txt) return;
+          if (!looksLikeArticleLine(txt)){
+            setMsg(txt);
+            try { n.remove(); } catch(e){}
+          }
+        });
+      } else if (m.type === 'characterData'){
+        const txt = (m.target && m.target.data || '').trim();
+        if (txt && !looksLikeArticleLine(txt)){
+          setMsg(txt);
+          try { m.target.parentNode && m.target.parentNode.remove(); } catch(e){}
+        }
+      }
+    }
+  });
+  mo.observe(disp, { childList:true, subtree:true, characterData:true });
+
+  // Wrap showMessage if present (non-destructive)
+  if (typeof window.showMessage === 'function'){
+    const prev = window.showMessage;
+    window.showMessage = function(msg){
+      try { setMsg(msg); } catch(e){}
+      return prev.apply(this, arguments);
+    };
+  } else {
+    // Provide a fallback showMessage that also uses the bar
+    window.showMessage = function(msg){ setMsg(msg); };
+  }
+
+  // Expose helpers for debugging if needed
+  window.__displayMessageSet = setMsg;
+  window.__displayMessageHide = hideMsg;
+
+  // Initial sweep in case something was pre-rendered
+  (function initialSweep(){
+    const nodes = Array.from(disp.childNodes);
+    for (const n of nodes){
+      let txt = '';
+      if (n.nodeType === 3) txt = n.nodeValue || '';
+      else if (n.nodeType === 1) txt = n.innerText || n.textContent || '';
+      txt = (txt||'').trim();
+      if (!txt) continue;
+      if (!looksLikeArticleLine(txt)){
+        setMsg(txt);
+        try { n.remove(); } catch(e){}
+      }
+    }
+  })();
+})();
+</script>
+<script id="scroll_line_by_line_script">
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    const disp = document.getElementById('kassendisplay');
+    const btnUp = document.getElementById('scroll_up');
+    const btnDown = document.getElementById('scroll_down');
+    if (!disp || !btnUp || !btnDown) return;
+
+    function computeLineHeight(el) {
+      const cs = window.getComputedStyle(el);
+      let lh = parseFloat(cs.lineHeight);
+      if (!lh || Number.isNaN(lh)) {
+        // Fallback: measure a single-line element
+        const probe = document.createElement('span');
+        probe.textContent = '';
+        probe.style.visibility = 'hidden';
+        probe.style.whiteSpace = 'pre';
+        el.appendChild(probe);
+        lh = probe.getBoundingClientRect().height || 16;
+        el.removeChild(probe);
+      }
+      // Guard-rail: avoid absurdly small or huge values
+      if (lh < 8) lh = 16;
+      if (lh > 72) lh = 24;
+      return lh;
+    }
+
+    let cachedLH = null;
+    function getLineHeight() {
+      if (!cachedLH) cachedLH = computeLineHeight(disp);
+      return cachedLH;
+    }
+
+    function scrollByLines(nLines) {
+      const dy = nLines * getLineHeight();
+      // Use scrollBy with smooth behavior; if not supported it will just jump.
+      disp.scrollBy({ top: dy, left: 0, behavior: 'smooth' });
+    }
+
+    btnUp.addEventListener('click', function () {
+      scrollByLines(-1);
+    });
+    btnDown.addEventListener('click', function () {
+      scrollByLines(1);
+    });
+
+    // Optional: keep line height cache accurate when fonts/zoom change
+    window.addEventListener('resize', function () { cachedLH = null; });
+
+    // Keyboard support when focus is inside display
+    disp.addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowUp') { ev.preventDefault(); scrollByLines(-1); }
+      else if (ev.key === 'ArrowDown') { ev.preventDefault(); scrollByLines(1); }
+    });
+    // Make display focusable for keyboard scroll if not already
+    if (!disp.hasAttribute('tabindex')) disp.setAttribute('tabindex', '0');
+  } catch (e) {
+    // Fail silently — no console in kiosk mode anyway
+  }
+});
+</script>
+<!-- Hilfe-Popup -->
+<div aria-labelledby="helpTitle" aria-modal="true" class="modal-overlay" id="helpOverlay" role="dialog">
+<div class="modal">
+<header>
+<h2 id="helpTitle">Hilfe</h2>
+<button aria-label="Schließen" class="close" id="helpClose">×</button>
+</header>
+<div aria-live="polite" class="content">
+<p style="line-height: 180%; "><b>1.</b> Nacheinander alle gekauften Artikel antippen zum Hinzufügen.</p>
+<p style="line-height: 180%; "><b>2.</b> Gegebenes Geld mit zwei Kommastellen eintippen, also z.B. 1 0 0 0 für 10,00 €.</p>
+<p style="line-height: 180%; "><b>3.</b> Taste BAR drücken, um das Rückgeld zu berechnen.</p>
+<br/>
+<p style="line-height: 200%; ">
+      • Das Komma muss nicht genutzt werden, aber <u>immer</u> Cent eintippen, auch bei ,00 !<br/>
+      • Der letzte Artikel kann mit der Taste SOFORT STORNO entfernt werden.<br/>
+      • Die Taste CL löscht den eingegeben Betrag (Zahlung).<br/>
+      • Mit der Taste ABBR. wird der aktuelle Verkauf abgebrochen und alle Artikel gelöscht.<br/>
+      • Mit einer Zahl und der Taste X können Artikel mehrfach hinzugefügt werden.<br/>
+      • Mit ZWISCHENSUMME wird die aktuelle Summe auf dem Kassenbon notiert.<br/>
+      • Mit ABMELDEN wird die Kasse gesperrt und eine andere Person kann sich anmelden.<br/>
+      • Die anderen Tasten zeigen nur einen Text an. Sie haben <u>hier</u> keine Funktion.</p>
+</div>
+</div>
+</div>
+<script id="help_modal_js">
+(function(){
+  var btn = document.getElementById('helpBtn');
+  var overlay = document.getElementById('helpOverlay');
+  var closeBtn = document.getElementById('helpClose');
+  if(!btn || !overlay || !closeBtn) return;
+
+  function open(){ overlay.style.display='flex'; document.body.style.overflow='hidden'; closeBtn.focus(); }
+  function close(){ overlay.style.display='none'; document.body.style.overflow=''; btn.focus(); }
+
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ close(); }});
+})();
+// Kassenabrechnung-Popup
+(function(){
+  var btn = document.getElementById('kassenBtn');
+  var overlay = document.getElementById('kassenOverlay');
+  var closeBtn = document.getElementById('kassenClose');
+  if(!btn || !overlay || !closeBtn) return;
+
+  function open(){ overlay.style.display='flex'; document.body.style.overflow='hidden'; closeBtn.focus(); updateKassenAbrechnung(); }
+  function close(){ overlay.style.display='none'; document.body.style.overflow=''; btn.focus(); }
+
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ close(); }});
+
+  // Dummy-Logik für Kassenabrechnung (hier kann später die echte Logik ergänzt werden)
+  var letzterBestand = 100.00; // Beispielwert: letzter Kassenbestand
+  var aktuellerBestand = 150.00; // Beispielwert: aktueller Kassenbestand
+
+  function updateKassenAbrechnung() {
+    document.getElementById('kassenstand').textContent = aktuellerBestand.toFixed(2) + ' €';
+    document.getElementById('einnahmen').textContent = (aktuellerBestand - letzterBestand).toFixed(2) + ' €';
+  }
+})();
+</script>
+<script id="datetime_js">
+function updateDateTime(){
+  var now=new Date();
+  var dd=String(now.getDate()).padStart(2,'0');
+  var mm=String(now.getMonth()+1).padStart(2,'0');
+  var hh=String(now.getHours()).padStart(2,'0');
+  var mi=String(now.getMinutes()).padStart(2,'0');
+  document.getElementById("dateNow").textContent=dd+"."+mm+".";
+  document.getElementById("timeNow").textContent=hh+":"+mi+" ";
+}
+updateDateTime();
+setInterval(updateDateTime, 10000); // alle 10 Sek. aktualisieren
+</script>
+<!-- Login-Popup -->
+<div class="modal-overlay" id="loginOverlay" style="display:flex;">
+<div class="modal" style="background:#ddd; width:min(480px, 70vw);">
+<header>
+<h2>Bitte anmelden</h2>
+</header>
+<div class="content">
+<input id="usernameInput" placeholder="Name eingeben" style="padding:6px; font-size:14px; width:100%;" type="text" readonly/>
+<div aria-label="Bildschirmtastatur (QWERTZ)" class="vkbd" id="vkbd"></div>
+<div align="center"><button id="loginBtn" style="margin-top:10px;">Anmelden</button></div>
+</div>
+</div>
+</div>
+<script>
+  let userName = "";
+
+  const loginOverlay = document.getElementById("loginOverlay");
+  const loginBtn = document.getElementById("loginBtn");
+
+  const usernameInput = document.getElementById("usernameInput");
+  const showKeyboardBtn = document.getElementById("showKeyboardBtn");
+  if(showKeyboardBtn && usernameInput){
+    showKeyboardBtn.addEventListener("click", function(){
+      usernameInput.removeAttribute("readonly");
+      usernameInput.focus();
+    });
+  }
+
+  loginBtn.addEventListener("click", () => {
+    const input = document.getElementById("usernameInput").value.trim();
+    if(input !== ""){
+      userName = input;
+      loginOverlay.style.display = "none";
+
+      // "Hallo Name" im Header einfügen
+      const headerCell = document.querySelector("td[colspan='12']");
+      let helloSpan = document.getElementById("helloUser");
+      if(!helloSpan){
+        helloSpan = document.createElement("span");
+        helloSpan.id = "helloUser";
+        helloSpan.style.position = "absolute";
+        helloSpan.style.left = "50%";
+        helloSpan.style.top = "50%";
+        helloSpan.style.transform = "translate(-50%, -50%)";
+        helloSpan.style.fontWeight = "bold";
+        helloSpan.style.fontSize = "12pt";
+        headerCell.appendChild(helloSpan);
+      }
+      helloSpan.textContent = "Hallo " + userName;
+    }
+  });
+
+  // Enter-Taste ermöglicht auch das Login
+  document.getElementById("usernameInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") loginBtn.click();
+  });
+
+  
+  // Funktion für Abmelden-Button (gelbes Feld)
+  document.querySelectorAll("td").forEach(td => {
+    if(td.textContent.trim().includes("ABMELDEN")){
+      td.style.cursor = "pointer";
+        td.addEventListener("click", () => {
+          showCustomLogoutPopup();
+        });
+    }
+  });
+// Custom Abmelden-Popup im Stil der Seite
+function showCustomLogoutPopup() {
+  let modal = document.getElementById("logoutModalOverlay");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "logoutModalOverlay";
+    modal.className = "modal-overlay";
+    modal.style.display = "flex";
+    modal.innerHTML = `
+      <div class=\"modal\" style=\"background:#e5e7eb; width:min(260px);\">
+        <header><h2>Wirklich abmelden?</h2></header>
+          <p>Alle Buchungen werden gelöscht.</p>
+          <div style=\"display:flex; gap:16px; justify-content:center; margin-top:10px;\">
+            <button id=\"logoutYesBtn\" style=\"padding:8px 24px; background:#93E6C5; color:#064e3b; border: 1px solid #064e3b; border-radius:6px; font-size:16px; cursor:pointer;\">Ja</button>
+            <button id=\"logoutNoBtn\" style=\"padding:8px 24px; background:#FF9999; color:#990000; border: 1px solid #990000; border-radius:6px; font-size:16px; cursor:pointer;\">Nein</button>
+          </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById("logoutYesBtn").onclick = function() {
+      modal.style.display = "none";
+      window.einnahmenSumme = 0;
+      window.buchungen = 0;
+      // Abmelde-Logik wie bisher:
+      userName = "";
+      const helloSpan = document.getElementById("helloUser");
+      if(helloSpan) helloSpan.remove();
+      loginOverlay.style.display = "flex";
+      document.getElementById("usernameInput").value = "";
+      document.getElementById("usernameInput").focus();
+      window.items.splice(0, window.items.length);
+      window.centsPay=0; window.bezahltCommitted=null; window.rueckgeldCommitted=null; window.transactionFinished=false;
+      const disp = document.getElementById("kassendisplay");
+      if (disp) disp.textContent = "";
+      if (typeof renderTotals === "function") renderTotals();
+      const sumEl = document.getElementById("summe_value");
+      if (sumEl) sumEl.textContent = "0,00 €";
+      const bezahltEl = document.getElementById("bezahlt_value");
+      if (bezahltEl) bezahltEl.textContent = "—";
+      const rueckgeldEl = document.getElementById("rueckgeld_value");
+      if (rueckgeldEl) rueckgeldEl.textContent = "—";
+    };
+    document.getElementById("logoutNoBtn").onclick = function() {
+      modal.style.display = "none";
+    };
+  } else {
+    modal.style.display = "flex";
+  }
+}
+</script>
+<script id="vkbd_js">
+(function(){
+  const input = document.getElementById('usernameInput');
+  const host = document.getElementById('vkbd');
+  const overlay = document.getElementById('loginOverlay');
+  if (!input || !host) return;
+
+  // Start immer mit Großschreibung
+  let isUpper = true;
+
+  // QWERTZ mit deutschen Sonderzeichen (Basiskeys)
+  const rowsBase = [
+    ["Q","W","E","R","T","Z","U","I","O","P","Ü"],
+    ["A","S","D","F","G","H","J","K","L","Ö","Ä"],
+    ["Y","X","C","V","B","N","M","ß"]
+  ];
+  // Steuer-Keys: Shift, Space, Backspace, Clear (kein OK)
+  const controls = ["⇧","␣","←","Tastatur"];
+
+  // Helpers
+  const toUpper = (ch)=> (ch === "ß" ? "ẞ" : ch.toUpperCase());
+  const toLower = (ch)=> ch.toLowerCase();
+  const isLetter = (s)=> /^[A-Za-zÄÖÜäöüẞß]$/.test(s);
+
+  function render(){
+    host.innerHTML = "";
+    rowsBase.forEach((row, idx)=>{
+      const r = document.createElement('div');
+      r.className = 'vkbd-row';
+      if (idx === 1){ const spacer = document.createElement('div'); spacer.className='spacer'; r.appendChild(spacer); }
+      row.forEach(key => {
+        const label = isUpper ? toUpper(key) : toLower(key);
+        r.appendChild(makeKey(label, { base:key }));
+      });
+      host.appendChild(r);
+    });
+    const ctrl = document.createElement('div');
+    ctrl.className = 'vkbd-row';
+    // Abstand ganz links
+    const spacer = document.createElement('div');
+    spacer.style.width = '40px';
+    spacer.style.height = '40px';
+    ctrl.appendChild(spacer);
+
+    controls.forEach((c, idx)=>{
+      const opts = {};
+      if (c === "⇧"){ opts.kind="shift"; opts.aria="Umschalttaste"; }
+      if (c === "␣"){ opts.kind="space"; opts.aria="Leerzeichen"; }
+      if (c === "←"){ opts.kind="back"; opts.aria="Backspace"; }
+      if (c === "CLR"){ opts.kind="clear"; opts.aria="Eingabe löschen"; }
+      if (c === "Tastatur"){
+        opts.kind = "togglekbd";
+        opts.aria = "Bildschirmtastatur ein-/ausblenden";
+        opts.style = "margin-left:auto; background:#ADADAD; border:none; border-radius:8px; padding:8px; display:flex; align-items:center; justify-content:center; width:40px; height:40px;";
+      }
+      ctrl.appendChild(makeKey(c, opts));
+    });
+    host.appendChild(ctrl);
+    updateShiftVisual();
+  }
+
+  function updateShiftVisual(){
+    const btn = host.querySelector("button.shift");
+    if (btn){
+      btn.classList.toggle("active", isUpper);
+      btn.setAttribute("aria-pressed", String(isUpper));
+    }
+    host.querySelectorAll("button[data-base]").forEach(b=>{
+      const base = b.getAttribute("data-base");
+      b.textContent = isUpper ? toUpper(base) : toLower(base);
+    });
+  }
+
+  function addText(txt){
+    const pos = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const before = input.value.slice(0,pos);
+    const after  = input.value.slice(end);
+    input.value = before + txt + after;
+    const newPos = pos + txt.length;
+    input.setSelectionRange(newPos, newPos);
+    input.dispatchEvent(new Event('input', {bubbles:true}));
+    input.focus();
+
+    // Auto-Case:
+    // - Nach erster Buchstabe eines Wortes -> isUpper = false
+    if (isLetter(txt) && isWordStart(before)){
+      isUpper = false;
+      updateShiftVisual();
+    }
+    // - Nach Leerzeile -> isUpper = true
+    const b = input.value.slice(0, newPos);
+    if (endsAfterBlankLine(b)){
+      isUpper = true;
+      updateShiftVisual();
+    }
+    // - Nach SPACE -> isUpper = true (z.B. "Vorname Nachname")
+    if (txt === " "){
+      isUpper = true;
+      updateShiftVisual();
+    }
+  }
+
+  function backspace(){
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    if (start !== end){
+      input.value = input.value.slice(0,start) + input.value.slice(end);
+      input.setSelectionRange(start,start);
+    } else if (start > 0){
+      input.value = input.value.slice(0,start-1) + input.value.slice(end);
+      input.setSelectionRange(start-1,start-1);
+    }
+    input.dispatchEvent(new Event('input', {bubbles:true}));
+    input.focus();
+  }
+
+  function isWordStart(beforeText){
+    if (beforeText.length === 0) return true;
+    const prev = beforeText.slice(-1);
+    return /\s/.test(prev);
+  }
+  function endsAfterBlankLine(text){
+    return /\n\s*\n$/.test(text);
+  }
+
+  function makeKey(label, opts={}){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+  if (opts.kind) b.classList.add(opts.kind);
+    if (opts.kind === "togglekbd" && opts.style) b.setAttribute('style', opts.style);
+    if (opts.kind === "togglekbd") {
+      b.innerHTML = getKeyboardIcon(input.hasAttribute('readonly'));
+    }
+    if (opts.kind === "shift") b.classList.add("shift");
+    if (opts.aria) b.setAttribute('aria-label', opts.aria);
+    if (opts.base) b.dataset.base = opts.base;
+
+    b.addEventListener('click', ()=>{
+      if (label === "␣") addText(" ");
+      else if (label === "←") backspace();
+      else if (label === "CLR"){ input.value = ""; input.focus(); isUpper = true; updateShiftVisual(); }
+      else if (label === "⇧"){ isUpper = !isUpper; updateShiftVisual(); }
+      else if (label === "Tastatur"){
+        if (!input.hasAttribute('readonly')) {
+          input.setAttribute('readonly', '');
+          b.innerHTML = getKeyboardIcon(true);
+          input.blur();
+        } else {
+          input.removeAttribute('readonly');
+          b.innerHTML = getKeyboardIcon(false);
+          input.focus();
+        }
+      }
+      else {
+        const ch = isLetter(label)
+          ? (isUpper ? toUpper(label) : toLower(label))
+          : label;
+        addText(ch);
+      }
+    });
+
+    function getKeyboardIcon(isInactive){
+      // Blass: #cccccc, Deutlich: #333333
+      const color = isInactive ? '#cccccc' : '#333333';
+      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="5" width="18" height="14" rx="3" fill="#fff" stroke="${color}" stroke-width="2"/>
+        <rect x="6" y="8" width="2" height="2" rx="0.5" fill="${color}"/>
+        <rect x="10" y="8" width="2" height="2" rx="0.5" fill="${color}"/>
+        <rect x="14" y="8" width="2" height="2" rx="0.5" fill="${color}"/>
+        <rect x="6" y="12" width="12" height="2" rx="1" fill="${color}"/>
+      </svg>`;
+    }
+    return b;
+  }
+
+  // Hardware-Tastatur: Auto-Case auch bei echter Eingabe
+  input.addEventListener('input', ()=>{
+    const pos = input.selectionStart ?? input.value.length;
+    const b = input.value.slice(0,pos);
+    // Nach Leerzeile -> Groß
+    if (endsAfterBlankLine(b)){
+      if (!isUpper){ isUpper = true; updateShiftVisual(); }
+      return;
+    }
+    // Nach Space -> Groß
+    if (/\s$/.test(b)){
+      if (!isUpper){ isUpper = true; updateShiftVisual(); }
+      return;
+    }
+    // Nach erstem Buchstaben eines Wortes -> klein
+    const prev = b.slice(-1);
+    if (isLetter(prev) && isWordStart(b.slice(0,-1))){
+      if (isUpper){ isUpper = false; updateShiftVisual(); }
+    }
+  });
+
+  // Modal geöffnet? -> immer mit Großbuchstaben beginnen
+  if (overlay){
+    const applyOnOpen = ()=>{ isUpper = true; updateShiftVisual(); setTimeout(()=> input.focus(), 0); };
+    // Direkt beim Start
+    applyOnOpen();
+    // Beobachte Änderungen (z.B. über "ABMELDEN" erneut geöffnet)
+    const obs = new MutationObserver(()=>{
+      const visible = overlay.style.display !== 'none';
+      if (visible) applyOnOpen();
+    });
+    obs.observe(overlay, { attributes:true, attributeFilter:['style','class'] });
+  }
+
+  // Erstes Rendern der Tasten
+  render();
+})();
+</script>
+<script id="vviewport_fit_js">
+(function(){
+  const root = document.querySelector('.kassa');
+  if(!root) return;
+
+  // Utility: device pixel rounding
+  function dpr(){ return Math.max(1, window.devicePixelRatio || 1); }
+  function roundDPR(v){ const p=dpr(); return Math.round(v*p)/p; }
+
+  function getAvail(){
+    // Prefer VisualViewport if present
+    const vv = window.visualViewport;
+    if (vv) return { w: Math.floor(vv.width), h: Math.floor(vv.height) };
+    return { w: document.documentElement.clientWidth, h: document.documentElement.clientHeight };
+  }
+
+  function supportsZoom(){
+    const isFF = navigator.userAgent.toLowerCase().includes('firefox');
+    return !isFF && CSS && CSS.supports && CSS.supports('zoom', '1');
+  }
+
+  function clearTransforms(){
+    root.style.transform = 'none';
+    root.style.zoom = '1';
+  }
+
+  function naturalSize(){
+    // measure once without scale/zoom
+    clearTransforms();
+    const r = root.getBoundingClientRect();
+    const natW = Math.max(r.width, root.scrollWidth, root.offsetWidth);
+    const natH = Math.max(r.height, root.scrollHeight, root.offsetHeight);
+    return { natW, natH };
+  }
+
+  function fit(){
+    const { natW, natH } = naturalSize();
+    if (!natW || !natH) return;
+
+    const { w: availW, h: availH } = getAvail();
+    let factor = Math.min(availW / natW, availH / natH);
+
+    // Slight bias down to avoid overflow due to rounding
+    factor = Math.max(0.05, Math.floor(factor * 1000) / 1000);
+
+    if (supportsZoom()){
+      // Use real CSS zoom (Chromium/Safari) -> fewer AA-Seams, crisper text
+      root.style.transform = 'none';
+      root.style.zoom = String(factor);
+
+      const scaledW = natW * factor;
+      const scaledH = natH * factor;
+      let offX = Math.max(0, (availW - scaledW) / 2);
+      let offY = Math.max(0, (availH - scaledH) / 2);
+      offX = roundDPR(offX);
+      offY = roundDPR(offY);
+
+      root.style.left = offX + 'px';
+      root.style.top  = offY + 'px';
+    } else {
+      // Firefox fallback: translate + scale
+      root.style.zoom = '1';
+      const scaledW = natW * factor;
+      const scaledH = natH * factor;
+      let offX = Math.max(0, (availW - scaledW) / 2);
+      let offY = Math.max(0, (availH - scaledH) / 2);
+      offX = roundDPR(offX);
+      offY = roundDPR(offY);
+
+      root.style.transformOrigin = 'top left';
+      root.style.transform = 'translate(' + offX + 'px,' + offY + 'px) scale(' + factor + ')';
+    }
+  }
+
+  // Hook events
+  function ready(fn){
+    if(document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  ready(function(){
+    function doFit(){
+      fit();
+      setTimeout(fit, 0);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(doFit);
+    else doFit();
+
+    // Resize: both layout and visual viewport
+    window.addEventListener('resize', fit);
+    window.addEventListener('orientationchange', fit);
+    if (window.visualViewport){
+      window.visualViewport.addEventListener('resize', fit);
+      window.visualViewport.addEventListener('scroll', fit);
+    }
+
+    if (window.ResizeObserver){
+      const ro = new ResizeObserver(fit);
+      ro.observe(root);
+    }
+  });
+})();
+</script></body>
+</html>

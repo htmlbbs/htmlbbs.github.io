@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Interaktiver Briefschreibtrainer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        .task { margin-bottom: 30px; }
+        .image-container { text-align: center; margin-bottom: 20px; }
+        .feedback { color: green; margin-top: 10px; }
+        .error { color: red; margin-top: 10px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; margin-bottom: 10px; }
+        button { padding: 8px 16px; margin-bottom: 8px; display: block; }
+        .brief-container {
+            background: #fffbe6;
+            border: 2px solid #e2c785;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+            padding: 30px;
+            width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .brief-field { margin-bottom: 24px; }
+        .no-copy-container {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            background: #f8f8f8;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 24px;
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 600px;
+            text-align: left;
+        }
+        .center-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="headline" style="user-select:none;">Interaktiver Briefschreibtrainer</h1>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var headline = document.getElementById('headline');
+        // Finde das erste "a" und mache es klickbar
+        let html = headline.innerHTML;
+        let idx = html.indexOf('a');
+        if (idx !== -1) {
+            html = html.substring(0, idx) + '<span id="trickA" style="cursor:default;">a</span>' + html.substring(idx+1);
+            headline.innerHTML = html;
+            document.getElementById('trickA').addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Aufgabe 2 direkt anzeigen
+                document.querySelector('.center-container').innerHTML = `
+                    <div id="briefdaten" class="no-copy-container">
+                        <p>Tom Meier wohnt in 53113 Bonn im Birkenweg 3. Er möchte seiner Freundin Lea Sommer, die in der Rosenstraße 7 in 54321 Köln lebt, eine Nachricht schreiben. Es ist der 20.09.2025 und Tom hat eine Idee: Er lädt Lea herzlich zu einem Kinobesuch am Freitag um 18 Uhr ein. Sie sollen sich vor dem Kino treffen. Tom bittet Lea, ihm Bescheid zu geben, ob sie kommt. Zum Schluss legt Tom noch ein Kinoticket als Anlage dazu und grüßt sie mit "Liebe Grüße".</p>
+                    </div>
+                    <div id="brief-layout2" class="brief-container" style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px; margin-top:16px;">
+                        <textarea id="absender2" rows="3" style="width:100%;max-width:500px;" placeholder="Absender..."></textarea>
+                        <textarea id="empfaenger2" rows="3" style="width:100%;max-width:500px;" placeholder="Empfänger..."></textarea>
+                        <textarea id="datum2" rows="1" style="width:100%;max-width:500px;" placeholder="Datum..."></textarea>
+                        <textarea id="betreff2" rows="1" style="width:100%;max-width:500px;" placeholder="Betreff..." value="Einladung"></textarea>
+                        <textarea id="anrede2" rows="1" style="width:100%;max-width:500px;" placeholder="Anrede..."></textarea>
+                        <textarea id="vollerbrief2" rows="5" style="width:100%;max-width:500px;" placeholder="Brieftext..."></textarea>
+                        <textarea id="gruss2" rows="1" style="width:100%;max-width:500px;" placeholder="Grußformel..."></textarea>
+                        <button style="margin-top:16px;" onclick="checkBrief2()">Brief prüfen</button>
+                    </div>
+                    <div id="feedback-brief2-wrapper" style="width:100%; max-width:600px; margin:16px auto 0 auto; text-align:center;"><span id="feedback-brief2" style="word-break:break-word; white-space:pre-line; display:block; max-width:400px;"></span></div>
+                `;
+                window.checkBrief2 = function() {
+                    function norm(txt) {
+                        return txt.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+                    }
+                    const absender = norm(document.getElementById('absender2').value);
+                    const empfaenger = norm(document.getElementById('empfaenger2').value);
+                    const datum = norm(document.getElementById('datum2').value);
+                    const betreff = norm(document.getElementById('betreff2').value);
+                    const anrede = norm(document.getElementById('anrede2').value);
+                    const vollerbrief = norm(document.getElementById('vollerbrief2').value);
+                    const gruss = norm(document.getElementById('gruss2').value);
+                    const feedbackDiv = document.getElementById('feedback-brief2');
+                    let fehler = 0;
+                    let fehlerFelder = [];
+                    // Vergleichswerte wie Aufgabe 1
+                    const absenderSollArr = [
+                        'Tom Meier\nBirkenweg 3\n53113 Bonn',
+                        'Tom Meier Birkenweg 3 53113 Bonn',
+                        'Tom Meier\nBirkenweg 3 53113 Bonn',
+                        'Tom Meier Birkenweg 3\n53113 Bonn'
+                    ];
+                    const empfaengerSollArr = [
+                        'Lea Sommer\nRosenstraße 7\n54321 Köln',
+                        'Lea Sommer Rosenstraße 7 54321 Köln',
+                        'Lea Sommer\nRosenstraße 7 54321 Köln',
+                        'Lea Sommer Rosenstraße 7\n54321 Köln'
+                    ];
+                    let absenderOk = absenderSollArr.some(val => norm(val) === absender);
+                    let empfaengerOk = empfaengerSollArr.some(val => norm(val) === empfaenger);
+                    if (!absenderOk) { fehler++; fehlerFelder.push('Absender'); }
+                    if (!empfaengerOk) { fehler++; fehlerFelder.push('Empfänger'); }
+                    if (datum !== '20.09.2025') { fehler++; fehlerFelder.push('Datum'); }
+                    if (betreff !== 'Einladung') { fehler++; fehlerFelder.push('Betreff'); }
+                    if (anrede !== 'Hallo Lea,') { fehler++; fehlerFelder.push('Anrede'); }
+                    if (gruss !== 'Liebe Grüße') { fehler++; fehlerFelder.push('Grußformel'); }
+                    // Brieftext: Nur bestimmte Wörter müssen enthalten sein
+                    const mussWoerter = ['Kino', 'Freitag', '18.00', 'vor', 'Bescheid'];
+                    let fehlendeWoerter = mussWoerter.filter(w => !vollerbrief.includes(w));
+                    if (fehlendeWoerter.length > 0) {
+                        fehler++;
+                        fehlerFelder.push('\n\nIm Brieftext fehlt:\n ' + fehlendeWoerter.join(', '));
+                    }
+                    
+                    if (fehler === 0) {
+                        feedbackDiv.innerHTML = '<span class="feedback">Richtig! Aufgabe gelöst.</span>';
+                        setTimeout(() => {
+                            // Fertigen Brief ausgeben
+                            const absender = document.getElementById('absender2').value;
+                            const empfaenger = document.getElementById('empfaenger2').value;
+                            const datum = document.getElementById('datum2').value;
+                            const betreff = document.getElementById('betreff2').value;
+                            const anrede = document.getElementById('anrede2').value;
+                            const vollerbrief = document.getElementById('vollerbrief2').value;
+                            const gruss = document.getElementById('gruss2').value;
+                            document.querySelector('.center-container').innerHTML = `
+                                <div id='fertig-brief' class='brief-container' style='margin-top:32px;'>
+                                    <div style='margin-bottom:24px; text-align:left; white-space:pre-line;'>
+                                        <b>Absender:</b><br>${absender}
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:left; white-space:pre-line;'>
+                                        <b>Empfänger:</b><br>${empfaenger}
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:right;'>
+                                        <b>${datum}</b>
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:left;'>
+                                        <b>${betreff}</b>
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:left;'>
+                                        ${anrede}
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:left; white-space:pre-line;'>
+                                        ${vollerbrief}
+                                    </div>
+                                    <div style='margin-bottom:24px; text-align:left;'>
+                                        ${gruss}
+                                    </div>
+                                </div>
+                            `;
+                        }, 800);
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="error">${fehler} Fehler. Prüfe die Felder genau!<br>Fehler in: ${fehlerFelder.join(', ')}</span>`;
+                    }
+                };
+            });
+        }
+    });
+    </script>
+
+    <div class="center-container">
+    <div id="briefdaten" class="no-copy-container">
+        <p>
+            Martin Mofa sitzt am Schreibtisch. Er will heute einen Brief schreiben. Zuerst denkt er: „Ich schreibe meinen Namen und meine Adresse oben links.“ Er notiert: Absender: Martin Mofa, Lindenstraße 12, 10115 Berlin.
+        </p>
+        <p>
+            Jetzt schaut Martin auf den Kalender. Er schreibt rechts: 19.09.2025. Dann überlegt er, an wen der Brief geht. Er sagt leise: „Ich brauche die Empfänger-Adresse.“ Er schreibt: Empfänger: Julia Sommer, Blumenweg 8, 20095 Hamburg.
+        </p>
+        <p>
+            Martin möchte klar sagen, worum es geht. Er tippt eine Zeile: Betreff: Einladung zum Herbstfest. Danach setzt er eine passende Anrede: „Sehr geehrte Frau Sommer,“. Nun beginnt der Text. Martin schreibt und achtet sehr darauf, dass er keine Fehler macht:
+        </p>
+        <p>
+            „ich lade Sie herzlich zu unserem Herbstfest ein. Das Fest ist am Samstag, den 4. Oktober, um 15:00 Uhr im Garten der Schule. Es gibt Kuchen, Musik und Spiele. Bitte sagen Sie mir bis zum 27. September Bescheid, ob Sie kommen.“
+        </p>
+        <p>
+            Er liest den Brief noch einmal. Alles ist freundlich und einfach. Am Ende braucht er eine Grußformel und eine Unterschrift. Er schreibt: „Mit freundlichen Grüßen“. Seinen Namen schreibt er noch nicht. Den Namen will er nach dem Ausdrucken mit der Hand auf den Brief schreiben.
+        </p>
+        <p>
+            Zum Schluss denkt Martin an eine kleine Hilfe für die Empfängerin. Er fügt eine Zeile hinzu: Anlage: Wegbeschreibung zum Schulhof. Jetzt ist alles fertig: Absender, Empfänger, Adressen, Datum, Betreff, Anrede, klarer Text, Grußformel, Unterschrift und Anlage. Martin legt den Brief in einen Umschlag und fühlt sich zufrieden.
+        </p>
+    </div>
+
+    <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: flex-start;">
+    <div id="pruef-buttons" style="min-width: 160px; margin-right: 8px; display: flex; flex-direction: column; align-items: stretch;">
+            <button onclick="checkTask('absender')">Absender prüfen</button>
+            <span id="feedback-absender"></span>
+            <button onclick="checkTask('empfaenger')">Empfänger prüfen</button>
+            <span id="feedback-empfaenger"></span>
+            <button onclick="checkTask('datum')">Datum prüfen</button>
+            <span id="feedback-datum"></span>
+            <button onclick="checkTask('betreff')">Betreff prüfen</button>
+            <span id="feedback-betreff"></span>
+            <button onclick="checkTask('anrede')">Anrede prüfen</button>
+            <span id="feedback-anrede"></span>
+            <button onclick="checkTask('vollerbrief')">Brieftext prüfen</button>
+            <span id="feedback-vollerbrief" style="word-break:break-word; white-space:pre-line; display:block; max-width:160px;"></span>
+            <button onclick="checkTask('gruss')">Grußformel prüfen</button>
+            <span id="feedback-gruss"></span>
+        </div>
+        <div id="brief-layout" class="brief-container" style="display: flex; flex-direction: column;">
+        <div class="brief-field">
+            <label for="absender"><b>Absender</b></label>
+            <textarea id="absender" rows="3" placeholder="Absender..."></textarea>
+        </div>
+        <div class="brief-field" style="text-align: right;">
+            <label for="datum"><b>Datum</b></label>
+            <input id="datum" type="text" placeholder="Datum..." style="width: 60%;">
+        </div>
+        <div class="brief-field">
+            <label for="empfaenger"><b>Empfänger</b></label>
+            <textarea id="empfaenger" rows="3" placeholder="Empfänger..."></textarea>
+        </div>
+        <div class="brief-field">
+            <label for="betreff"><b>Betreff</b></label>
+            <input id="betreff" type="text" placeholder="Betreff...">
+        </div>
+        <div class="brief-field">
+            <label for="anrede"><b>Anrede</b></label>
+            <input id="anrede" type="text" placeholder="Anrede...">
+        </div>
+        <div class="brief-field">
+            <label for="vollerbrief"><b>Brieftext</b></label>
+            <textarea id="vollerbrief" rows="8" placeholder="Vollständiger Brief..."></textarea>
+        </div>
+        <div class="brief-field">
+            <label for="gruss"><b>Grußformel</b></label>
+            <textarea id="gruss" rows="1" placeholder="Grußformel..."></textarea>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+        // Vorgabedaten
+        const data = {
+            absender: "Martin Mofa\nLindenstraße 12\n10115 Berlin",
+            empfaenger: "Julia Sommer\nBlumenweg 8\n20095 Hamburg",
+            datum: "19.09.2025",
+            betreff: "Einladung zum Herbstfest",
+            anrede: "Sehr geehrte Frau Sommer,",
+            gruss: "Mit freundlichen Grüßen"
+        };
+
+        // Prüfung der Aufgaben
+        window.checkTask = function(id) {
+            const input = document.getElementById(id).value.trim();
+            const feedbackDiv = document.getElementById('feedback-' + id);
+
+            let solution;
+            switch(id) {
+                case 'absender': solution = data.absender; break;
+                case 'empfaenger': solution = data.empfaenger; break;
+                case 'datum': solution = data.datum; break;
+                case 'betreff': solution = data.betreff; break;
+                case 'anrede': solution = data.anrede; break;
+                case 'gruss': solution = data.gruss; break;
+            }
+
+            if (id !== 'vollerbrief') {
+                // Einzelne Felder prüfen (ignoriere Zeilenumbrüche und Leerzeichen)
+                const solutionNorm = solution.replace(/\r?\n/g, '').replace(/\s/g, '').toLowerCase();
+                const userInputNorm = input.replace(/\r?\n/g, '').replace(/\s/g, '').toLowerCase();
+                if (userInputNorm === solutionNorm) {
+                    feedbackDiv.innerHTML = '<span class="feedback">Richtig!</span>';
+                } else {
+                    feedbackDiv.innerHTML = '<span class="error">Leider falsch. Versuche es noch einmal!</span>';
+                }
+            } else {
+                // Brieftext: Zähle falsch geschriebene, fehlende und überflüssige Wörter (inkl. Groß-/Kleinschreibung)
+                const referenz = `ich lade Sie herzlich zu unserem Herbstfest ein. Das Fest ist am Samstag, den 4. Oktober, um 15:00 Uhr im Garten der Schule. Es gibt Kuchen, Musik und Spiele. Bitte sagen Sie mir bis zum 27. September Bescheid, ob Sie kommen.`;
+                function cleanText(txt) {
+                    return txt.replace(/[^\wäöüßÄÖÜ.,;:!?-]/gi, ' ');
+                }
+                const refWords = cleanText(referenz).split(/\s+/).filter(Boolean);
+                const userWords = cleanText(input).split(/\s+/).filter(Boolean);
+                let falsch = [];
+                let fehlend = [];
+                let ueberfluessig = [];
+
+                userWords.forEach((wort, idx) => {
+                    if (refWords[idx] && wort !== refWords[idx]) {
+                        // Zeichensetzungsfehler erkennen
+                        let baseWort = wort.replace(/[.,;:!?-]/g, '');
+                        let baseRef = refWords[idx].replace(/[.,;:!?-]/g, '');
+                        if (baseWort === baseRef) {
+                            // Nur Zeichensetzung falsch
+                            falsch.push(`<span style='color:#d00;font-weight:bold;'>${wort}</span> (<span style='color:#007;font-weight:bold;'>Zeichensetzung</span>)`);
+                        } else {
+                            falsch.push(wort);
+                        }
+                    }
+                });
+                refWords.forEach((wort, idx) => {
+                    if (!userWords[idx]) {
+                        fehlend.push(wort);
+                    }
+                });
+                if (userWords.length > refWords.length) {
+                    ueberfluessig = userWords.slice(refWords.length);
+                }
+
+                // Fehler zählen und ersten Fehler anzeigen
+                const fehlerGesamt = falsch.length + fehlend.length + ueberfluessig.length;
+                let ersterFehler = '';
+                if (falsch.length > 0) {
+                    ersterFehler = falsch[0];
+                } else if (fehlend.length > 0) {
+                    ersterFehler = `<b>${fehlend[0]}</b>`;
+                } else if (ueberfluessig.length > 0) {
+                    ersterFehler = `<b>${ueberfluessig[0]}</b>`;
+                }
+
+                let output = '';
+                if (felerGesamt === 0) {
+                    output = '<span class="feedback">Alle Wörter sind richtig und vollständig!</span>';
+                } else {
+                    output = `<span class="error">${fehlerGesamt} Fehler insgesamt.<br>Erster Fehler: ${ersterFehler}</span>`;
+                }
+                feedbackDiv.innerHTML = output;
+                // Nach erfolgreicher Prüfung: Alle Aufgaben richtig?
+                if (fehlerGesamt === 0) {
+                    setTimeout(() => {
+                        // Neue Aufgabe einfügen
+                        document.querySelector('.center-container').innerHTML = `
+                            <div id="briefdaten" class="no-copy-container">
+                                <p>Tom Meier wohnt in 53113 Bonn im Birkenweg 3. Er möchte seiner Freundin Lea Sommer, die in der Rosenstraße 7 in 54321 Köln lebt, eine Nachricht schreiben. Es ist der 20.09.2025 und Tom hat eine Idee: Er lädt Lea herzlich zu einem Kinobesuch am Freitag um 18 Uhr ein. Sie sollen sich vor dem Kino treffen. Tom bittet Lea, ihm Bescheid zu geben, ob sie kommt. Zum Schluss legt Tom noch ein Kinoticket als Anlage dazu und grüßt sie mit "Liebe Grüße".</p>
+                            </div>
+                            <div id="brief-layout2" class="brief-container" style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px; margin-top:16px;">
+                                <textarea id="absender2" rows="3" style="width:100%;max-width:500px;" placeholder="Absender..."></textarea>
+                                <textarea id="empfaenger2" rows="3" style="width:100%;max-width:500px;" placeholder="Empfänger..."></textarea>
+                                <textarea id="datum2" rows="1" style="width:100%;max-width:500px;" placeholder="Datum..."></textarea>
+                                <textarea id="betreff2" rows="1" style="width:100%;max-width:500px;" placeholder="Betreff..." value="Einladung"></textarea>
+                                <textarea id="anrede2" rows="1" style="width:100%;max-width:500px;" placeholder="Anrede..."></textarea>
+                                <textarea id="vollerbrief2" rows="5" style="width:100%;max-width:500px;" placeholder="Brieftext..."></textarea>
+                                <textarea id="gruss2" rows="1" style="width:100%;max-width:500px;" placeholder="Grußformel..."></textarea>
+                                <button style="margin-top:16px;" onclick="checkBrief2()">Brief prüfen</button>
+                            </div>
+                            <div id="feedback-brief2-wrapper" style="width:100%; max-width:600px; margin:16px auto 0 auto; text-align:center;"><span id="feedback-brief2" style="word-break:break-word; white-space:pre-line; display:block; max-width:400px;"></span></div>
+                        `;
+                        window.checkBrief2 = function() {
+                            function norm(txt) {
+                                return txt.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+                            }
+                            const absender = norm(document.getElementById('absender2').value);
+                            const empfaenger = norm(document.getElementById('empfaenger2').value);
+                            const datum = norm(document.getElementById('datum2').value);
+                            const betreff = norm(document.getElementById('betreff2').value);
+                            const anrede = norm(document.getElementById('anrede2').value);
+                            const vollerbrief = norm(document.getElementById('vollerbrief2').value);
+                            const gruss = norm(document.getElementById('gruss2').value);
+                            const feedbackDiv = document.getElementById('feedback-brief2');
+                            let fehler = 0;
+                            let fehlerFelder = [];
+                            // Akzeptiere beide Varianten: mit Zeilenumbrüchen und als eine Zeile
+                            const absenderSollArr = [
+                                'Tom Meier Birkenweg 3 53113 Bonn',
+                                'Tom Meier\nBirkenweg 3\n53113 Bonn',
+                                'Tom Meier Birkenweg 3\n53113 Bonn',
+                                'Tom Meier\nBirkenweg 3 53113 Bonn'
+                            ];
+                            const empfaengerSollArr = [
+                                'Lea Sommer Rosenstraße 7 54321 Köln',
+                                'Lea Sommer\nRosenstraße 7\n54321 Köln',
+                                'Lea Sommer Rosenstraße 7\n54321 Köln',
+                                'Lea Sommer\nRosenstraße 7 54321 Köln'
+                            ];
+                            let absenderOk = absenderSollArr.some(val => norm(val) === absender);
+                            let empfaengerOk = empfaengerSollArr.some(val => norm(val) === empfaenger);
+                            if (!absenderOk) { fehler++; fehlerFelder.push('Absender'); }
+                            if (!empfaengerOk) { fehler++; fehlerFelder.push('Empfänger'); }
+                            if (datum !== '20.09.2025') { fehler++; fehlerFelder.push('Datum'); }
+                            if (betreff !== '') { fehler++; fehlerFelder.push('Betreff'); }
+                            if (anrede !== 'Hallo Lea,') { fehler++; fehlerFelder.push('Anrede'); }
+                            // Brieftext: Nur bestimmte Wörter müssen enthalten sein
+                            const mussWoerter = ['Kino', 'Freitag', '18', 'vor', 'Bescheid'];
+                            let fehlendeWoerter = mussWoerter.filter(w => !vollerbrief.includes(w));
+                            if (fehlendeWoerter.length > 0) {
+                                fehler++;
+                                fehlerFelder.push('Brieftext: fehlt ' + fehlendeWoerter.join(', '));
+                            }
+                            if (gruss !== 'Liebe Grüße') { fehler++; fehlerFelder.push('Grußformel'); }
+                            if (fehler === 0) {
+                                feedbackDiv.innerHTML = '<span class="feedback">Richtig! Aufgabe gelöst.</span>';
+                            } else {
+                                feedbackDiv.innerHTML = `<span class="error">${fehler} Fehler. Prüfe alle Felder genau!<br>Fehler in: ${fehlerFelder.join(', ')}</span>`;
+                            }
+                        };
+                    }, 500);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

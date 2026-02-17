@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>Badminton Lesepfad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            background: #6ab04c;
+            color: white;
+            padding: 20px;
+        }
+        .section {
+            background: #ffffff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none; /* Alle Sektionen zunächst ausblenden */
+        }
+        .section h2 {
+            background: #2980b9;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .section p {
+            margin: 10px 0;
+        }
+        .questions {
+            margin: 10px 0;
+            padding: 10px;
+            background: #dcdde1;
+            border-radius: 5px;
+        }
+        .questions p {
+            margin: 5px 0;
+        }
+        .btn-container {
+            margin: 10px 0;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .check-btn {
+            background-color: #27ae60;
+            color: #fff;
+        }
+        .solution-btn {
+            background-color: #8e44ad;
+            color: #fff;
+        }
+        .next-btn {
+            background-color: #2980b9;
+            color: #fff;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .wrong {
+            color: red;
+            font-weight: bold;
+        }
+        /* Erste Sektion gleich anzeigen */
+        #section1 {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Badminton Lesepfad</h1>
+
+<!-- SECTION 1: EINLEITUNG -->
+<div class="section" id="section1">
+    <h2>Einleitung</h2>
+    <p>
+        Willkommen zu unserem abschließenden Lesepfad rund um die wichtigsten Badminton-Themen! 
+        In diesem Kurs haben wir uns intensiv mit Techniken, Taktiken und Regeln im Badminton beschäftigt. 
+        In den folgenden Abschnitten wiederholen wir die grundlegenden Inhalte zum Spielfeld, 
+        Griffhaltung, verschiedenen Schlägen und den wichtigsten Regeln. 
+        Außerdem werfen wir einen Blick auf taktische Aufstellungen im Doppel. 
+        Viel Erfolg und viel Spaß beim Wiederholen!
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 1 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Was ist das Hauptziel dieses Lesepfads?</p>
+        <label>
+            <input type="radio" name="q1-1" value="A" /> a) Eine Einführung in eine neue Sportart.
+        </label><br/>
+        <label>
+            <input type="radio" name="q1-1" value="B" /> b) Eine Wiederholung grundlegender Badminton-Themen.
+        </label><br/>
+        <label>
+            <input type="radio" name="q1-1" value="C" /> c) Eine Auflistung aller olympischen Disziplinen.
+        </label>
+
+        <p><strong>Frage 2:</strong> Wer ist die Zielgruppe dieses Lesepfads?</p>
+        <label>
+            <input type="radio" name="q1-2" value="A" /> a) Schülerinnen und Schüler eines Beruflichen Gymnasiums Klasse 13.
+        </label><br/>
+        <label>
+            <input type="radio" name="q1-2" value="B" /> b) Kindergartenkinder ab 5 Jahren.
+        </label><br/>
+        <label>
+            <input type="radio" name="q1-2" value="C" /> c) Freizeitspieler in Sportvereinen mit langjähriger Erfahrung.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(1)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution1" style="display:none;" onclick="showSolution(1)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback1"></div>
+</div>
+
+<!-- SECTION 2: SPIELFELD FÜR EINZEL UND DOPPEL -->
+<div class="section" id="section2">
+    <h2>Spielfeld für Einzel und Doppel</h2>
+    <p>
+        Das Badmintonfeld ist insgesamt 13,40 Meter lang und 6,10 Meter breit. Für das Einzelspiel 
+        sind die Seitenlinien jeweils etwas enger, sodass die effektive Breite 5,18 Meter beträgt. 
+        Beim Doppel werden die äußeren Seitenlinien genutzt, wodurch die gesamte Breite von 6,10 Metern 
+        zum Tragen kommt. Die Grundlinie markiert jeweils das hintere Ende des Feldes. 
+        Der vordere Aufschlagbereich ist durch die vordere Aufschlaglinie begrenzt. 
+        Beim Doppel wird häufig die hintere Aufschlaglinie für Doppel als Grenze genutzt, 
+        die etwas verkürzt ist (0,76 Meter vor der eigentlichen Grundlinie). 
+        Für den Aufschlag müssen sich die Spielenden diagonal gegenüberstehen und jeweils hinter der entsprechenden Aufschlaglinie bleiben.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 2 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Welche Spielfeldbreite gilt beim Einzel?</p>
+        <label>
+            <input type="radio" name="q2-1" value="A" /> a) 6,10 m
+        </label><br/>
+        <label>
+            <input type="radio" name="q2-1" value="B" /> b) 5,18 m
+        </label><br/>
+        <label>
+            <input type="radio" name="q2-1" value="C" /> c) 4,90 m
+        </label>
+
+        <p><strong>Frage 2:</strong> Was beschreibt die hintere Aufschlaglinie beim Doppel?</p>
+        <p>(Hier können zwei Antworten richtig sein.)</p>
+        <label>
+            <input type="checkbox" name="q2-2" value="A" /> a) Sie liegt 0,76 m vor der Grundlinie.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q2-2" value="B" /> b) Sie wird nur im Einzel beachtet.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q2-2" value="C" /> c) Sie begrenzt den hinteren Aufschlagbereich im Doppel.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(2)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution2" style="display:none;" onclick="showSolution(2)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback2"></div>
+</div>
+
+<!-- SECTION 3: UNIVERSALGRIFF -->
+<div class="section" id="section3">
+    <h2>Universalgriff</h2>
+    <p>
+        Der Universalgriff (auch „V-Griff“ genannt) ist die grundlegende Schlägerhaltung im Badminton. 
+        Dabei wird der Schläger so gehalten, dass sich zwischen Daumen und Zeigefinger ein „V“ bildet. 
+        Der Handballen liegt leicht hinter dem Schlägergriff. 
+        Mit diesem Griff ist es möglich, schnell zwischen Vorhand- und Rückhandhaltung zu wechseln, 
+        was eine hohe Flexibilität bei unterschiedlichen Schlagtechniken ermöglicht. 
+        Ein korrekter Universalgriff ist die Basis für nahezu alle Schläge, 
+        da er eine neutrale Ausgangsposition darstellt.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 3 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Wie wird der Universalgriff noch bezeichnet?</p>
+        <label>
+            <input type="radio" name="q3-1" value="A" /> a) Power-Griff
+        </label><br/>
+        <label>
+            <input type="radio" name="q3-1" value="B" /> b) V-Griff
+        </label><br/>
+        <label>
+            <input type="radio" name="q3-1" value="C" /> c) Federgriff
+        </label>
+
+        <p><strong>Frage 2:</strong> Warum ist der Universalgriff wichtig?</p>
+        <label>
+            <input type="radio" name="q3-2" value="A" /> a) Er ermöglicht eine neutrale Ausgangsposition für verschiedene Schläge.
+        </label><br/>
+        <label>
+            <input type="radio" name="q3-2" value="B" /> b) Er wird nur im Doppel verwendet.
+        </label><br/>
+        <label>
+            <input type="radio" name="q3-2" value="C" /> c) Er verhindert das Wechseln zwischen Vorhand und Rückhand.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(3)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution3" style="display:none;" onclick="showSolution(3)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback3"></div>
+</div>
+
+<!-- SECTION 4: ÜBERKOPF-CLEAR -->
+<div class="section" id="section4">
+    <h2>Überkopf-Clear (ÜK-Clear)</h2>
+    <p>
+        Der Überkopf-Clear ist ein defensiver bis semi-offensiver Schlag, 
+        mit dem der Ball hoch und weit in die gegnerische Spielfeldhälfte gespielt wird. 
+        Ziel ist es, den Gegner an die Grundlinie zu drängen, um selbst Zeit zu gewinnen oder 
+        die gegnerische Position zu schwächen. 
+        Der Schlag wird meist in der Vorhand-Auslage ausgeführt, wobei die Schlagbewegung 
+        ähnlich dem Wurf einer Speerbewegung ist. 
+        Wichtig sind eine korrekte Ausholbewegung über Kopf, ein stabiler Stand und 
+        ein sauberer Treffpunkt des Balls (möglichst hoch über dem Kopf).
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 4 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Welches Ziel verfolgt man mit dem Überkopf-Clear in erster Linie?</p>
+        <label>
+            <input type="radio" name="q4-1" value="A" /> a) Den Gegner ans Netz zu locken.
+        </label><br/>
+        <label>
+            <input type="radio" name="q4-1" value="B" /> b) Den Gegner an die Grundlinie zu drängen.
+        </label><br/>
+        <label>
+            <input type="radio" name="q4-1" value="C" /> c) Den Ball immer flach halten.
+        </label>
+
+        <p><strong>Frage 2:</strong> Welcher Bewegungsablauf ist charakteristisch für den Überkopf-Clear?</p>
+        <label>
+            <input type="radio" name="q4-2" value="A" /> a) Eine kurze Schlagbewegung aus dem Handgelenk.
+        </label><br/>
+        <label>
+            <input type="radio" name="q4-2" value="B" /> b) Eine flache Vorwärtsbewegung ohne Ausholphase.
+        </label><br/>
+        <label>
+            <input type="radio" name="q4-2" value="C" /> c) Eine Ausholbewegung über Kopf, ähnlich einem Speerwurf.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(4)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution4" style="display:none;" onclick="showSolution(4)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback4"></div>
+</div>
+
+<!-- SECTION 5: ÜBERKOPF-DROP -->
+<div class="section" id="section5">
+    <h2>Überkopf-Drop (ÜK-Drop)</h2>
+    <p>
+        Der Überkopf-Drop ist ein Schlag, der wie ein Überkopf-Clear vorbereitet wird, 
+        jedoch mit deutlich weniger Schlaghärte. 
+        Statt den Ball hoch und weit zu spielen, wird der Ball nur knapp über das Netz platziert. 
+        Der Drop soll den Gegner überraschen und nach vorne zwingen. 
+        Idealerweise sieht der Aushol- und Schlagansatz genauso aus wie beim Clear oder Smash, 
+        sodass der Gegner nicht sofort erkennt, dass es sich um einen Drop handeln wird.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 5 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Worin unterscheidet sich der Überkopf-Drop hauptsächlich vom Überkopf-Clear?</p>
+        <label>
+            <input type="radio" name="q5-1" value="A" /> a) Er wird ausschließlich aus der Rückhand gespielt.
+        </label><br/>
+        <label>
+            <input type="radio" name="q5-1" value="B" /> b) Er wird mit weniger Schlaghärte ausgeführt und näher ans Netz platziert.
+        </label><br/>
+        <label>
+            <input type="radio" name="q5-1" value="C" /> c) Er hat eine komplett andere Ausholbewegung.
+        </label>
+
+        <p><strong>Frage 2:</strong> Warum ist eine ähnliche Ausholbewegung wie beim Clear oder Smash beim Drop von Vorteil?</p>
+        <label>
+            <input type="radio" name="q5-2" value="A" /> a) Weil der Gegner den Schlag so leichter voraussehen kann.
+        </label><br/>
+        <label>
+            <input type="radio" name="q5-2" value="B" /> b) Um den Gegner zu täuschen und ihm die Reaktion zu erschweren.
+        </label><br/>
+        <label>
+            <input type="radio" name="q5-2" value="C" /> c) Weil der Netzdrop so sicherer wird.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(5)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution5" style="display:none;" onclick="showSolution(5)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback5"></div>
+</div>
+
+<!-- SECTION 6: SMASH -->
+<div class="section" id="section6">
+    <h2>Smash</h2>
+    <p>
+        Der Smash ist der wohl aggressivste Schlag im Badminton. 
+        Er wird mit maximaler Schlaghärte von oben nach unten gespielt und zielt darauf ab, 
+        den Ball so schnell und steil wie möglich ins gegnerische Feld zu schlagen. 
+        Ein guter Smash setzt eine solide Technik, viel Schlagkraft und eine gute Stellung zum Ball voraus. 
+        Oft wird der Smash eingesetzt, um direkte Punkte zu erzielen oder den Gegner in große Bedrängnis zu bringen. 
+        Jedoch benötigt er viel Energie und sollte nicht unüberlegt eingesetzt werden.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 6 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Was kennzeichnet den Smash im Badminton vor allem?</p>
+        <label>
+            <input type="radio" name="q6-1" value="A" /> a) Er ist ein sehr defensiver Schlag.
+        </label><br/>
+        <label>
+            <input type="radio" name="q6-1" value="B" /> b) Er wird mit maximaler Härte und steilem Winkel gespielt.
+        </label><br/>
+        <label>
+            <input type="radio" name="q6-1" value="C" /> c) Er wird nur im Doppel verwendet.
+        </label>
+
+        <p><strong>Frage 2:</strong> Was sollte man beim Smash beachten?</p>
+        <p>(Zwei Antworten können richtig sein.)</p>
+        <label>
+            <input type="checkbox" name="q6-2" value="A" /> a) Eine gute Stellung zum Ball.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q6-2" value="B" /> b) Eine maximale Aushol- und Schlagbewegung.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q6-2" value="C" /> c) Den Ball unvorhersehbar hoch über das Netz spielen.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(6)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution6" style="display:none;" onclick="showSolution(6)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback6"></div>
+</div>
+
+<!-- SECTION 7: NETZDROP -->
+<div class="section" id="section7">
+    <h2>Netzdrop</h2>
+    <p>
+        Ein Netzdrop (Netz- oder Hairpin-Drop) ist ein kurzer Schlag am Netz, 
+        bei dem der Ball möglichst knapp über die Netzkante zurück ins gegnerische Feld gespielt wird. 
+        Ziel ist es, den Gegner weit nach vorne zu zwingen und ihm dadurch die Möglichkeit zu nehmen, 
+        selber einen druckvollen Schlag aufzubauen. 
+        Der Netzdrop erfordert viel Feingefühl, da das Timing und der Treffpunkt sehr präzise sein müssen, 
+        um den Ball nicht zu hoch und damit für den Gegner angreifbar zu spielen.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 7 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Wozu dient ein Netzdrop vor allem?</p>
+        <label>
+            <input type="radio" name="q7-1" value="A" /> a) Den Gegner in eine weite Verteidigungsposition zu zwingen.
+        </label><br/>
+        <label>
+            <input type="radio" name="q7-1" value="B" /> b) Den Gegner nach vorne zu ziehen und Druck aufzubauen.
+        </label><br/>
+        <label>
+            <input type="radio" name="q7-1" value="C" /> c) Nur zum Aufwärmen verwendet zu werden.
+        </label>
+
+        <p><strong>Frage 2:</strong> Warum braucht man für den Netzdrop viel Feingefühl?</p>
+        <label>
+            <input type="radio" name="q7-2" value="A" /> a) Weil der Ball sehr nah an der Netzkante gespielt werden muss.
+        </label><br/>
+        <label>
+            <input type="radio" name="q7-2" value="B" /> b) Weil die Schlagbewegung sehr schnell und hart ausgeführt wird.
+        </label><br/>
+        <label>
+            <input type="radio" name="q7-2" value="C" /> c) Weil man den Ball immer hoch ins Hinterfeld schlagen möchte.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(7)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution7" style="display:none;" onclick="showSolution(7)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback7"></div>
+</div>
+
+<!-- SECTION 8: WICHTIGSTE AUFSCHLAGREGELN -->
+<div class="section" id="section8">
+    <h2>Wichtigste Aufschlagregeln</h2>
+    <p>
+        Beim Aufschlag muss der Schläger unterhalb der Taille den Federball treffen. 
+        Außerdem müssen beide Füße des Aufschlägers den Boden berühren und weitgehend stillstehen, 
+        bis der Ball getroffen wurde. 
+        Der Aufschlag erfolgt diagonal ins gegenüberliegende Aufschlagfeld. 
+        Bei einem Einzelfeld ist das schmal-lange Feld relevant, 
+        beim Doppel das breit-kurze (unter Berücksichtigung der hinteren Aufschlaglinie). 
+        Berührt der Aufschlag das Netz und fällt ins richtige Feld, wird der Aufschlag wiederholt (Netzaufschlag).
+        Macht der Aufschlagende dabei einen Fehler (z.B. zu hoch angeschlagen), 
+        erhält der Gegner den Aufschlag und einen Punkt.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 8 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Welche Aussage zum korrekten Aufschlag ist richtig?</p>
+        <label>
+            <input type="radio" name="q8-1" value="A" /> a) Der Treffpunkt darf oberhalb der Taille liegen.
+        </label><br/>
+        <label>
+            <input type="radio" name="q8-1" value="B" /> b) Beide Füße müssen während des Aufschlags ruhig am Boden bleiben.
+        </label><br/>
+        <label>
+            <input type="radio" name="q8-1" value="C" /> c) Der Ball darf ins beliebige Feld gespielt werden.
+        </label>
+
+        <p><strong>Frage 2:</strong> Was passiert bei einem Netzaufschlag, der ins richtige Feld fällt?</p>
+        <label>
+            <input type="radio" name="q8-2" value="A" /> a) Er gilt als Fehler und der Gegner bekommt den Punkt.
+        </label><br/>
+        <label>
+            <input type="radio" name="q8-2" value="B" /> b) Der Aufschlag wird wiederholt.
+        </label><br/>
+        <label>
+            <input type="radio" name="q8-2" value="C" /> c) Er gilt als Ass.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(8)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution8" style="display:none;" onclick="showSolution(8)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback8"></div>
+</div>
+
+<!-- SECTION 9: AUFSTELLUNGEN IM DOPPEL (TUNNEL, PARALLEL, VERSETZT) -->
+<div class="section" id="section9">
+    <h2>Aufstellungen im Doppel: Tunnel, Parallel, Versetzt</h2>
+    <p>
+        Im Doppel ist die richtige Aufstellung ein entscheidender Faktor für den Erfolg. 
+        Drei häufige Grundaufstellungen sind:
+    </p>
+    <ul>
+        <li><strong>Tunnel-Formation (Offensivaufstellung):</strong> 
+            Beide Spielenden stehen hintereinander (Vorder- und Hinterfeldspieler). 
+            Diese Formation wird oft eingenommen, wenn das eigene Team im Ballwechsel die Initiative hat 
+            und angreifen kann. Der vordere Spieler deckt das Netz ab, der hintere Spieler ist für hohe Bälle zuständig.</li>
+        <li><strong>Parallele Aufstellung (Abwehrformation):</strong> 
+            Beide Spielenden stehen nebeneinander und decken jeweils eine Feldhälfte ab. 
+            Diese Formation eignet sich gut in der Verteidigung, um harte Angriffe des Gegners abzuwehren.</li>
+        <li><strong>Versetzte Aufstellung (Situationsbedingt):</strong> 
+            Eine Mischung aus Tunnel und Parallel, bei der beide Spielenden leicht versetzt stehen, 
+            um sowohl das Netz als auch das Hinterfeld abzusichern. 
+            Diese Formation kann variieren und erfordert gute Absprachen.</li>
+    </ul>
+    <p>
+        Wichtig ist, dass beide Doppelpartner ständig kommunizieren und sich flexibel an die Spielsituation anpassen. 
+        Oft wechselt man zwischen den Aufstellungen, abhängig davon, ob man gerade angreift oder verteidigt.
+    </p>
+
+    <!-- FRAGEN ZU ABSCHNITT 9 -->
+    <div class="questions">
+        <p><strong>Frage 1:</strong> Worin unterscheidet sich die Tunnel-Formation von der parallelen Aufstellung?</p>
+        <p>(Zwei Antworten können richtig sein.)</p>
+        <label>
+            <input type="checkbox" name="q9-1" value="A" /> a) Bei der Tunnel-Formation stehen die Partner hintereinander, bei der Parallel-Formation nebeneinander.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q9-1" value="B" /> b) Die Tunnel-Formation wird nur im Einzel verwendet.
+        </label><br/>
+        <label>
+            <input type="checkbox" name="q9-1" value="C" /> c) Die parallele Aufstellung eignet sich eher für die Defensive.
+        </label>
+
+        <p><strong>Frage 2:</strong> Was zeichnet die versetzte Aufstellung aus?</p>
+        <label>
+            <input type="radio" name="q9-2" value="A" /> a) Beide Spieler stehen exakt nebeneinander.
+        </label><br/>
+        <label>
+            <input type="radio" name="q9-2" value="B" /> b) Beide Spieler stehen leicht versetzt, um flexibel auf Angriff und Verteidigung zu reagieren.
+        </label><br/>
+        <label>
+            <input type="radio" name="q9-2" value="C" /> c) Nur ein Spieler bewegt sich, der andere bleibt statisch.
+        </label>
+    </div>
+
+    <div class="btn-container">
+        <button class="check-btn" onclick="checkAnswers(9)">Antworten prüfen</button>
+        <button class="solution-btn" id="solution9" style="display:none;" onclick="showSolution(9)">Lösung anzeigen</button>
+    </div>
+
+    <div id="feedback9"></div>
+</div>
+
+<script>
+    /*
+      Dieses Skript realisiert folgende Funktionen:
+      - Fragen beantworten und prüfen
+      - Nach zwei falschen Versuchen: Möglichkeit, die Lösung anzuzeigen
+      - Freischalten des nächsten Abschnitts erst nach korrekter Beantwortung
+    */
+
+    // Korrekte Lösungen definieren (bei Checkbox-Fragen als Array)
+    // Format: pro Section ein Objekt mit "single" oder "multiple" Fragen
+    // Beispiel single: "q1-1": "B"
+    // Beispiel multiple: "q2-2": ["A","C"]
+    const correctAnswers = {
+        1: { "q1-1": ["B"], "q1-2": ["A"] },
+        2: { "q2-1": ["B"], "q2-2": ["A","C"] },
+        3: { "q3-1": ["B"], "q3-2": ["A"] },
+        4: { "q4-1": ["B"], "q4-2": ["C"] },
+        5: { "q5-1": ["B"], "q5-2": ["B"] },
+        6: { "q6-1": ["B"], "q6-2": ["A","B"] },
+        7: { "q7-1": ["B"], "q7-2": ["A"] },
+        8: { "q8-1": ["B"], "q8-2": ["B"] },
+        9: { "q9-1": ["A","C"], "q9-2": ["B"] }
+    };
+
+    // Anzahl Fehlversuche pro Abschnitt tracken
+    let attempts = {
+        1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0
+    };
+
+    // Prüfen der Antworten
+    function checkAnswers(section) {
+        const answers = correctAnswers[section];
+        let allCorrect = true;
+
+        // Jede Frage im Abschnitt durchgehen
+        for (let questionId in answers) {
+            const correct = answers[questionId]; // Array mit korrekten Werten
+            // Auslesen der User-Auswahl
+            const inputs = document.getElementsByName(questionId);
+            let userSelection = [];
+
+            for (let i = 0; i < inputs.length; i++) {
+                let input = inputs[i];
+                if ((input.type === "radio" || input.type === "checkbox") && input.checked) {
+                    userSelection.push(input.value);
+                }
+            }
+
+            // Vergleich der Arrays (bei single hat man 1 Eintrag, bei multiple ggf. mehrere)
+            if (!compareArrays(userSelection.sort(), correct.sort())) {
+                allCorrect = false;
+                break;
+            }
+        }
+
+        const feedbackEl = document.getElementById("feedback" + section);
+        if (allCorrect) {
+            feedbackEl.innerHTML = "<p class='correct'>Alle Antworten sind richtig! Weiter geht's.</p>";
+            // Nächste Sektion anzeigen (falls vorhanden)
+            const nextSection = document.getElementById("section" + (section + 1));
+            if (nextSection) {
+                nextSection.style.display = "block";
+            }
+        } else {
+            attempts[section]++;
+            if (attempts[section] < 2) {
+                feedbackEl.innerHTML = "<p class='wrong'>Nicht alle Antworten sind korrekt. Bitte versuche es noch einmal.</p>";
+            } else {
+                feedbackEl.innerHTML = "<p class='wrong'>Zweiter Fehlversuch. Du kannst dir jetzt die Lösung anzeigen lassen.</p>";
+                document.getElementById("solution" + section).style.display = "inline-block";
+            }
+        }
+    }
+
+    // Lösung anzeigen
+    function showSolution(section) {
+        const answers = correctAnswers[section];
+        let solutionText = "<p><strong>Lösungen:</strong></p><ul>";
+        for (let questionId in answers) {
+            solutionText += "<li>" + questionId + ": " + answers[questionId].join(", ") + "</li>";
+        }
+        solutionText += "</ul>";
+        document.getElementById("feedback" + section).innerHTML = solutionText;
+    }
+
+    // Vergleich von zwei Arrays (Inhalt + Länge)
+    function compareArrays(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+</html>
