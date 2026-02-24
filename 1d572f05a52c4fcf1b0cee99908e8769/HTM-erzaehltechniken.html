@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Selbstlernseite: Erzähltechniken (Deutsch, Jg. 11/12) – dynamische Aufgaben</title>
+  <meta name="description" content="Interaktive, barrierearme Selbstlernseite zu Erzähltechniken mit dynamisch wechselnden Aufgaben bei jedem Laden der Seite." />
+  <style>
+    :root{
+      --bg: #ffffff; --fg:#1a1a1a; --muted:#6b7280; --primary:#0f766e; --primary-contrast:#fff;
+      --card:#f8fafc; --border:#e5e7eb; --focus:#2563eb;
+    }
+    html{font-size:16px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;color:var(--fg);background:var(--bg);line-height:1.6}
+    header,main,footer{max-width:1100px;margin-inline:auto;padding:1rem 1.25rem}
+    header{padding-block:1.5rem}
+    .app-title{font-size:clamp(1.4rem,2.5vw,2rem);margin:0 0 .25rem 0}
+    .subtitle{margin:0;color:var(--muted)}
+    nav.breadcrumb{font-size:.95rem;margin-top:.25rem}
+    nav.breadcrumb a{color:var(--primary);text-decoration:none}
+    nav.breadcrumb a:focus, nav.breadcrumb a:hover{ text-decoration:underline }
+    .grid{display:grid;gap:1rem}
+    @media (min-width: 880px){ .grid-2{grid-template-columns:1fr 1fr} }
+    section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+    section h2{margin-top:0;font-size:1.25rem}
+    details.summary{border:1px solid var(--border);background:#fff;border-radius:10px;padding:.5rem 1rem}
+    .badge{display:inline-block;font-size:.8rem;background:#e0f2fe;color:#0c4a6e;border-radius:999px;padding:.15rem .6rem;margin-right:.4rem}
+    .info li{margin:.25rem 0}
+    .btn{appearance:none;border:none;background:var(--primary);color:var(--primary-contrast);padding:.55rem .9rem;border-radius:10px;font-weight:600;cursor:pointer}
+    .btn.secondary{background:#1118270d;color:#111827;border:1px solid var(--border)}
+    .btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem}
+    .row{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+    .stack{display:grid;gap:.5rem}
+    .muted{color:var(--muted)}
+    input[type="text"], textarea, select{width:100%;padding:.55rem .6rem;border-radius:10px;border:1px solid var(--border)}
+    textarea{min-height:120px}
+    label{font-weight:600}
+    .qa{display:grid;gap:1rem}
+    .qa fieldset{border:1px solid var(--border);padding:1rem;border-radius:12px}
+    .qa legend{font-weight:700}
+    .feedback{min-height:1.2em}
+    .cloze input{width:min(16ch, 100%)}
+    .pair{display:grid;gap:.35rem}
+    .checklist label{display:flex;align-items:flex-start;gap:.6rem}
+    .sr-only{position:absolute;left:-9999px}
+    .notice{border-left:4px solid var(--primary);padding:.5rem .75rem;background:#ecfeff}
+    @media print{
+      header, .sr-only, .no-print{display:none!important}
+      section{break-inside:avoid}
+      body{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#main">Zum Inhalt springen</a>
+  <header>
+    <h1 class="app-title">Selbstlernseite: Erzähltechniken</h1>
+    <p class="subtitle">Deutsch · Jg. 11/12 · Dynamische Aufgaben bei jedem Seitenaufruf</p>
+    <nav class="breadcrumb" aria-label="Brotkrumen">
+      <a href="#orientierung">Einstieg</a> · <a href="#wissen">Wissensfundus</a> · <a href="#uebung1">MC‑Quiz</a> · <a href="#uebung2">Lückentext</a> · <a href="#uebung3">Zuordnung</a> · <a href="#uebung4">Kurzschreibaufgabe</a> · <a href="#transfer">Transfer</a> · <a href="#check">Checkliste</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section id="orientierung" class="card">
+      <h2>🔎 Advance Organizer</h2>
+      <p>Erzähltechniken beantworten u. a. diese Fragen:</p>
+      <ul class="info">
+        <li><strong>Wer erzählt</strong> (Erzählerinstanz) und <strong>aus welcher Sicht</strong> (Innen‑/Außensicht, Perspektivwechsel)?</li>
+        <li><strong>Wie erzählt</strong> der Erzähler (auktorial, personal, neutral) und mit welcher <strong>Haltung</strong> (wertend vs. neutral)?</li>
+        <li><strong>Wie ist die Zeit</strong> gestaltet (chronologisch, Rückblende, Montage, erzählte Zeit vs. Erzählzeit)?</li>
+        <li><strong>Welche Rolle spielt der Raum</strong> (Handlungsort, Atmosphäre, Symbolik)?</li>
+        <li><strong>Wie werden Figurenrede und Darstellung</strong> umgesetzt (direkte/indirekte/erlebte Rede, innerer Monolog, Bewusstseinsstrom)?</li>
+      </ul>
+      <p class="notice">Bei jedem Laden der Seite werden neue Aufgabenvarianten und Beispiele gezogen.</p>
+    </section>
+
+    <section id="wissen">
+      <h2>📚 Wissensfundus (kompakt)</h2>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3><span class="badge">1</span>Erzählperspektive & ‑standort</h3>
+          <ul>
+            <li><strong>Innensicht</strong>: Gedanken/Gefühle einer Figur zugänglich · <strong>Außensicht</strong>: nur von außen Beobachtbares.</li>
+            <li><strong>Erzählerstandort</strong>: Nähe/Distanz zum Geschehen (z. B. olympischer Überblick vs. Teil der Welt des Geschehens).</li>
+            <li><strong>Multiperspektivik</strong>: wechselnde Sichtweisen mehrerer Figuren oder Erzähler.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="badge">2</span>Erzählverhalten (nach Stanzel)</h3>
+          <ul>
+            <li><strong>auktorial</strong>: Überblick, Kommentare, Vorausdeutungen möglich; Erzähler als ordnende Instanz.</li>
+            <li><strong>personal</strong>: an Figur gebunden, scheinbar unmittelbare Innen‑/Außensicht dieser Figur.</li>
+            <li><strong>neutral</strong>: beobachtend wie Kamera; keine Kommentare, Außenansicht dominiert.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="badge">3</span>Erzählhaltung</h3>
+          <ul>
+            <li><strong>wertend</strong> (z. B. ironisch, kritisch, satirisch) vs. <strong>neutral</strong>.</li>
+            <li>Erkennbar an Wortwahl, Kommentaren, Bildlichkeit.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="badge">4</span>Zeitgestaltung</h3>
+          <ul>
+            <li><strong>Erzählzeit</strong> (Zeit des Erzählens) ↔ <strong>erzählte Zeit</strong> (Dauer des Geschehens).</li>
+            <li><strong>Ordnung</strong>: chronologisch, <em>Analepse</em> (Rückblende), <em>Prolepse</em> (Vorausdeutung).</li>
+            <li><strong>Tempo</strong>: Zeitraffung, Zeitdehnung, Zeitdeckung (szenisch).</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="badge">5</span>Raum</h3>
+          <ul>
+            <li><strong>Handlungsraum</strong>, <strong>Atmosphäre</strong> (Stimmung), <strong>Symbolraum</strong> (bedeutungstragend).</li>
+            <li>Kontrast‑ und Korrespondenzbeziehungen zwischen Räumen erzeugen Sinn (z. B. Dorf vs. Gebirge).</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3><span class="badge">6</span>Darbietungsformen / Figurenrede</h3>
+          <ul>
+            <li><strong>Erzählerrede</strong>: Bericht, Szene, Beschreibung, Kommentar.</li>
+            <li><strong>Figurenrede</strong>: direkte Rede, indirekte Rede, <strong>erlebte Rede</strong>, innerer Monolog, Bewusstseinsstrom.</li>
+          </ul>
+        </article>
+      </div>
+      <details class="summary"><summary><strong>Hinweis</strong>: Die oben genannten Punkte sind stark verkürzt. Nutze bei Bedarf dein Lehrwerk/Handout für Details.</summary>
+        <p>Die Inhalte orientieren sich an gängigen Einteilungen (u. a. Stanzel). Sie sind so formuliert, dass sie unabhängig von bestimmten Lehrbüchern funktionieren.</p>
+      </details>
+    </section>
+
+    <section id="uebung1">
+      <h2>🧠 Übung 1: Multiple‑Choice (Sofort‑Feedback)</h2>
+      <form id="mc-form" class="qa" onsubmit="event.preventDefault()"></form>
+      <div class="row">
+        <button class="btn" type="button" onclick="checkMC()">Auswerten</button>
+        <button class="btn secondary" type="button" onclick="renderMC()">Neue MC‑Aufgaben laden</button>
+        <span id="score1" class="muted" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section id="uebung2">
+      <h2>✍️ Übung 2: Lückentext (Kompetenzen anwenden)</h2>
+      <p>Fülle die Lücken. Groß‑/Kleinschreibung und Fachbegriffe beachten.</p>
+      <form id="cloze-form" class="cloze stack" onsubmit="event.preventDefault()"></form>
+      <div class="row">
+        <button class="btn" type="button" onclick="checkCloze()">Auswerten</button>
+        <button class="btn secondary" type="button" onclick="renderCloze()">Neue Lückentexte laden</button>
+        <span id="score2" class="muted" aria-live="polite"></span>
+      </div>
+      <details class="summary"><summary>Musterlösungen zeigen</summary>
+        <ul id="cloze-sol"></ul>
+      </details>
+    </section>
+
+    <section id="uebung3">
+      <h2>🧩 Übung 3: Zuordnung (Begriff → Beispiel)</h2>
+      <p>Wähle zu jedem Beispiel den passenden Begriff.</p>
+      <form id="match-form" class="stack" onsubmit="event.preventDefault()"></form>
+      <div class="row">
+        <button class="btn" type="button" onclick="checkSelects()">Auswerten</button>
+        <button class="btn secondary" type="button" onclick="renderMatch()">Neue Zuordnungen laden</button>
+        <span id="score3" class="muted" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section id="uebung4">
+      <h2>📝 Übung 4: Kurzschreibaufgabe (mit Musterlösung)</h2>
+      <p id="prompt-schreiben"></p>
+      <textarea aria-label="Kurztext"></textarea>
+      <div class="row no-print">
+        <button class="btn" type="button" onclick="toggleModel(true)">Musterlösung anzeigen</button>
+        <button class="btn secondary" type="button" onclick="toggleModel(false)">Musterlösung ausblenden</button>
+      </div>
+      <article id="model" class="card" hidden>
+        <h3>Beispiel (möglich)</h3>
+        <div id="model-texts"></div>
+      </article>
+    </section>
+
+    <section id="transfer">
+      <h2>🔁 Transfer: Analyse mini</h2>
+      <p id="transfer-hinweis"></p>
+      <ol id="transfer-list"></ol>
+      <details class="summary"><summary>Erwartungshorizont (einblendbar)</summary>
+        <ul id="transfer-sol"></ul>
+      </details>
+    </section>
+
+    <section id="check">
+      <h2>✅ Selbsteinschätzung</h2>
+      <form class="checklist stack" onsubmit="event.preventDefault()">
+        <label><input type="checkbox"> Ich kann Erzählverhalten (auktorial/personal/neutral) sicher unterscheiden.</label>
+        <label><input type="checkbox"> Ich erkenne Innen‑/Außensicht und kann Perspektivwechsel benennen.</label>
+        <label><input type="checkbox"> Ich bestimme Zeitordnung und ‑tempo (Rückblende, Raffung, Dehnung, Deckung).</label>
+        <label><input type="checkbox"> Ich unterscheide Darbietungsformen der Figurenrede (direkt/indirekt/erlebt/Monolog/Bewusstseinsstrom).</label>
+        <label><input type="checkbox"> Ich kann die Wirkung der gewählten Technik knapp deuten.</label>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p class="muted">© 2025 · Barrierearme HTML‑Selbstlernseite (ohne externe Bibliotheken). Aufgabenpools generieren zufällige Varianten bei jedem Laden.</p>
+  </footer>
+
+  <script>
+    /* ===== Utilities ===== */
+    const rnd = (n) => Math.floor(Math.random()*n);
+    const shuffle = (arr) => arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
+    const pickN = (arr,n) => shuffle(arr).slice(0, n);
+
+    const normalize = (s) => (s||'').toString().trim().toLowerCase().replace(/\\s+/g,' ');
+
+    /* ===== Aufgabenpools ===== */
+    const poolMC = [
+      {
+        q: "Welche Aussage passt zur <em>personal</em>en Erzählsituation?",
+        options: [
+          {t:"Der Erzähler kommentiert allwissend und greift ordnend ein.", ok:false},
+          {t:"Der Erzähler ist an die Wahrnehmung einer Figur gebunden.", ok:true},
+          {t:"Der Erzähler schildert nur äußerlich Beobachtbares wie eine Kamera.", ok:false}
+        ]
+      },
+      {
+        q: "Welche Zeitgestaltung beschreibt <em>Zeitraffung</em>?",
+        options: [
+          {t:"Minutiöse Szenendarstellung mit Dialog.", ok:false},
+          {t:"Lange erzählte Zeit wird in kurzer Erzählzeit zusammengefasst.", ok:true},
+          {t:"Eine Rückblende innerhalb einer Rahmenhandlung.", ok:false}
+        ]
+      },
+      {
+        q: "Wähle die richtige Zuordnung:",
+        options: [
+          {t:"Bewusstseinsstrom → ungeordnete Gedankenassoziationen, oft ohne Grammatik.", ok:true},
+          {t:"Erlebte Rede → wörtlich zitierte Figurenrede mit Anführungszeichen.", ok:false},
+          {t:"Indirekte Rede → Ich‑Form im Präsens ohne Konjunktiv.", ok:false}
+        ]
+      },
+      {
+        q: "Welche Aussage passt zur <em>neutralen</em> Erzählsituation?",
+        options: [
+          {t:"Der Erzähler wertet und kommentiert.", ok:false},
+          {t:"Die Darstellung bleibt bei äußerlich Beobachtbarem, ohne Kommentare.", ok:true},
+          {t:"Der Erzähler kennt die Gedanken aller Figuren.", ok:false}
+        ]
+      },
+      {
+        q: "Was kennzeichnet die <em>auktoriale</em> Erzählsituation?",
+        options: [
+          {t:"Wechselnde Ich‑Erzählungen mehrerer Figuren.", ok:false},
+          {t:"Kommentierende Eingriffe, Vorausdeutungen, Überblickswissen.", ok:true},
+          {t:"Strikte Bindung an eine Figur ohne Kommentare.", ok:false}
+        ]
+      }
+    ];
+
+    const poolCloze = [
+      [
+        ["In der ", "personal", "en Erzählsituation ist der Erzähler an eine ", "Figur", " gebunden."],
+        ["Eine ", "Rückblende", " nennt man auch ", "Analepse", "."],
+        ["", "Erlebte Rede", " vermittelt Gedanken einer Figur in der 3. Person, oft im ", "Präteritum", "."],
+        ["", "Zeitraffung", " bedeutet, dass die erzählte Zeit ", "größer", " ist als die Erzählzeit."]
+      ],
+      [
+        ["Beim ", "Bewusstseinsstrom", " werden Gedanken als ", "assoziativer", " Fluss wiedergegeben."],
+        ["Die Darstellung ohne Innensicht nennt man ", "Außensicht", "."],
+        ["Eine Vorausschau in die Zukunft heißt ", "Prolepse", "."],
+        ["", "Zeitdehnung", " bedeutet, dass die Erzählzeit ", "größer", " ist als die erzählte Zeit."]
+      ],
+      [
+        ["Der Erzähler mit Überblickswissen heißt ", "auktorialer", " Erzähler."],
+        ["Die Bindung an eine Figur nennt man ", "personal", "e Erzählsituation."],
+        ["Bei der ", "Direkten Rede", " wird die Figurenrede ", "wörtlich", " wiedergegeben."],
+        ["Der innere Monolog steht oft in der ", "Ich", "-Form."]
+      ]
+    ];
+
+    const poolMatch = [
+      { ex: "„Er wusste, dass sie kommen würde, dachte er und sah zum Fenster.“", answer: "Erlebte Rede" },
+      { ex: "Er: „Kommst du heute?“ – Erzählinstanz referiert wörtlich.", answer: "Direkte Rede" },
+      { ex: "Er fragte, ob sie heute komme.", answer: "Indirekte Rede" },
+      { ex: "Ich werde gehen, dachte ich. Ich werde gehen!", answer: "Innerer Monolog" },
+      { ex: "Die Erzählinstanz kommentiert: Der Plan konnte nur scheitern.", answer: "Auktorial" },
+      { ex: "Kameraartige Beschreibung ohne Kommentare.", answer: "Neutral" },
+      { ex: "Gedankenfetzen: Jetzt los – warum – später – nein – doch!", answer: "Bewusstseinsstrom" },
+      { ex: "Wechsel der Sicht von Figur A zu Figur B im nächsten Abschnitt.", answer: "Multiperspektivik" }
+    ];
+
+    const begriffe = ["Direkte Rede","Indirekte Rede","Erlebte Rede","Innerer Monolog","Auktorial","Neutral","Bewusstseinsstrom","Multiperspektivik"];
+
+    const promptsSchreiben = [
+      {
+        auftrag: "Schreibe 4–6 Sätze zu einem Ereignis (z. B. Bus verpasst), einmal personal (Innensicht) und einmal neutral (Kamera). Markiere je eine Stelle der Figurenrede.",
+        model: [
+          "<em>Personal:</em> Der Bus rollt davon, und <u>ich wusste, dass ich zu spät sein würde</u>. Der Hals wird heiß, die Gedanken stolpern.",
+          "<em>Neutral:</em> Er läuft zur Haltestelle, der Bus fährt ab. Er bleibt stehen, blickt auf die Uhr. (Keine Innensicht.)",
+          "<em>Erlebte Rede:</em> <u>Jetzt hilft nur noch rennen</u>, denkt er – und bleibt doch stehen."
+        ]
+      },
+      {
+        auftrag: "Schreibe 4–6 Sätze zu einem kurzen Konflikt (z. B. Streit am Telefon): einmal personal, einmal neutral. Markiere je eine Stelle der Figurenrede.",
+        model: [
+          "<em>Personal:</em> Das Display glüht. <u>Sie wird wieder sagen, ich sei schuld</u>, denke ich und atme flach.",
+          "<em>Neutral:</em> Er hält das Telefon, schweigt, legt auf. Dann setzt er sich auf die Kante des Bettes.",
+          "<em>Innerer Monolog:</em> <u>Nicht noch einmal</u>."
+        ]
+      },
+      {
+        auftrag: "Schreibe 4–6 Sätze zu einer Beobachtung im Regen: einmal personal, einmal neutral. Markiere je eine Stelle der Figurenrede.",
+        model: [
+          "<em>Personal:</em> Der Regen riecht nach Metall. <u>Sie kommt doch</u>, hoffe ich und spüre, wie die Jacke schwer wird.",
+          "<em>Neutral:</em> Er tritt vor die Tür, Wasser perlt von der Kapuze. Er blickt zur Straße, tritt einen Schritt zurück.",
+          "<em>Erlebte Rede:</em> <u>Jetzt müsste sie längst da sein</u>."
+        ]
+      }
+    ];
+
+    const transferSets = [
+      {
+        hinweis: "Nimm einen kurzen Auszug aus eurer aktuellen Lektüre (5–8 Sätze) oder aus deinem Hefteintrag.",
+        liste: [
+          "Erzählverhalten: auktorial / personal / neutral? Belege (1–2 Textstellen).",
+          "Perspektive/Standort: Innen‑/Außensicht? Distanz? Wechsel?",
+          "Zeitgestaltung: Ordnung (RB/Vorausdeutung), Tempo (Raffung/Dehnung/Deckung).",
+          "Raum: Atmosphäre/Symbolik (falls relevant).",
+          "Darbietungsformen der Figurenrede (mit Beispiel)."
+        ],
+        sol: [
+          "Erzählsituation korrekt benannt + Beleg (z. B. Innensicht → personal).",
+          "Mind. ein Aspekt der Zeitgestaltung korrekt + belegt.",
+          "Mind. eine Form der Figurenrede korrekt bestimmt + Zitat.",
+          "Kurze Deutung zur Wirkung (Nähe/Distanz, Spannung durch Tempo, Raum als Symbol)."
+        ]
+      },
+      {
+        hinweis: "Wähle einen Pressekommentar (8–10 Sätze) und analysiere narratologisch.",
+        liste: [
+          "Wer spricht/erzählt? Gibt es Kommentare/Wertungen?",
+          "Perspektive und Distanz.",
+          "Zeitstruktur: Rückblenden, Vorausdeutungen?",
+          "Sprachliche Gestaltung der Figuren-/Erzählerrede."
+        ],
+        sol: [
+          "Auktoriale Kommentare erkennen und belegen.",
+          "Innensicht in Reportagepassagen vs. Außensicht unterscheiden.",
+          "Tempoeffekte (szenisch vs. Bericht) benennen.",
+          "Formen der Rede korrekt zuordnen."
+        ]
+      }
+    ];
+
+    /* ===== Renderer ===== */
+    function renderMC(){
+      const form = document.getElementById('mc-form');
+      form.innerHTML = '';
+      const chosen = pickN(poolMC, 3);
+      chosen.forEach((task, idx)=>{
+        const fs = document.createElement('fieldset');
+        const lg = document.createElement('legend');
+        lg.innerHTML = (idx+1)+") "+task.q;
+        fs.appendChild(lg);
+        const opts = shuffle(task.options.slice());
+        opts.forEach(opt=>{
+          const id = 'q'+idx+'-'+Math.random().toString(36).slice(2,7);
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = 'q'+idx;
+          if(opt.ok) input.setAttribute('data-correct','');
+          label.appendChild(input);
+          label.insertAdjacentText('beforeend',' '+opt.t);
+          fs.appendChild(label);
+        });
+        const p = document.createElement('p');
+        p.className = 'feedback';
+        p.setAttribute('aria-live','polite');
+        fs.appendChild(p);
+        form.appendChild(fs);
+      });
+      document.getElementById('score1').textContent='';
+    }
+
+    function checkMC(){
+      const form = document.getElementById('mc-form');
+      let correct = 0, total = 0;
+      form.querySelectorAll('fieldset').forEach(fs=>{
+        total++;
+        const fb = fs.querySelector('.feedback');
+        const chosen = fs.querySelector('input[type="radio"]:checked');
+        if(!chosen){ fb.textContent = 'Bitte wähle eine Option.'; fb.style.color = '#92400e'; return; }
+        if(chosen.hasAttribute('data-correct')){ fb.textContent = '✔️ richtig'; fb.style.color = '#065f46'; correct++; }
+        else { fb.textContent = '✖️ leider falsch'; fb.style.color = '#991b1b'; }
+      });
+      document.getElementById('score1').textContent = `Punkte: ${correct} / ${total}`;
+    }
+
+    function renderCloze(){
+      const form = document.getElementById('cloze-form');
+      form.innerHTML = '';
+      const solList = document.getElementById('cloze-sol');
+      solList.innerHTML = '';
+
+      const variant = poolCloze[rnd(poolCloze.length)];
+      variant.forEach((seg, i)=>{
+        // seg is like ["textBefore", answer1, "textMid", answer2, "textEnd"]
+        const wrap = document.createElement('label');
+        wrap.innerHTML = '';
+        for(let j=0;j<seg.length;j++){
+          if(j%2===0){ // text
+            wrap.insertAdjacentText('beforeend', seg[j]);
+          } else { // answer
+            const inp = document.createElement('input');
+            inp.setAttribute('aria-label','Lücke '+(i+1)+'.'+((j+1)/2));
+            inp.setAttribute('data-answer', seg[j]);
+            wrap.appendChild(inp);
+          }
+        }
+        form.appendChild(wrap);
+        // solutions
+        const li = document.createElement('li');
+        const answers = seg.filter((_,k)=>k%2===1).map(a=>'<strong>'+a+'</strong>').join(' · ');
+        li.innerHTML = (i+1)+') '+answers;
+        solList.appendChild(li);
+      });
+      document.getElementById('score2').textContent='';
+    }
+
+    function checkCloze(){
+      const form = document.getElementById('cloze-form');
+      let correct = 0, total = 0;
+      form.querySelectorAll('input[data-answer]').forEach(inp=>{
+        total++;
+        const want = normalize(inp.dataset.answer);
+        const got  = normalize(inp.value);
+        if(got === want){ inp.style.borderColor = '#059669'; correct++; }
+        else { inp.style.borderColor = '#dc2626'; }
+      });
+      document.getElementById('score2').textContent = `Punkte: ${correct} / ${total}`;
+    }
+
+    function renderMatch(){
+      const form = document.getElementById('match-form');
+      form.innerHTML = '';
+      const chosen = pickN(poolMatch, 4);
+      const options = shuffle(begriffe.slice());
+      chosen.forEach((item, idx)=>{
+        const pair = document.createElement('div');
+        pair.className = 'pair card';
+        const div = document.createElement('div');
+        div.innerHTML = '<strong>' + String.fromCharCode(65+idx) + ')</strong> ' + item.ex;
+        pair.appendChild(div);
+        const label = document.createElement('label');
+        label.className = 'sr-only';
+        label.setAttribute('for','sel'+idx);
+        label.textContent = 'Begriff für Beispiel '+String.fromCharCode(65+idx);
+        const select = document.createElement('select');
+        select.id = 'sel'+idx;
+        select.setAttribute('data-answer', item.answer);
+        const opt0 = document.createElement('option');
+        opt0.value = ''; opt0.textContent = '– auswählen –';
+        select.appendChild(opt0);
+        options.forEach(o=>{
+          const op = document.createElement('option');
+          op.textContent = o; op.value = o;
+          select.appendChild(op);
+        });
+        pair.appendChild(label);
+        pair.appendChild(select);
+        form.appendChild(pair);
+      });
+      document.getElementById('score3').textContent='';
+    }
+
+    function checkSelects(){
+      const form = document.getElementById('match-form');
+      let correct = 0, total = 0;
+      form.querySelectorAll('select[data-answer]').forEach(sel=>{
+        total++;
+        if(sel.value === sel.dataset.answer){ sel.style.borderColor = '#059669'; correct++; }
+        else { sel.style.borderColor = '#dc2626'; }
+      });
+      document.getElementById('score3').textContent = `Punkte: ${correct} / ${total}`;
+    }
+
+    function renderSchreiben(){
+      const p = promptsSchreiben[rnd(promptsSchreiben.length)];
+      document.getElementById('prompt-schreiben').textContent = p.auftrag;
+      const modelBox = document.getElementById('model-texts');
+      modelBox.innerHTML = p.model.map(x=>'<p>'+x+'</p>').join('');
+    }
+
+    function toggleModel(show){
+      document.getElementById('model').hidden = !show;
+    }
+
+    function renderTransfer(){
+      const t = transferSets[rnd(transferSets.length)];
+      document.getElementById('transfer-hinweis').textContent = t.hinweis;
+      const list = document.getElementById('transfer-list');
+      list.innerHTML='';
+      t.liste.forEach(li=>{
+        const el = document.createElement('li'); el.textContent = li; list.appendChild(el);
+      });
+      const sol = document.getElementById('transfer-sol');
+      sol.innerHTML='';
+      t.sol.forEach(s=>{
+        const li = document.createElement('li'); li.textContent = s; sol.appendChild(li);
+      });
+    }
+
+    /* ===== Initialisierung ===== */
+    function init(){
+      renderMC();
+      renderCloze();
+      renderMatch();
+      renderSchreiben();
+      renderTransfer();
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

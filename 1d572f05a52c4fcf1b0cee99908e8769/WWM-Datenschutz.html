@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wer wird Datenschutz-Profi? — Quiz für Kitas (Niedersachsen)</title>
+  <meta name="description" content="Quiz im Stil von 'Wer wird Millionär' zum Einstieg in Datenschutz in der Kita für Auszubildende Sozialassistenz (Niedersachsen)." />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --bg-2:#0f1a3a;
+      --accent:#1e90ff;
+      --accent-2:#ffd700;
+      --good:#2ecc71;
+      --bad:#e74c3c;
+      --muted:#aab3c5;
+      --panel:#121a33;
+      --text:#e8edf7;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 20% -10%, #1a2b6a 0%, transparent 70%),
+                  radial-gradient(1200px 600px at 120% 110%, #041229 0%, transparent 60%),
+                  linear-gradient(180deg, var(--bg) 0%, #0a0f1c 100%);
+    }
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.05));
+      position:sticky;top:0;z-index:10
+    }
+    .branding{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:44px;height:44px;border-radius:50%;
+      background:conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent));
+      display:grid;place-items:center;box-shadow:0 0 0 3px rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.25);
+      font-weight:700;color:#081224
+    }
+    .branding h1{font-size:18px;margin:0;line-height:1.2}
+    .branding p{margin:0;font-size:12px;color:var(--muted)}
+
+    .wrap{display:grid;grid-template-columns: 1fr 320px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+    @media (max-width: 960px){.wrap{grid-template-columns:1fr}}
+
+    .game{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.25);
+    }
+    .question{
+      background:linear-gradient(180deg, #0c1b46, #081638);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;padding:18px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);
+      font-size:20px;line-height:1.4;position:relative
+    }
+    .question small{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+
+    .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    @media (max-width:700px){.answers{grid-template-columns:1fr}}
+
+    .answer{
+      border-radius:14px; padding:14px 16px; border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, #0a173a, #08122c);
+      display:flex; align-items:center; gap:12px;
+      cursor:pointer; user-select:none; position:relative; isolation:isolate;
+      transition:transform .08s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .answer[aria-disabled="true"]{opacity:.45;filter:saturate(.6); pointer-events:none}
+    .answer:hover{transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .answer:focus{outline:2px solid var(--accent); outline-offset:2px}
+    .answer .letter{
+      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:700;
+      background:linear-gradient(180deg, #162a6b, #0c1e50);
+      border:1px solid rgba(255,255,255,.08); flex:0 0 auto;
+    }
+    .answer.selected{border-color:var(--accent); box-shadow:0 0 0 2px rgba(30,144,255,.25) inset}
+    .answer.correct{border-color:var(--good); box-shadow:0 0 0 2px rgba(46,204,113,.25) inset}
+    $1
+
+    /* Sicherstellen, dass die Schrift in den Antwortfeldern rein weiß ist */
+    .answer, .answer .letter { color:#ffffff; }
+
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;align-items:center}
+    .controls button{
+      background:linear-gradient(180deg, #183a7a, #0e2656);
+      color:var(--text); border:1px solid rgba(255,255,255,.14);
+      border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:600;
+      transition:filter .12s ease, transform .06s ease;
+    }
+    .controls button:hover{filter:brightness(1.1)}
+    .controls button:active{transform:translateY(1px)}
+    .controls .danger{background:linear-gradient(180deg, #612027, #3c1319)}
+
+    .lifelines{margin-left:auto; display:flex; gap:8px; align-items:center}
+    .lifeline{position:relative}
+    .lifeline button{display:flex;align-items:center;gap:8px}
+    .badge{font-size:11px;color:#0a1432;background:var(--accent-2);border-radius:999px;padding:2px 8px;font-weight:800}
+    .lifeline[aria-disabled="true"]{opacity:.5; pointer-events:none}
+
+    .ladder{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.05));
+      border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:12px;
+      position:sticky; top:72px; height:fit-content
+    }
+    .ladder h3{margin:4px 8px 8px;font-size:14px;color:var(--muted)}
+    ol.levels{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+    .levels li{
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      background:linear-gradient(180deg, #0b1a3f, #081331);
+      border:1px solid rgba(255,255,255,.06); border-radius:10px;
+      padding:8px 10px; font-weight:700; color:#e6ecff
+    }
+    .levels li.safe{border-color:var(--accent-2)}
+    .levels li.current{outline:2px solid var(--accent); outline-offset:2px}
+    .levels .n{opacity:.6; font-weight:600}
+
+    .explain{
+      margin-top:12px; background:#0a142f; border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px; display:none
+    }
+    .explain.show{display:block}
+
+    .start, .overlay{position:fixed; inset:0; display:grid; place-items:center; background:rgba(4,8,20,.6); backdrop-filter: blur(6px); z-index:15}
+    .card{
+      width:min(920px, 92vw); background:linear-gradient(180deg, #0b1533, #0a1227);
+      border:1px solid rgba(255,255,255,.1); border-radius:16px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,.35)
+    }
+    .card h2{margin:0 0 10px}
+    .card p{margin:6px 0;color:#cbd6ee}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media (max-width: 860px){.grid{grid-template-columns:1fr}}
+
+    .audience-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+    .bar{display:flex;align-items:flex-end;gap:8px}
+    .bar span{font-size:12px;color:var(--muted)}
+    .bar div{width:100%;height:12px;background:#12214b;border:1px solid rgba(255,255,255,.08); border-radius:6px; position:relative; overflow:hidden}
+    .bar div i{position:absolute;left:0;bottom:0;height:100%;background:linear-gradient(90deg, var(--accent), #48b6ff)}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    footer{max-width:1200px;margin:24px auto 60px;color:var(--muted);padding:0 16px;font-size:12px}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;background:#0b173b;border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:6px}
+      /* A/B/C/D-Beschriftung deutlich weiß darstellen */
+    .answer .letter{ color:#ffffff !important; text-shadow:0 1px 1px rgba(0,0,0,.35); }
+      /* Kontrast: Antworttexte (Labels) in den Feldern A–D klar weiß darstellen */
+    .answers .answer,
+    .answers .answer .letter,
+    .answers .answer > div { color:#ffffff !important; }
+    /* Auch in Zuständen ausgewählt/korrekt/falsch/disabled weiß halten */
+    .answer.selected, .answer.correct, .answer.wrong, .answer[aria-disabled="true"] { color:#ffffff !important; }
+    /* Lesbarkeit leicht erhöhen */
+    .answers .answer > div { font-weight:600; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="branding" aria-label="Quiz Branding">
+      <div class="logo">DS</div>
+      <div>
+        <h1>Wer wird Datenschutz‑Profi?</h1>
+        <p>Quiz für Kitas in Niedersachsen · Niveau: Einstieg</p>
+      </div>
+    </div>
+    <div class="lifelines" aria-label="Joker">
+      <div class="lifeline" id="ll5050"><button type="button" aria-label="50:50 Joker"><span class="badge">50:50</span> zwei falsche weg</button></div>
+      <div class="lifeline" id="llAudience"><button type="button" aria-label="Publikumsjoker">👥 Publikum</button></div>
+      <div class="lifeline" id="llPhone"><button type="button" aria-label="Telefonjoker">📞 Tipp</button></div>
+    </div>
+  </header>
+
+  <main class="wrap" id="app">
+    <section class="game" aria-live="polite">
+      <div class="question" id="questionBox" tabindex="0">
+        <small id="qMeta"></small>
+        <div id="questionText">Lade Frage …</div>
+      </div>
+      <div class="answers" id="answers"></div>
+      <div class="controls">
+        <button id="lockBtn" type="button" disabled>Antwort fixieren (Enter)</button>
+        <button id="nextBtn" type="button" disabled>Weiter (N)</button>
+        <button id="restartBtn" class="danger" type="button" title="Neustart">↺ Neustart</button>
+      </div>
+      <div class="explain" id="explainBox" role="region" aria-live="polite"></div>
+    </section>
+
+    <aside class="ladder" aria-label="Gewinnleiter">
+      <h3>Gewinnleiter</h3>
+      <ol class="levels" id="ladder"></ol>
+    </aside>
+  </main>
+
+  <section class="start" id="start">
+    <div class="card">
+      <h2>Willkommen! 🎓</h2>
+      <div class="grid">
+        <div>
+          <p><strong>Zielgruppe:</strong> Auszubildende Sozialassistenz in Niedersachsen (1. Lehrjahr).</p>
+          <p>Spiele im Stil von <em>„Wer wird Millionär“</em>: Wähle eine Antwort (A–D), nutze Joker, und steigere dich die Gewinnleiter hinauf. Kurze Erklärungen helfen beim Lernen.</p>
+          <ul>
+            <li><span class="kbd">A–D</span> oder <span class="kbd">1–4</span> wählt eine Antwort</li>
+            <li><span class="kbd">Enter</span> fixiert, <span class="kbd">N</span> nächste Frage</li>
+            <li>Joker: <strong>50:50</strong>, <strong>Publikum</strong>, <strong>Tipp</strong></li>
+          </ul>
+          <p><small>Hinweis: Lerninhalt, keine Rechtsberatung. Beachte die Vorgaben eurer Einrichtung und des Trägers.</small></p>
+        </div>
+        <div>
+          <p><strong>Themen heute</strong></p>
+          <ul>
+            <li>Grundbegriffe (personenbezogene Daten, besondere Kategorien)</li>
+            <li>Einwilligung & Fotos</li>
+            <li>Datensicherheit im Alltag der Kita</li>
+            <li>Rechte von Eltern & Kindern</li>
+            <li>Aufsichtsbehörde in Niedersachsen</li>
+          </ul>
+          <button id="startBtn" type="button" style="margin-top:8px">▶️ Spiel starten</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="overlay" id="overlay" style="display:none">
+    <div class="card" id="overlayCard" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+      <h3 id="overlayTitle">Hinweis</h3>
+      <div id="overlayContent"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="overlayClose">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 · „Wer wird Datenschutz‑Profi?“ — Didaktisches Quiz für den Unterricht. Entwickelt für Einsteiger:innen in Niedersachsen. 
+  </footer>
+
+  <script>
+    // ---------- Datenbank der Fragen ----------
+    const questions = [
+      {
+        level: 1, amount: "50 €",
+        text: "Was bedeutet 'personenbezogene Daten' im Kita‑Alltag?",
+        answers: [
+          "Daten, die sich auf eine identifizierte oder identifizierbare Person beziehen",
+          "Daten, die nur im Computer gespeichert sind",
+          "Beliebige Informationen über Gruppen",
+          "Nur Name und Adresse"
+        ],
+        correct: 0,
+        explain: "Personenbezogene Daten beziehen sich auf eine identifizierte/identifizierbare Person – in der Kita z. B. Angaben zu Kindern, Eltern oder Mitarbeitenden.",
+        tip: "Frag dich: Kann ich eine Person (Kind/Eltern) direkt oder indirekt erkennen?"
+      },
+      {
+        level: 2, amount: "100 €",
+        text: "Welche Information gehört zu den *besonderen Kategorien* (Art. 9 DSGVO)?",
+        answers: [
+          "Haarfarbe",
+          "Allergien eines Kindes",
+          "Lieblingsspielzeug",
+          "Schuhgröße"
+        ],
+        correct: 1,
+        explain: "Gesundheitsdaten wie Allergien sind besonders schützenswert und erfordern erhöhte Sorgfalt.",
+        tip: "Denk an sensible Infos: Gesundheit, Religion, Herkunft …"
+      },
+      {
+        level: 3, amount: "200 €",
+        text: "Wofür braucht die Kita in der Regel eine *schriftliche Einwilligung* der Sorgeberechtigten?",
+        answers: [
+          "Veröffentlichung von Kinderfotos auf Website/Social Media",
+          "Interne Anwesenheitslisten im Team",
+          "Unfallbericht für Versicherung",
+          "Notfallkontakte speichern"
+        ],
+        correct: 0,
+        explain: "Für die Veröffentlichung von Fotos ist in der Regel eine ausdrückliche Einwilligung nötig. Interne Abläufe können auf andere Rechtsgrundlagen gestützt sein.",
+        tip: "Öffentliche Sichtbarkeit = Einwilligung sichern."
+      },
+      {
+        level: 4, amount: "300 €",
+        text: "Darf eine Liste mit Allergien gut sichtbar am Gruppenraum‑Eingang hängen?",
+        answers: [
+          "Ja, das ist immer erlaubt",
+          "Nein, nur zugriffsbeschränkt für berechtigte Personen",
+          "Ja, wenn sie bunt gestaltet ist",
+          "Ja, wenn nur Vornamen stehen"
+        ],
+        correct: 1,
+        explain: "Gesundheitsdaten dürfen nicht öffentlich einsehbar sein. Zugriff nur für das Team und weitere berechtigte Personen (z. B. Küche) – möglichst geschützt.",
+        tip: "Frage dich: Wer kann das lesen? Ist es wirklich nötig?"
+      },
+      {
+        level: 5, amount: "500 €", safe:true,
+        text: "Wie schnell muss eine meldepflichtige Datenpanne der Aufsichtsbehörde gemeldet werden?",
+        answers: [
+          "Sofort, aber ohne Frist",
+          "Innerhalb von 72 Stunden",
+          "Innerhalb von 14 Tagen",
+          "Am Ende des Schuljahres"
+        ],
+        correct: 1,
+        explain: "Art. 33 DSGVO: Meldepflicht *ohne unangemessene Verzögerung*, möglichst innerhalb von 72 Stunden. Intern sofort Leitung/DPO informieren.",
+        tip: "Merksatz: 72 Stunden. Erst intern melden!"
+      },
+      {
+        level: 6, amount: "1.000 €",
+        text: "Welche Elternkommunikation ist in der Regel datenschutzkonform?",
+        answers: [
+          "WhatsApp auf privatem Handy",
+          "Ein vom Träger bereitgestellter Messenger mit Auftragsverarbeitung",
+          "Private Facebook‑Gruppe",
+          "SMS mit Kinderfotos vom Diensthandy"
+        ],
+        correct: 1,
+        explain: "Dienstliche Tools mit Vertrag zur Auftragsverarbeitung und klaren Vorgaben sind der richtige Weg. Private Apps meiden.",
+        tip: "Dienstliche Lösung + Vertrag + Vorgaben des Trägers."
+      },
+      {
+        level: 7, amount: "2.000 €",
+        text: "Wer ist in der Kita meist der *Verantwortliche* im Sinne der DSGVO?",
+        answers: [
+          "Der Träger/die Einrichtung",
+          "Die/der Praktikant:in",
+          "Die Elternvertretung",
+          "Der Hausmeister"
+        ],
+        correct: 0,
+        explain: "Verantwortlicher ist, wer über Zwecke und Mittel der Verarbeitung entscheidet – typischerweise der Träger/die Einrichtung.",
+        tip: "Wer bestimmt das 'Wie' und 'Wozu' der Datenverarbeitung?"
+      },
+      {
+        level: 8, amount: "4.000 €",
+        text: "Was bedeutet *Datenminimierung*?",
+        answers: [
+          "So viele Daten wie möglich sammeln",
+          "Nur Daten erheben, die für den Zweck notwendig sind",
+          "Daten auf viele Apps verteilen",
+          "Alles doppelt speichern"
+        ],
+        correct: 1,
+        explain: "Nur erforderliche Daten erheben, verarbeiten und speichern – nicht 'auf Vorrat'.",
+        tip: "Frage: Brauche ich das wirklich für den Zweck?"
+      },
+      {
+        level: 9, amount: "8.000 €",
+        text: "Welche Rechte haben Eltern bzgl. der Daten ihres Kindes?",
+        answers: [
+          "Gar keine",
+          "Nur Auskunft, keine Berichtigung",
+          "Auskunft, Berichtigung und ggf. Löschung",
+          "Nur Löschung"
+        ],
+        correct: 2,
+        explain: "Betroffenenrechte umfassen u. a. Auskunft, Berichtigung und – sofern keine Pflicht entgegensteht – auch Löschung.",
+        tip: "Eltern können nachfragen, korrigieren lassen und teils löschen lassen."
+      },
+      {
+        level: 10, amount: "16.000 €", safe:true,
+        text: "Wie bewahrst du ausgedruckte Entwicklungsberichte sicher auf?",
+        answers: [
+          "Offen in der Küche",
+          "In einem verschließbaren Schrank, nur für das Team",
+          "In der Spielecke",
+          "Ich fotografiere sie und schicke sie an mich privat"
+        ],
+        correct: 1,
+        explain: "Papierdokumente mit sensiblen Angaben gehören unter Verschluss. Zugriff nur für Berechtigte.",
+        tip: "Schlüssel‑/Zutrittsprinzip: so wenig wie möglich, so viel wie nötig."
+      },
+      {
+        level: 11, amount: "32.000 €",
+        text: "Dürfen Unterlagen an externe Fachstellen (z. B. Therapie) weitergegeben werden?",
+        answers: [
+          "Ja, jederzeit ohne Rücksprache",
+          "Nur mit Einwilligung der Sorgeberechtigten und möglichst sicher (z. B. verschlüsselt)",
+          "Per privater Mail, das reicht",
+          "Über eine öffentliche Pinnwand"
+        ],
+        correct: 1,
+        explain: "Weitergabe an Dritte erfordert i. d. R. Einwilligung und eine sichere Übermittlung (z. B. verschlüsselt).",
+        tip: "Ohne Einwilligung keine Weitergabe an Externe."
+      },
+      {
+        level: 12, amount: "64.000 €",
+        text: "Welche Aufsichtsbehörde ist in Niedersachsen für Kitas zuständig?",
+        answers: [
+          "Die Landesbeauftragte für den Datenschutz Niedersachsen (LfD Niedersachsen)",
+          "BayLDA (Bayern)",
+          "BSI",
+          "Europäische Zentralbank"
+        ],
+        correct: 0,
+        explain: "In Niedersachsen ist die LfD Niedersachsen die zuständige Datenschutz‑Aufsichtsbehörde.",
+        tip: "Merke: LfD Niedersachsen."
+      },
+      {
+        level: 13, amount: "125.000 €",
+        text: "Was bedeutet *Zweckbindung* bei der Datenverarbeitung in der Kita?",
+        answers: [
+          "Daten nur für den vorher festgelegten, legitimen Zweck nutzen",
+          "Daten später auch für Werbung der Stadt nutzen",
+          "Daten auf Vorrat sammeln – man weiß ja nie",
+          "Zwecke können jederzeit ohne Info an Eltern geändert werden"
+        ],
+        correct: 0,
+        explain: "Zweckbindung: Daten dürfen nur für den bestimmten, legitimen Zweck verarbeitet werden. Eine spätere Zweckänderung braucht eine Rechtsgrundlage und Information der Betroffenen.",
+        tip: "Frage: Wofür genau brauche ich diese Information?"
+      },
+      {
+        level: 14, amount: "500.000 €",
+        text: "Wann gilt eine Einwilligung der Sorgeberechtigten als *freiwillig*?",
+        answers: [
+          "Wenn eine Verweigerung keine Nachteile für das Kind/den Platz hat",
+          "Wenn sie Voraussetzung für die Aufnahme in die Kita ist",
+          "Wenn sie versteckt in allgemeinen Formularen 'mitläuft'",
+          "Wenn die Gruppe schon zugestimmt hat (Gruppendruck)"
+        ],
+        correct: 0,
+        explain: "Freiwilligkeit heißt: echte Wahlmöglichkeit ohne Druck oder Nachteile. Eine Einwilligung darf keine Bedingung für Leistungen sein, die auch ohne sie erbracht werden müssen.",
+        tip: "Kein Zwang, keine Kopplung – echte Wahl."
+      },
+      {
+        level: 15, amount: "1.000.000 €",
+        text: "Welche Aussage zur *Auftragsverarbeitung* (Art. 28 DSGVO) trifft zu?",
+        answers: [
+          "Beauftragt die Kita einen IT‑Dienst, braucht es einen schriftlichen AV‑Vertrag",
+          "Eine einfache Verschwiegenheitszusage (NDA) reicht vollkommen aus",
+          "Mündliche Absprachen sind ausreichend, wenn der Anbieter vertrauenswürdig ist",
+          "AV‑Verträge braucht man nur bei Behörden innerhalb der EU"
+        ],
+        correct: 0,
+        explain: "Bei Auftragsverarbeitern (z. B. Kita‑App, Cloud‑Dienst) ist ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO Pflicht. Er regelt u. a. Sicherheitsmaßnahmen, Subunternehmer und Weisungen.",
+        tip: "Merke: Externer Dienst + personenbezogene Daten = AV‑Vertrag."
+      }
+    ];
+
+    // ---------- State ----------
+    let order = [...questions.keys()];
+    let current = 0;
+    let selectedIdx = null;
+    let removedBy5050 = new Set();
+    let lifelines = { fifty:false, audience:false, phone:false };
+
+    const els = {
+      qMeta: document.getElementById('qMeta'),
+      qText: document.getElementById('questionText'),
+      answers: document.getElementById('answers'),
+      explain: document.getElementById('explainBox'),
+      lockBtn: document.getElementById('lockBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      restartBtn: document.getElementById('restartBtn'),
+      ladder: document.getElementById('ladder'),
+      overlay: document.getElementById('overlay'),
+      overlayTitle: document.getElementById('overlayTitle'),
+      overlayContent: document.getElementById('overlayContent'),
+      overlayClose: document.getElementById('overlayClose'),
+      start: document.getElementById('start'),
+      startBtn: document.getElementById('startBtn'),
+      ll5050: document.getElementById('ll5050'),
+      llAudience: document.getElementById('llAudience'),
+      llPhone: document.getElementById('llPhone'),
+      questionBox: document.getElementById('questionBox')
+    };
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for (let i=a.length-1; i>0; i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] }
+      return a;
+    }
+
+    // Build ladder UI
+    function buildLadder(){
+      els.ladder.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      questions.slice().reverse().forEach((q, idxRev)=>{
+        const n = questions.length - idxRev; // 1..N
+        const li = document.createElement('li');
+        li.dataset.level = n;
+        if(q.safe) li.classList.add('safe');
+        const left = document.createElement('span');
+        left.className='n';
+        left.textContent = n.toString().padStart(2,'0');
+        const right = document.createElement('span');
+        right.textContent = q.amount;
+        li.append(left, right);
+        frag.append(li);
+      });
+      els.ladder.append(frag);
+      highlightLadder();
+    }
+    function highlightLadder(){
+      [...els.ladder.children].forEach(li=>li.classList.remove('current'));
+      const currentLevel = (current+1).toString().padStart(2,'0');
+      const target = [...els.ladder.children].reverse()[current];
+      if(target) target.classList.add('current');
+    }
+
+    function renderQuestion(){
+      removedBy5050.clear();
+      selectedIdx = null;
+      els.lockBtn.disabled = true;
+      els.nextBtn.disabled = true;
+      els.explain.classList.remove('show');
+      els.explain.textContent = '';
+
+      const q = questions[current];
+      const indices = [0,1,2,3];
+      const shuffled = shuffle(indices);
+      const correctMappedIndex = shuffled.indexOf(q.correct);
+
+      els.qMeta.textContent = `Frage ${current+1} von ${questions.length} · Wert: ${q.amount}`;
+      els.qText.textContent = q.text;
+      els.answers.innerHTML = '';
+
+      shuffled.forEach((origIdx, i)=>{
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'answer';
+        btn.setAttribute('role','radio');
+        btn.setAttribute('aria-checked','false');
+        btn.dataset.index = i; // mapped index
+        btn.dataset.correct = (i===correctMappedIndex).toString();
+
+        const letter = document.createElement('div');
+        letter.className='letter';
+        letter.textContent = String.fromCharCode(65+i);
+        const label = document.createElement('div');
+        label.innerHTML = q.answers[origIdx];
+        btn.append(letter,label);
+
+        btn.addEventListener('click', ()=>selectAnswer(i));
+        btn.addEventListener('keydown', e=>{ if(e.key==='Enter'){ selectAnswer(i); els.lockBtn.click(); } });
+        els.answers.append(btn);
+      });
+
+      // store mapping on container for lifelines
+      els.answers.dataset.correctIndex = correctMappedIndex;
+      highlightLadder();
+      // focus the question for screen readers / keyboard users
+      setTimeout(()=>els.questionBox.focus(), 50);
+    }
+
+    function selectAnswer(i){
+      selectedIdx = i;
+      [...els.answers.children].forEach((el, idx)=>{
+        el.classList.toggle('selected', idx===i);
+        el.setAttribute('aria-checked', idx===i ? 'true' : 'false');
+      });
+      els.lockBtn.disabled = false;
+    }
+
+    function lockIn(){
+      if(selectedIdx==null) return;
+      // disable interactions
+      [...els.answers.children].forEach(el=>el.setAttribute('aria-disabled','true'));
+      els.lockBtn.disabled = true;
+
+      const correct = Number(els.answers.dataset.correctIndex);
+      const selectedEl = els.answers.children[selectedIdx];
+      const correctEl = els.answers.children[correct];
+
+      if(selectedIdx===correct){
+        selectedEl.classList.add('correct');
+        showExplain(true);
+        els.nextBtn.disabled = false;
+      } else {
+        selectedEl.classList.add('wrong');
+        correctEl.classList.add('correct');
+        showExplain(false);
+        els.nextBtn.disabled = false;
+        gameOver();
+      }
+    }
+
+    function showExplain(ok){
+      const q = questions[current];
+      els.explain.innerHTML = `<strong>${ok? 'Richtig! ✅' : 'Leider falsch. ❌'}</strong> ${q.explain}`;
+      els.explain.classList.add('show');
+    }
+
+    function nextQuestion(){
+      if(current < questions.length - 1){
+        current++;
+        renderQuestion();
+      } else {
+        // finished!
+        showOverlay('Geschafft! 🏆', `<p>Du hast alle Fragen gemeistert und ${questions[questions.length-1].amount} erreicht.</p><p>Super! Willst du nochmal spielen?</p><div><button type="button" onclick="restart()">Nochmal spielen</button></div>`);
+      }
+    }
+
+    function gameOver(){
+      // calculate last safe amount
+      let safeAmount = '0 €';
+      for(let i=current; i>=0; i--){ if(questions[i].safe){ safeAmount = questions[i].amount; break; } }
+      showOverlay('Spiel vorbei', `<p>Das war leider falsch. Du fällst auf die letzte Sicherheitsstufe: <strong>${safeAmount}</strong>.</p><p>Kein Stress – du kannst sofort neu starten und weiterlernen.</p><div><button type="button" onclick="restart()">↺ Neustart</button></div>`);
+    }
+
+    function restart(){
+      current = 0; selectedIdx=null; lifelines={fifty:false,audience:false,phone:false};
+      removedBy5050.clear();
+      enableLifelines();
+      hideOverlay();
+      renderQuestion();
+    }
+
+    // ---------- Joker ----------
+    function use5050(){
+      if(lifelines.fifty) return; lifelines.fifty = true; disableBtn(els.ll5050);
+      const correct = Number(els.answers.dataset.correctIndex);
+      const idxs = [0,1,2,3].filter(i=>i!==correct && i!==selectedIdx);
+      shuffle(idxs).slice(0,2).forEach(i=>{
+        removedBy5050.add(i);
+        const el = els.answers.children[i];
+        if(el){ el.setAttribute('aria-disabled','true'); el.style.opacity = .35; el.style.filter='saturate(.4)'; }
+      });
+    }
+
+    function useAudience(){
+      if(lifelines.audience) return; lifelines.audience = true; disableBtn(els.llAudience);
+      const correct = Number(els.answers.dataset.correctIndex);
+      const base = 50 + Math.floor(Math.random()*31); // 50..80 for correct
+      const rest = 100 - base;
+      const others = [0,1,2].map(()=>0);
+      let leftover = rest;
+      for(let i=0;i<others.length;i++){
+        const take = i<others.length-1 ? Math.floor(Math.random()*(leftover+1)) : leftover;
+        others[i]=take; leftover -= take;
+      }
+      const perc=[0,0,0,0];
+      let oi=0;
+      for(let i=0;i<4;i++) perc[i] = (i===correct)? base : others[oi++];
+      showAudienceBars(perc);
+    }
+
+    function usePhone(){
+      if(lifelines.phone) return; lifelines.phone = true; disableBtn(els.llPhone);
+      const q = questions[current];
+      const tip = q.tip || 'Denk an die Grundsätze: Zweckbindung, Datenminimierung, Vertraulichkeit.';
+      showOverlay('Telefonjoker ☎️', `<p><em>„Ich glaube, die richtige Antwort ist:“</em></p><p><strong>${tip}</strong></p>`);
+    }
+
+    function disableBtn(wrapper){ wrapper.setAttribute('aria-disabled','true'); const b=wrapper.querySelector('button'); if(b) b.disabled=true; }
+    function enableLifelines(){ [els.ll5050, els.llAudience, els.llPhone].forEach(w=>{ w.removeAttribute('aria-disabled'); const b=w.querySelector('button'); if(b) b.disabled=false; }); }
+
+    function showAudienceBars(perc){
+      const letters=['A','B','C','D'];
+      const html = `<div class="audience-bars">${perc.map((p,i)=>`
+        <div class="bar"><span>${letters[i]} ${p}%</span><div><i style="width:${p}%"></i></div></div>
+      `).join('')}</div>`;
+      showOverlay('Publikumsjoker 👥', html);
+    }
+
+    function showOverlay(title, html){
+      els.overlayTitle.textContent = title;
+      els.overlayContent.innerHTML = html;
+      els.overlay.style.display='grid';
+      els.overlayClose.focus();
+    }
+    function hideOverlay(){ els.overlay.style.display='none'; }
+
+    // ---------- Events ----------
+    els.lockBtn.addEventListener('click', lockIn);
+    els.nextBtn.addEventListener('click', nextQuestion);
+    els.restartBtn.addEventListener('click', restart);
+    els.overlayClose.addEventListener('click', hideOverlay);
+
+    document.getElementById('ll5050').addEventListener('click', use5050);
+    document.getElementById('llAudience').addEventListener('click', useAudience);
+    document.getElementById('llPhone').addEventListener('click', usePhone);
+
+    els.startBtn.addEventListener('click', ()=>{ document.getElementById('start').style.display='none'; restart(); });
+
+    document.addEventListener('keydown', (e)=>{
+      const k = e.key.toLowerCase();
+      const map = { '1':0,'2':1,'3':2,'4':3, 'a':0,'b':1,'c':2,'d':3 };
+      if(map.hasOwnProperty(k)){
+        const idx = map[k];
+        const btn = els.answers.children[idx];
+        if(btn && btn.getAttribute('aria-disabled')!=="true"){
+          selectAnswer(idx);
+        }
+      }
+      if(k==='enter' && !els.lockBtn.disabled){ els.lockBtn.click(); }
+      if(k==='n' && !els.nextBtn.disabled){ els.nextBtn.click(); }
+    });
+
+    // init
+    buildLadder();
+  </script>
+</body>
+</html>

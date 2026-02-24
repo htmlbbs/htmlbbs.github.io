@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Übung: Fläche, Umfang, Kosten (BES 2)</title>
+  <style>
+    :root{
+      --bg:#f7f7fb; --card:#ffffff; --text:#14141a; --muted:#5a5a66;
+      --ok:#1a7f37; --bad:#b42318; --warn:#8a6d00; --border:#e6e6ef;
+      --btn:#2b59ff; --shadow: 0 1px 0 rgba(0,0,0,.03); --radius:16px;
+
+      /* yellow pill */
+      --pill-bg:#fff7db; --pill-border:#ffe7a3; --pill-text:#4a3600;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:980px;margin:0 auto;padding:16px;}
+    h1{font-size:1.15rem;margin:0 0 6px;}
+    p{margin:6px 0;color:var(--muted);line-height:1.35;}
+    .topbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      background:var(--pill-bg);border:1px solid var(--pill-border);color:var(--pill-text);
+      padding:6px 10px;border-radius:999px;font-size:.9rem;
+    }
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.9rem;border:1px solid var(--border);border-bottom-width:2px;padding:1px 6px;border-radius:7px;background:#fff;}
+
+    .grid{display:grid;grid-template-columns: 1fr 1fr; gap:12px; align-items:start;}
+    @media (max-width:860px){
+      .grid{grid-template-columns:1fr;}
+      .wrap{padding:12px;}
+      .roomCard{order:1}
+      .inputsCard{order:2}
+    }
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow);}
+    .small{font-size:.92rem;color:var(--muted);}
+    .taskText{font-weight:900;font-size:1.05rem;margin:2px 0 8px;}
+
+    .form{display:flex;flex-direction:column;gap:10px;}
+    .step{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px;
+      background:#fcfcff;
+    }
+    .stepTitle{font-weight:900;}
+    .stepRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+    input[type="text"]{
+      width:170px;
+      max-width:100%;
+      padding:10px 12px;border:1px solid var(--border);border-radius:12px;
+      font-size:1rem;background:#fff;
+    }
+    .unit{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:#111827;}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .btn{appearance:none;border:0;border-radius:12px;padding:10px 12px;background:var(--btn);color:#fff;font-weight:900;cursor:pointer;}
+    .btn.secondary{background:#eef2ff;color:#1f2a6a;border:1px solid #dfe5ff;}
+
+    .msg{margin-top:8px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;}
+    .msg.ok{border-color:#b7ebc6;background:#effcf3;color:#0f3d1d;}
+    .msg.bad{border-color:#ffd0cc;background:#fff1f0;color:#5c0a05;}
+    .msg.warn{border-color:#ffe7a3;background:#fff7db;color:#4a3600;}
+    .hintbox{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed var(--border);background:#ffffff;}
+    .hintbox b{font-weight:900}
+
+    .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+    .tile{border:1px solid var(--border);border-radius:14px;padding:10px;background:#fcfcff;}
+    .tile .t{font-size:.85rem;color:var(--muted);}
+    .tile .v{font-weight:900;font-size:1.05rem;margin-top:2px;}
+
+    @media (max-width:520px){
+      h1{font-size:1.05rem;}
+      .pill{font-size:.85rem;}
+      .card{padding:10px;}
+      .step{padding:10px;}
+      input[type="text"]{width:100%;}
+      .stepRow{gap:8px;}
+      .kpi{grid-template-columns:1fr;}
+      .topbar{gap:8px;}
+      .btn{width:100%;}
+      .actions .btn{flex: 1 1 100%;}
+    }
+    svg{max-width:100%;height:auto;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Interaktive Übung: Fläche, Umfang und Kosten</h1>
+        <p>Rechne zuerst alles aus. Dann klicke auf <b>Prüfen</b>.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button class="btn secondary" id="newTaskBtn" type="button">Neue Aufgabe</button>
+        <span class="pill">Dezimal: <span class="kbd">,</span> oder <span class="kbd">.</span></span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card roomCard">
+        <div class="small" style="font-weight:900;margin-bottom:6px;">Klassenzimmer</div>
+        <div id="roomSvg"></div>
+
+        <div class="kpi">
+          <div class="tile"><div class="t">Länge</div><div class="v"><span id="lenText"></span> m</div></div>
+          <div class="tile"><div class="t">Breite</div><div class="v"><span id="widText"></span> m</div></div>
+          <div class="tile"><div class="t">Preis Fußbodenbelag</div><div class="v"><span id="pfText"></span> € / m²</div></div>
+          <div class="tile"><div class="t">Preis Fußleiste</div><div class="v"><span id="plText"></span> € / m</div></div>
+        </div>
+      </div>
+
+      <div class="card inputsCard" aria-live="polite">
+        <div class="taskText">Berechne die Maße und die Kosten.</div>
+
+        <div class="form" id="form"></div>
+
+        <div class="actions">
+          <button class="btn" id="checkAllBtn" type="button">Prüfen</button>
+        </div>
+
+        <div id="globalMsg" class="msg" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ---------- Helpers ----------
+  const rndStep = (min, max, step) => {
+    const nSteps = Math.round((max - min) / step);
+    const k = Math.floor(Math.random() * (nSteps + 1));
+    return +(min + k * step).toFixed(1);
+  };
+  const rndPrice = (min, max) => {
+    const v = min + Math.random() * (max - min);
+    return +v.toFixed(2);
+  };
+  const round1 = (x) => +(Math.round(x * 10) / 10).toFixed(1);
+  const round2 = (x) => +(Math.round(x * 100) / 100).toFixed(2);
+  const eq = (a, b, eps=1e-9) => Math.abs(a - b) <= eps;
+
+  const de = {
+    fmt1(x){ return String(x.toFixed(1)).replace(".", ","); },
+    fmt2(x){ return String(x.toFixed(2)).replace(".", ","); },
+    parse(s){
+      if (typeof s !== "string") return NaN;
+      const cleaned = s.trim().replace(/\s+/g,"").replace(",",".");
+      if(cleaned === "") return NaN;
+      const v = Number(cleaned);
+      return Number.isFinite(v) ? v : NaN;
+    }
+  };
+
+  let task = null;
+
+  const state = {
+    attempts: {},
+    ans: {},
+    status: { area:"", per:"" }
+  };
+
+  const steps = [
+    {
+      key: "area",
+      title: "1) Fläche",
+      label: "Die Schule braucht ____ m² von dem Fußbodenbelag.",
+      unit: "m²",
+      round: 1,
+      expected: () => task.area1,
+      explanation: () => [
+        `<b>Rechenweg:</b>`,
+        `Fläche = Länge <b>·</b> Breite`,
+        `${de.fmt1(task.len)} <b>·</b> ${de.fmt1(task.wid)} = ${de.fmt1(task.area1)}`
+      ].join("<br/>")
+    },
+    {
+      key: "per",
+      title: "2) Umfang",
+      label: "Die Schule braucht ____ m von der Fußleiste.",
+      unit: "m",
+      round: 1,
+      expected: () => task.per1,
+      explanation: () => [
+        `<b>Rechenweg:</b>`,
+        `Umfang = 2 <b>·</b> (Länge + Breite)`,
+        `2 <b>·</b> (${de.fmt1(task.len)} + ${de.fmt1(task.wid)})`,
+        `= 2 <b>·</b> ${de.fmt1(task.len + task.wid)} = ${de.fmt1(task.per1)}`
+      ].join("<br/>")
+    },
+    {
+      key: "costFloor",
+      title: "3) Kosten Fußboden",
+      label: "Preis für den Fußbodenbelag (Fläche <b>·</b> Preis pro m²).",
+      unit: "€",
+      round: 2,
+      expected: () => task.costFloor2,
+      explanation: () => [
+        `<b>Rechenweg:</b>`,
+        `Kosten Boden = Fläche <b>·</b> Preis pro m²`,
+        `${de.fmt1(task.area1)} <b>·</b> ${de.fmt2(task.pFloor)} = ${de.fmt2(task.costFloor2)}`
+      ].join("<br/>"),
+      followError: () => {
+        if (state.status.area !== "wrong") return null;
+        const aS = state.ans.area;
+        if (aS == null) return null;
+        return round2(aS * task.pFloor);
+      },
+      followNote: () => `Folgefehler: Deine Fläche war falsch, aber du hast den Boden-Preis richtig mit <b>deiner Fläche</b> gerechnet.`
+    },
+    {
+      key: "costBase",
+      title: "4) Kosten Fußleiste",
+      label: "Preis für die Fußleiste (Umfang <b>·</b> Preis pro m).",
+      unit: "€",
+      round: 2,
+      expected: () => task.costBase2,
+      explanation: () => [
+        `<b>Rechenweg:</b>`,
+        `Kosten Leiste = Umfang <b>·</b> Preis pro m`,
+        `${de.fmt1(task.per1)} <b>·</b> ${de.fmt2(task.pBase)} = ${de.fmt2(task.costBase2)}`
+      ].join("<br/>"),
+      followError: () => {
+        if (state.status.per !== "wrong") return null;
+        const uS = state.ans.per;
+        if (uS == null) return null;
+        return round2(uS * task.pBase);
+      },
+      followNote: () => `Folgefehler: Dein Umfang war falsch, aber du hast den Leisten-Preis richtig mit <b>deinem Umfang</b> gerechnet.`
+    },
+    {
+      key: "total",
+      title: "5) Gesamt",
+      label: "Antwort: Insgesamt muss die Schule also ____ € bezahlen.",
+      unit: "€",
+      round: 2,
+      expected: () => task.total2,
+      explanation: () => [
+        `<b>Rechenweg:</b>`,
+        `Gesamt = Kosten Boden + Kosten Leiste`,
+        `${de.fmt2(task.costFloor2)} + ${de.fmt2(task.costBase2)} = ${de.fmt2(task.total2)}`
+      ].join("<br/>"),
+      followError: () => {
+        const cf = state.ans.costFloor, cb = state.ans.costBase;
+        if (cf == null || cb == null) return null;
+        const cfCorrect = eq(cf, task.costFloor2);
+        const cbCorrect = eq(cb, task.costBase2);
+        if (cfCorrect && cbCorrect) return null;
+        return round2(cf + cb);
+      },
+      followNote: () => `Folgefehler: Mindestens eine Teilkosten-Rechnung war (wegen eines früheren Fehlers) falsch, aber du hast die <b>Summe</b> aus deinen Teilkosten richtig gerechnet.`
+    }
+  ];
+
+  // ---------- DOM ----------
+  const form = document.getElementById("form");
+  const newTaskBtn = document.getElementById("newTaskBtn");
+  const checkAllBtn = document.getElementById("checkAllBtn");
+  const globalMsg = document.getElementById("globalMsg");
+
+  const lenText = document.getElementById("lenText");
+  const widText = document.getElementById("widText");
+  const pfText = document.getElementById("pfText");
+  const plText = document.getElementById("plText");
+  const roomSvg = document.getElementById("roomSvg");
+
+  function msgEl(stepKey){ return document.querySelector(`[data-msg="${stepKey}"]`); }
+  function solBtnEl(stepKey){ return document.querySelector(`[data-solbtn="${stepKey}"]`); }
+  function solBoxEl(stepKey){ return document.querySelector(`[data-solbox="${stepKey}"]`); }
+  function inputEl(stepKey){ return document.querySelector(`[data-input="${stepKey}"]`); }
+
+  function showMsg(stepKey, type, html){
+    const el = msgEl(stepKey);
+    el.className = "msg " + type;
+    el.innerHTML = html;
+    el.style.display = "block";
+  }
+  function clearStep(stepKey){
+    const m = msgEl(stepKey);
+    m.style.display = "none";
+    m.innerHTML = "";
+    m.className = "msg";
+
+    const s = solBoxEl(stepKey);
+    s.style.display = "none";
+    s.innerHTML = "";
+
+    const b = solBtnEl(stepKey);
+    b.style.display = "none";
+  }
+  function showSolution(stepKey, html){
+    const el = solBoxEl(stepKey);
+    el.innerHTML = html;
+    el.style.display = "block";
+
+    // Button ausblenden, sobald Lösung angezeigt wird
+    const btn = solBtnEl(stepKey);
+    if (btn) btn.style.display = "none";
+  }
+  function showGlobal(type, html){
+    globalMsg.className = "msg " + type;
+    globalMsg.innerHTML = html;
+    globalMsg.style.display = "block";
+  }
+  function hideGlobal(){
+    globalMsg.style.display = "none";
+    globalMsg.innerHTML = "";
+    globalMsg.className = "msg";
+  }
+
+  // ---------- SVG ----------
+  function renderSvg(){
+  const L = task.len, B = task.wid;
+
+  const w = 520;
+  const padX = 44;
+
+  // Platz über/unter dem Rechteck für Maßlinien & Text
+  const topGap = 60;
+  const bottomGap = 30;
+
+  // optische Länge (Rechteck-Breite) bleibt konstant
+  const rectW = w - 2 * padX;
+
+  // ECHT proportional (keine Begrenzung!)
+  const rectH = rectW * (B / L);
+
+  // SVG-Höhe passt sich an, damit alles reinpasst
+  const h = topGap + rectH + bottomGap;
+
+  // Rechteck-Position
+  const rectX = padX;
+  const rectY = topGap;
+
+  const extraRight = 90;
+  const vbW = w + extraRight;
+
+  roomSvg.innerHTML = `
+    <svg viewBox="0 0 ${vbW} ${h}" role="img" aria-label="Rechteckiger Raum mit Maßen">
+      <rect x="${rectX}" y="${rectY}" width="${rectW}" height="${rectH}"
+            fill="#ffffff" stroke="#111827" stroke-width="3" rx="12"></rect>
+
+      <!-- Länge (oben, bleibt optisch gleich breit) -->
+      <line x1="${rectX}" y1="${rectY-16}" x2="${rectX+rectW}" y2="${rectY-16}" stroke="#111827" stroke-width="2"></line>
+      <line x1="${rectX}" y1="${rectY-22}" x2="${rectX}" y2="${rectY-10}" stroke="#111827" stroke-width="2"></line>
+      <line x1="${rectX+rectW}" y1="${rectY-22}" x2="${rectX+rectW}" y2="${rectY-10}" stroke="#111827" stroke-width="2"></line>
+      <text x="${rectX+rectW/2}" y="${rectY-26}" text-anchor="middle" font-size="20" font-weight="900" fill="#111827">
+        ${de.fmt1(L)} m
+      </text>
+
+      <!-- Breite (rechts, jetzt wirklich proportional) -->
+      <line x1="${rectX+rectW+18}" y1="${rectY}" x2="${rectX+rectW+18}" y2="${rectY+rectH}" stroke="#111827" stroke-width="2"></line>
+      <line x1="${rectX+rectW+12}" y1="${rectY}" x2="${rectX+rectW+24}" y2="${rectY}" stroke="#111827" stroke-width="2"></line>
+      <line x1="${rectX+rectW+12}" y1="${rectY+rectH}" x2="${rectX+rectW+24}" y2="${rectY+rectH}" stroke="#111827" stroke-width="2"></line>
+
+      <text x="${rectX+rectW+30}" y="${rectY+rectH/2}" text-anchor="start"
+            font-size="20" font-weight="900" fill="#111827" dominant-baseline="middle">
+        ${de.fmt1(B)} m
+      </text>
+    </svg>
+  `;
+}
+
+
+
+  function renderTaskInfo(){
+    lenText.textContent = de.fmt1(task.len);
+    widText.textContent = de.fmt1(task.wid);
+    pfText.textContent = de.fmt2(task.pFloor);
+    plText.textContent = de.fmt2(task.pBase);
+    renderSvg();
+  }
+
+  // ---------- Build form ----------
+  function buildForm(){
+    form.innerHTML = "";
+    steps.forEach((s) => {
+      const stepDiv = document.createElement("div");
+      stepDiv.className = "step";
+      stepDiv.innerHTML = `
+        <div class="stepTitle">${s.title}</div>
+        <div class="small" style="margin-top:4px;">${s.label}</div>
+
+        <div class="stepRow">
+          <input type="text" inputmode="decimal" autocomplete="off" data-input="${s.key}" aria-label="${s.title}">
+          <span class="unit">${s.unit}</span>
+        </div>
+
+        <div class="msg" data-msg="${s.key}" style="display:none;"></div>
+        <div class="hintbox" data-solbox="${s.key}" style="display:none;"></div>
+
+        <div style="margin-top:8px;">
+          <button class="btn secondary" type="button" data-solbtn="${s.key}" style="display:none;">Lösung anzeigen</button>
+        </div>
+      `;
+      form.appendChild(stepDiv);
+    });
+
+    steps.forEach((s) => {
+      solBtnEl(s.key).addEventListener("click", () => showStepSolution(s.key));
+    });
+
+    steps.forEach((s, idx) => {
+      const inp = inputEl(s.key);
+      inp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter"){
+          e.preventDefault();
+          const next = steps[idx+1];
+          if (next) inputEl(next.key).focus();
+          else checkAll();
+        }
+      });
+    });
+  }
+
+  // ---------- Checking ----------
+  function normalizeAndRound(step, raw){
+    const v = de.parse(raw);
+    if(!Number.isFinite(v)) return { ok:false, value:NaN };
+    const r = step.round === 1 ? +v.toFixed(1) : +v.toFixed(2);
+    return { ok:true, value:r };
+  }
+
+  function showStepSolution(stepKey){
+    const step = steps.find(s => s.key === stepKey);
+    const expected = step.expected();
+
+    const valueLine = (step.round === 1)
+      ? `<b>Richtiges Ergebnis:</b> ${de.fmt1(expected)} ${step.unit}`
+      : `<b>Richtiges Ergebnis:</b> ${de.fmt2(expected)} ${step.unit}`;
+
+    showSolution(stepKey, valueLine + "<br/><br/>" + (step.explanation ? step.explanation() : ""));
+  }
+
+  function checkAll(){
+    hideGlobal();
+
+    steps.forEach(s => {
+      msgEl(s.key).style.display = "none";
+      msgEl(s.key).innerHTML = "";
+      msgEl(s.key).className = "msg";
+      solBoxEl(s.key).style.display = "none";
+      solBoxEl(s.key).innerHTML = "";
+    });
+
+    const missing = [];
+    const parsedMap = {};
+    for (const s of steps){
+      const raw = inputEl(s.key).value;
+      const parsed = normalizeAndRound(s, raw);
+      if(!parsed.ok){
+        missing.push(s.key);
+      } else {
+        parsedMap[s.key] = parsed.value;
+      }
+    }
+    if (missing.length){
+      showGlobal("bad", "Es fehlen noch Zahlen. Bitte fülle alle Felder aus.");
+      for (const k of missing){
+        showMsg(k, "bad", "Hier fehlt noch eine Zahl.");
+      }
+      inputEl(missing[0]).focus();
+      return;
+    }
+
+    for (const s of steps){
+      state.ans[s.key] = parsedMap[s.key];
+    }
+
+    state.status.area = eq(state.ans.area, task.area1) ? "correct" : "wrong";
+    state.status.per  = eq(state.ans.per,  task.per1)  ? "correct" : "wrong";
+
+    let anyWrong = false;
+    let allPerfect = true;
+
+    for (const s of steps){
+      const userVal = state.ans[s.key];
+      const expected = s.expected();
+      const isCorrect = eq(userVal, expected);
+
+      let follow = null;
+      if (typeof s.followError === "function") follow = s.followError();
+      const isFollowOk = (follow !== null && eq(userVal, follow));
+
+      if (isCorrect){
+        showMsg(s.key, "ok", "Richtig ✅");
+      } else if (isFollowOk){
+        showMsg(s.key, "warn", `<b>Folgefehler</b> ⚠️<br/>${s.followNote ? s.followNote() : "Du hast richtig weitergerechnet, aber ein früheres Ergebnis war falsch."}`);
+        allPerfect = false;
+      } else {
+        anyWrong = true;
+        allPerfect = false;
+
+        state.attempts[s.key] = (state.attempts[s.key] || 0) + 1;
+        showMsg(s.key, "bad", "Leider falsch.");
+
+        if (state.attempts[s.key] >= 2){
+          solBtnEl(s.key).style.display = "inline-block";
+        }
+      }
+    }
+
+    if (allPerfect){
+      showGlobal("ok", "Alles richtig! 🎉");
+    } else if (!anyWrong){
+      showGlobal("warn", "Du hast richtig gerechnet, aber es gab vorher einen Fehler (Folgefehler).");
+    } else {
+      showGlobal("bad", "Noch nicht alles richtig. Korrigiere deine Antworten.");
+    }
+  }
+
+  // ---------- New task ----------
+  function newTask(){
+    // Bedingungen:
+    // - Fläche (len*wid) hat exakt 1 Nachkommastelle (kein Runden nötig)
+    // - Kosten Boden (Fläche * Preis Boden) hat exakt 2 Nachkommastellen (kein Runden nötig)
+    // - Kosten Leiste (Umfang * Preis Leiste) hat exakt 2 Nachkommastellen (kein Runden nötig)
+    let len, wid, pFloor, pBase, areaExact, area1, per1, costFloorExact, costBaseExact;
+
+    while (true){
+      len = rndStep(6.0, 12.0, 0.1);
+      wid = rndStep(4.0, 9.5, 0.1);
+      if (Math.abs(len - wid) < 0.5) continue;
+
+      areaExact = len * wid;
+      area1 = round1(areaExact);
+      if (!Number.isFinite(areaExact) || Math.abs(areaExact - area1) > 1e-9) continue;
+
+      per1 = round1(2 * (len + wid));
+
+      // Preise wählen und prüfen, ob Multiplikationen "genau" auf 2 Nachkommastellen enden
+      pFloor = rndPrice(10.00, 24.50);
+      pBase  = rndPrice(1.50, 5.95);
+
+      costFloorExact = area1 * pFloor;
+      costBaseExact  = per1  * pBase;
+
+      // akzeptiere nur, wenn kein Runden nötig ist (exakt 2 Nachkommastellen)
+      if (Math.abs(costFloorExact - round2(costFloorExact)) > 1e-9) continue;
+      if (Math.abs(costBaseExact  - round2(costBaseExact))  > 1e-9) continue;
+
+      break;
+    }
+
+    const costFloor2 = round2(costFloorExact);
+    const costBase2  = round2(costBaseExact);
+    const total2     = round2(costFloor2 + costBase2);
+
+    task = { len, wid, pFloor, pBase, area1, per1, costFloor2, costBase2, total2 };
+
+    state.attempts = {};
+    state.ans = {};
+    state.status = { area:"", per:"" };
+
+    renderTaskInfo();
+    buildForm();
+    hideGlobal();
+    steps.forEach(s => clearStep(s.key));
+
+    const first = inputEl("area");
+    if (first) first.focus();
+  }
+
+  // ---------- Start ----------
+  newTaskBtn.addEventListener("click", newTask);
+  checkAllBtn.addEventListener("click", checkAll);
+  newTask();
+})();
+</script>
+</body>
+</html>
