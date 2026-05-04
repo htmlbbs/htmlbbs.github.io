@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pluspunkt Deutsch A2 – Kapitel 3 & 4: Interaktive Übungen</title>
+<style>
+  /* ... CSS bleibt unverändert ... */
+</style>
+</head>
+<body>
+<!-- ... Header und Main-Struktur bleiben unverändert ... -->
+<script>
+// ---------- Utility & State ----------
+const attempts = new Map();
+const solved = new Set();
+
+function incAttempt(key){
+  const n = attempts.get(key) || 0; attempts.set(key, n+1); return n+1;
+}
+function normalize(s){ return (s||"").toString().trim().toLowerCase().replace(/\s+/g,' ')}
+
+function updateProgress(){
+  const all = document.querySelectorAll('[data-itemkey]').length;
+  const done = solved.size;
+  const pct = all? Math.round(100*done/all) : 0;
+  document.getElementById('progressBar').style.width = pct+'%';
+}
+
+// ---------- Drag & Drop (fix: move statt kopieren) ----------
+function zoneSequence(zone){
+  return [...zone.querySelectorAll('.drag')].map(p=>p.dataset.val);
+}
+function zoneValue(zone){
+  return normalize(zoneSequence(zone).join(' '));
+}
+function setupDragMove(scope){
+  scope.querySelectorAll('.drag').forEach(p=>{
+    if(!p.id) p.id = 'pill-' + Math.random().toString(36).slice(2);
+    p.setAttribute('draggable','true');
+    p.addEventListener('dragstart', e=>{
+      e.dataTransfer.setData('text/uid', p.id);
+      e.dataTransfer.setData('text/plain', p.dataset.val);
+      e.dataTransfer.effectAllowed='move';
+    });
+  });
+  scope.querySelectorAll('.drags, .dropzone').forEach(zone=>{
+    zone.addEventListener('dragover', e=>{ e.preventDefault(); e.dataTransfer.dropEffect='move' });
+    zone.addEventListener('drop', e=>{
+      e.preventDefault();
+      const uid = e.dataTransfer.getData('text/uid');
+      const pill = scope.querySelector('#'+uid);
+      if(!pill) return;
+      const target = e.currentTarget;
+      const before = e.target.closest('.drag');
+      if(before && before.parentElement===target){
+        target.insertBefore(pill, before);
+      } else {
+        target.appendChild(pill);
+      }
+    });
+  });
+}
+function tokensFromSolution(item){
+  const sol = normalize((item.solution || item.answer || '')+'');
+  return (item.choices||[])
+    .map(ch=>({text:ch, norm:normalize(ch), idx: sol.indexOf(normalize(ch))}))
+    .filter(o=>o.idx>-1)
+    .sort((a,b)=>a.idx-b.idx)
+    .map(o=>o.text);
+}
+
+// ---------- Render Match-Aufgaben ----------
+function renderMatch(container, items){
+  items.forEach((it, idx)=>{
+    const key = `${container.id}-${idx}`;
+    const bankId = `bank-${key}`;
+    const choices = it.choices.map((c,i)=>`<span class="drag" data-val="${c}" id="pill-${key}-${i}">${c}</span>`).join(' ');
+    const card = document.createElement('div'); card.className='card'; card.dataset.itemkey=key;
+    card.innerHTML = `
+      <div><strong>${it.q}</strong></div>
+      <div class="drags" id="${bankId}">${choices}</div>
+      <div class="row" style="margin-top:8px">
+        <div class="dropzone grow" id="dz-${key}" aria-label="Antwortfeld"></div>
+      </div>
+      <div class="controls">
+        <button data-action="check" data-key="${key}">Prüfen</button>
+        <button class="secondary" data-action="solution" data-key="${key}">Lösung</button>
+      </div>
+      <div class="feedback" id="fb-${key}"></div>
+    `;
+    container.appendChild(card);
+    setupDragMove(card);
+  });
+
+  container.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action, key = btn.dataset.key;
+    const idx = Number(key.split('-').pop());
+    const item = items[idx];
+    const card = e.target.closest('.card');
+    const dz = card.querySelector(`#dz-${key}`);
+    const bank = card.querySelector(`#bank-${key}`);
+
+    if(action==='solution'){
+      [...dz.querySelectorAll('.drag')].forEach(p=> bank.appendChild(p));
+      const order = tokensFromSolution(item);
+      order.forEach(tok=>{
+        const pill = [...bank.querySelectorAll('.drag')].find(p=> normalize(p.dataset.val)===normalize(tok));
+        if(pill) dz.appendChild(pill);
+      });
+      document.getElementById(`fb-${key}`).textContent=`Lösung: ${order.join(' ')}`;
+      solved.add(key); updateProgress(); return;
+    }
+
+    const val = zoneValue(dz);
+    const ok = normalize(item.answer);
+    if(val===ok){
+      document.getElementById(`fb-${key}`).textContent='Richtig!';
+      solved.add(key); updateProgress();
+    } else {
+      const n = incAttempt(key);
+      if(n===1) document.getElementById(`fb-${key}`).textContent='Falsch. Versuche es noch einmal.';
+      else if(n===2) document.getElementById(`fb-${key}`).textContent=`Hilfe: ${item.hint}`;
+      else {
+        [...dz.querySelectorAll('.drag')].forEach(p=> bank.appendChild(p));
+        const order = tokensFromSolution(item);
+        order.forEach(tok=>{
+          const pill = [...bank.querySelectorAll('.drag')].find(p=> normalize(p.dataset.val)===normalize(tok));
+          if(pill) dz.appendChild(pill);
+        });
+        document.getElementById(`fb-${key}`).textContent=`Lösung: ${order.join(' ')}`;
+        solved.add(key); updateProgress();
+      }
+    }
+  });
+}
+
+// ---------- Restliche Renderfunktionen & Daten bleiben unverändert ----------
+</script>
+</body>
+</html>

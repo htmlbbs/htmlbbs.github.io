@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Prozentrechnung üben</title>
+  <style>
+    :root{
+      --bg:#f4f6fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#d1d5db;
+      --accent:#4f67e8; --accent-soft:#dfe7ff; --ok:#166534; --ok-bg:#dcfce7; --bad:#991b1b; --bad-bg:#fee2e2;
+      --shadow:0 8px 24px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding-bottom:70px;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+    header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}
+    .wrap{max-width:1180px;margin:0 auto;padding:16px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:1.5rem}
+    .sub{color:var(--muted);font-size:.95rem;margin-top:4px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .jump-wrap{display:flex;align-items:center;gap:8px}
+    .jump-controls{display:flex;align-items:center;gap:0}
+    .jump-label{font-size:.95rem;color:var(--text);font-weight:600;white-space:nowrap}
+    select,input,button{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff}
+    select,input,button{padding:8px 12px;height:38px}
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type="number"]{appearance:textfield;-moz-appearance:textfield}
+    #jumpInput{width:4.5em;border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:0;border-bottom-right-radius:0;text-align:center}
+    #jumpInput.overwrite-ready{background:#dbeafe;border-color:#4f67e8;box-shadow:inset 0 0 0 2px rgba(79,103,232,.18);color:#1d4ed8;font-weight:700}
+    #jumpBtn{min-width:38px;padding:8px 10px 8px;border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-1px;font-weight:400;font-size:1.35rem;display:flex;align-items:center;justify-content:center;line-height:1}
+    #jumpBtn .arrow{display:block;transform:translateY(2px)}
+    #randomTaskBtn{min-width:38px;padding:8px 10px;margin-right:-1px;font-size:1.1rem;display:flex;align-items:center;justify-content:center;line-height:1;border-top-right-radius:0;border-bottom-right-radius:0}
+    .solved-mark{display:none;margin-left:0;padding:2px 10px;border-radius:999px;border:1px solid #156a35;background:#16843f;color:#ecfdf5;font-size:.78rem;font-weight:700;line-height:1}
+    .solved-mark.visible{display:inline-flex;align-items:center}
+    button{cursor:pointer;transition:background-color .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+    button:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    button:active{transform:translateY(1px)}
+    button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    button.primary:hover{background:#4259d8;border-color:#4259d8}
+    button.success{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+    button.success:hover{background:var(--ok-bg);border-color:var(--ok)}
+    .nav-row button.success{background:var(--ok-bg) !important;color:var(--ok) !important;border-color:var(--ok) !important}
+    #keyboardToggle{height:auto;padding:0;margin:0}
+    .toggle-label{display:flex;align-items:center;gap:8px;padding:8px 12px;height:38px;border:1px solid var(--line);border-radius:12px;background:#fff;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .toggle-label:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .toggle-label:has(#keyboardToggle:checked){background:#eceff3;border-color:#9ca3af}
+    main{padding:18px 0 140px}
+    .layout{display:grid;grid-template-columns:1.3fr .9fr;gap:18px}
+    @media (max-width:920px){.layout{grid-template-columns:1fr}aside.card{display:none}#calcToggleBtn{display:flex !important}.toggle-label{display:none !important}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    aside.card{background:transparent;border:none;box-shadow:none;padding:0}
+    .badge{display:inline-block;padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.92rem;margin-right:8px;margin-bottom:8px}
+    .task-panel{position:sticky;top:calc(var(--header-height, 82px) + 10px);z-index:15;background:#eaf3ff;border:3px double #6f8de0;border-radius:18px;padding:12px 16px;margin:0 0 18px;box-shadow:0 0 22px 6px rgba(255,255,255,1),var(--shadow)}
+    .task-label{font-size:.82rem;font-weight:700;color:var(--muted);margin:0 0 6px 2px;text-transform:uppercase;letter-spacing:.04em}
+    .task-text{font-size:1.15rem;margin:0;min-height:0;background:transparent;border:none;border-radius:0;padding:0;box-shadow:none}
+    .step{border-top:1px solid #e5e7eb;margin-top:14px;padding-top:14px}
+    .step h2{margin:0 0 8px;font-size:1.05rem}
+    .help{color:var(--muted);font-size:.94rem;margin-bottom:10px}
+    .choice-row{display:grid;grid-template-columns:1fr 230px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:10px;margin-bottom:10px}
+    @media (max-width:720px){.choice-row{grid-template-columns:1fr}}
+    .formula-choice{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fafafa;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .formula-choice:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .formula-choice.selected{border-color:var(--accent);background:var(--accent-soft)}
+    .target-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+    .target-btn{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fafafa;cursor:pointer;font-weight:600;text-align:center;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .target-btn:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    @media (max-width:720px){.target-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .target-btn.selected{border-color:var(--accent);background:var(--accent-soft)}
+    .formula-entry{border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:12px;min-height:76px}
+    .small-input{width:88px;margin:0 4px;padding:6px 8px;height:auto;border-radius:8px;border:1px solid var(--line);background:#fff;vertical-align:middle}
+    .feedback{border-radius:12px;padding:10px 12px;margin-top:10px;font-weight:700}
+    .ok{background:var(--ok-bg);color:var(--ok)}
+    .bad{background:var(--bad-bg);color:var(--bad)}
+    .hidden{display:none}
+    .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .result-box{margin-top:10px;padding:12px;border-radius:12px;background:var(--ok-bg);color:var(--ok);font-weight:700}
+    .nav-row{display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid #e5e7eb;flex-wrap:wrap;justify-content:center}
+    .nav-row button{background:#f3f4f6;border-color:var(--line);color:var(--text);min-width:160px}
+    .nav-row button.success{background:var(--ok-bg) !important;color:var(--ok) !important;border-color:var(--ok) !important;font-weight:700 !important}
+    #nextBtn{margin-left:0}
+    .calc-shell{max-width:360px;margin:0 auto;background:linear-gradient(180deg,#39404b 0%,#1f2937 100%);border-radius:24px;padding:18px;box-shadow:0 16px 40px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);position:sticky;top:calc(var(--header-height, 82px) + 16px)}
+    #calcToggleBtn{position:fixed !important;bottom:40px !important;right:20px !important;width:60px;height:60px;background:rgba(91,111,216,.7);border:2px solid #5b6fd8;border-radius:18px;display:none !important;cursor:pointer;z-index:1000 !important;box-shadow:0 4px 16px rgba(91,111,216,.4);transition:background-color .2s,box-shadow .2s;align-items:center;justify-content:center}
+    #calcToggleBtn:hover{background:rgba(91,111,216,.9);box-shadow:0 6px 20px rgba(91,111,216,.5)}
+    #calcToggleBtn:active{transform:scale(0.95)}
+    #calcToggleBtn .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:36px;height:36px}
+    #calcToggleBtn .symbol{color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;line-height:1}
+    .calc-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+    .calc-overlay.active{display:flex}
+    .calc-overlay .calc-shell{position:static;margin:0;max-height:90vh;overflow-y:auto}
+    .calc-screen-frame{background:#0f172a;border-radius:16px;padding:10px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
+    .calc-screen{width:100%;height:auto;border:none;border-radius:10px;padding:14px 12px;text-align:right;font-size:1.5rem;font-family:"Courier New",monospace;background:#d9f7c8;color:#0f172a}
+    .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .calc-btn{height:58px;border:none;border-radius:14px;font-size:1.1rem;font-weight:700;box-shadow:inset 0 -3px 0 rgba(0,0,0,.16)}
+    .calc-btn.num{background:#f3f4f6}.calc-btn.op{background:#cbd5e1}.calc-btn.action{background:#fecaca}.calc-btn.equal{background:#93c5fd}.calc-btn.zero{grid-column:span 2}
+    footer{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:30}
+    .footerbar{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700}
+    .mini-kb-overlay{position:fixed;z-index:2000;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:10px;display:none;min-width:220px}
+    .mini-kb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .mini-kb-btn{border:none;border-radius:10px;padding:12px 10px;font-weight:700;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+    .mini-kb-num{background:#e5e7eb}.mini-kb-comma{background:#bfdbfe}.mini-kb-del{background:#fecaca}
+    @media (max-height:700px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{position:sticky !important;top:18px !important}
+    }
+    @media (max-height:600px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{max-width:300px;padding:12px;border-radius:18px;position:sticky !important;top:18px !important}
+      .calc-screen-frame{padding:6px;margin-bottom:10px;border-radius:12px}
+      .calc-screen{padding:8px;font-size:1.2rem;border-radius:8px}
+      .calc-grid{gap:6px}
+      .calc-btn{height:42px;font-size:.95rem;border-radius:10px}
+    }
+    @media (max-height:480px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{max-width:260px;padding:8px;border-radius:14px;position:sticky !important;top:18px !important}
+      .calc-screen-frame{padding:4px;margin-bottom:8px;border-radius:10px}
+      .calc-screen{padding:6px;font-size:1rem;border-radius:6px}
+      .calc-grid{gap:4px}
+      .calc-btn{height:36px;font-size:.85rem;border-radius:8px}
+    }
+    @media (max-width:920px){.layout{grid-template-columns:1fr}aside.card{display:none}#calcToggleBtn{display:flex !important}.toggle-label{display:none !important}}
+    @media (max-width:768px){
+      body{padding-bottom:0 !important}
+      header{position:static !important}
+      footer{position:static !important}
+      main{padding:18px 0 !important}
+      .calc-shell{position:static !important}
+      .task-panel{top:8px}
+      .topbar{justify-content:center}
+      .controls{justify-content:center;flex-wrap:wrap}
+      .footerbar{justify-content:center;font-size:.8rem;gap:8px;padding:10px 12px}
+      .toggle-label{display:none !important}
+      h1{font-size:1.2rem}
+      .sub{font-size:.85rem}
+      select,input,button{font-size:.85rem;padding:5px 8px;height:32px}
+      .controls{gap:6px}
+      .controls label{font-size:.85rem;display:flex;align-items:center;gap:4px;white-space:nowrap}
+      .jump-label{font-size:.85rem}
+      #jumpInput{width:50px}
+      #resetBtn{display:inline-flex;align-items:center;justify-content:center}
+    }
+    @media (max-width:480px){
+      h1{font-size:1rem}
+      .sub{display:none}
+      select,input,button{font-size:.8rem;padding:4px 6px;height:30px}
+      .controls{gap:4px}
+      .controls label{font-size:0;gap:2px}
+      .controls label select,.controls label input{font-size:.8rem}
+      .jump-label{font-size:.8rem}
+      #jumpInput{width:45px}
+      #jumpBtn{padding:4px 8px}
+      #randomTaskBtn{padding:4px 8px;margin-right:-1px}
+      .footerbar{font-size:.7rem;gap:6px;padding:8px 10px}
+      .footerbar>div{white-space:nowrap;font-size:.7rem}
+      .wrap{padding:12px}
+      .calc-overlay .calc-shell{max-width:320px;padding:14px;max-height:85vh}
+      .calc-btn{height:50px;font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Prozentrechnung üben</h1>
+      </div>
+      <div class="controls">
+        <label aria-label="Niveau auswählen">
+          <select id="difficultySelect">
+            <option value="easy">mit Hilfe rechnen</option>
+            <option value="medium">Schritt für Schritt</option>
+            <option value="hard">allein rechnen</option>
+          </select>
+        </label>
+        <div class="jump-wrap">
+          <span class="jump-label">Aufgabe</span>
+          <div class="jump-controls">
+            <button id="randomTaskBtn" aria-label="Zufällige Aufgabe">🎲</button>
+            <input id="jumpInput" type="text" value="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go" data-mini-kb="true" aria-label="Aufgabennummer" />
+            <button id="jumpBtn" aria-label="Zur Aufgabe springen"><span class="arrow">➜</span></button>
+          </div>
+        </div>
+        <label class="toggle-label"><span>Tasten</span><input id="keyboardToggle" type="checkbox" /></label>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="layout">
+    <section class="card">
+      <div class="task-panel">
+        <div class="task-label">Aufgabe <span id="solvedMark" class="solved-mark">✓ fertig</span></div>
+        <div class="task-text" id="taskText">Lade Aufgabe ...</div>
+      </div>
+
+      <div id="guidedArea">
+        <div class="step" id="step1">
+          <h2>1. Welche Werte sind das?</h2>
+          <div class="help">Ordne die markierten Werte zu.</div>
+          <div id="classifyBox"></div>
+          <button class="primary" id="checkStep1Btn">Prüfen</button>
+          <div id="feedback1"></div>
+        </div>
+        <div class="step" id="step2">
+          <h2>2. Was ist gesucht? Welche Formel passt?</h2>
+          <div class="help">Wähle zuerst den gesuchten Wert. Danach die passende Formel.</div>
+          <div class="target-row" id="targetButtons">
+            <div class="target-btn" data-value="G">Grundwert</div>
+            <div class="target-btn" data-value="W">Prozentwert</div>
+            <div class="target-btn" data-value="p">Prozentzahl</div>
+            <div class="target-btn" data-value="N">Neuer Preis</div>
+          </div>
+          <div id="formulaChoices"></div>
+          <button class="primary" id="checkStep2Btn">Prüfen</button>
+          <div id="feedback2"></div>
+        </div>
+        <div class="step" id="step3">
+          <h2>3. Werte in die Formel eintragen</h2>
+          <div class="help">Trage die passenden Werte ein.</div>
+          <div class="formula-entry" id="formulaEntry"></div>
+          <button class="primary" id="checkStep3Btn">Prüfen</button>
+          <div id="feedback3"></div>
+        </div>
+        <div class="step" id="step4">
+          <h2>4. Rechne aus</h2>
+          <div class="help">Nutze den Taschenrechner und schreibe die Lösung auf.</div>
+          <div class="answer-row">
+            <input id="answerInput" type="text" placeholder="Lösung" />
+            <span id="answerUnit"></span>
+            <button class="primary" id="checkAnswerBtn">Antwort prüfen</button>
+          </div>
+          <div id="feedback4"></div>
+          <div id="resultBox" class="result-box hidden"></div>
+        </div>
+      </div>
+
+      <div id="hardArea" class="hidden">
+        <div class="step" style="border-top:none;margin-top:0;padding-top:0;">
+          <h2>Direkt rechnen</h2>
+          <div class="help">Lies die Aufgabe und rechne direkt.</div>
+          <div class="answer-row">
+            <input id="hardAnswerInput" type="text" placeholder="Lösung" />
+            <span id="hardUnit"></span>
+            <button class="primary" id="checkHardBtn">Antwort prüfen</button>
+          </div>
+          <div id="hardFeedback"></div>
+          <div id="hardResultBox" class="result-box hidden"></div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button id="prevBtn">vorige Aufgabe</button>
+        <button id="nextBtn">nächste Aufgabe</button>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="calc-shell">
+        <div class="calc-screen-frame"><input id="calcDisplay" class="calc-screen" type="text" readonly inputmode="none" virtualkeyboardpolicy="manual" tabindex="-1" aria-readonly="true" data-mini-kb="false" value="0" /></div>
+        <div class="calc-grid" id="calcGrid"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+<button id="calcToggleBtn" type="button" aria-label="Taschenrechner öffnen">
+  <div class="grid">
+    <div class="symbol">+</div>
+    <div class="symbol">÷</div>
+    <div class="symbol">×</div>
+    <div class="symbol">−</div>
+  </div>
+</button>
+<div class="calc-overlay" id="calcOverlay">
+  <div class="calc-shell" id="calcShellOverlay">
+    <div class="calc-screen-frame"><input id="calcDisplayOverlay" class="calc-screen" type="text" readonly inputmode="none" virtualkeyboardpolicy="manual" tabindex="-1" aria-readonly="true" data-mini-kb="false" value="0" /></div>
+    <div class="calc-grid" id="calcGridOverlay"></div>
+  </div>
+</div>
+<footer>
+  <div class="footerbar">
+    <div id="progressText">Aufgabe 1 / 100</div>
+    <div id="correctText">Richtige Lösungen: 0</div>
+    <div id="doneText">Bearbeitet: 0</div>
+    <div id="timeText">Zeit: 00:00</div>
+  </div>
+</footer>
+<div id="miniKeyboard" class="mini-kb-overlay">
+  <div class="mini-kb-grid">
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="1">1</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="2">2</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="3">3</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="4">4</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="5">5</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="6">6</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="7">7</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="8">8</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="9">9</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="0">0</button>
+    <button type="button" class="mini-kb-btn mini-kb-comma" data-key=",">,</button>
+    <button type="button" class="mini-kb-btn mini-kb-del" data-key="DEL">C</button>
+  </div>
+</div>
+<script>
+const PERCENT_VALUE_TASKS = [
+{id:1,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Ein T-Shirt kostet 40 €. Es gibt 25% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'40 €',value:40,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false},
+{id:2,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Ein Buch kostet 24 €. Es gibt 50% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'24 €',value:24,type:'G'},{label:'50%',value:50,type:'p'}],hasDistractor:false},
+{id:3,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Ein Rucksack kostet 60 €. Es gibt 15% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'60 €',value:60,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false},
+{id:4,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder fehlen.',text:'In einer Klasse sind 20 Kinder. 25% fehlen. Wie viele Kinder fehlen?',numbers:[{label:'20 Kinder',value:20,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false},
+{id:5,target:'W',category:'W',unit:'Äpfel',sentence:'{value} Äpfel sind faul.',text:'Von 80 Äpfeln sind 10% faul. Wie viele Äpfel sind faul?',numbers:[{label:'80 Äpfel',value:80,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false},
+{id:6,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder sind im Verein.',text:'Ein Verein hat 120 Mitglieder. 40% sind Kinder. Wie viele Kinder sind das?',numbers:[{label:'120 Mitglieder',value:120,type:'G'},{label:'40%',value:40,type:'p'}],hasDistractor:false},
+{id:7,target:'W',category:'W',unit:'€',sentence:'Die Zinsen sind {value} €.',text:'Auf einem Konto sind 500 €. Die Bank zahlt 4% Zinsen. Wie viel Euro Zinsen gibt es?',numbers:[{label:'500 €',value:500,type:'G'},{label:'4%',value:4,type:'p'}],hasDistractor:false},
+{id:8,target:'W',category:'W',unit:'Plätze',sentence:'{value} Plätze sind besetzt.',text:'Ein Kinosaal hat 200 Plätze. 35% sind besetzt. Wie viele Plätze sind besetzt?',numbers:[{label:'200 Plätze',value:200,type:'G'},{label:'35%',value:35,type:'p'}],hasDistractor:false},
+{id:9,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder gehen zu Fuß.',text:'In einer Schule sind 450 Kinder. 20% gehen zu Fuß. Wie viele Kinder sind das?',numbers:[{label:'450 Kinder',value:450,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:false},
+{id:10,target:'W',category:'W',unit:'km',sentence:'Das sind {value} km.',text:'Eine Strecke ist 80 km lang. 25% bin ich gelaufen. Wie viele Kilometer sind das?',numbers:[{label:'80 km',value:80,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false},
+{id:11,target:'W',category:'W',unit:'Liter',sentence:'Das sind {value} Liter.',text:'In einer Flasche sind 2 Liter Saft. 50% sind schon getrunken. Wie viel Liter sind das?',numbers:[{label:'2 Liter',value:2,type:'G'},{label:'50%',value:50,type:'p'}],hasDistractor:false},
+{id:12,target:'W',category:'W',unit:'€',sentence:'Die Anzahlung beträgt {value} €.',text:'Ein Handy kostet 300 €. 10% sind Anzahlung. Wie viel Euro Anzahlung sind das?',numbers:[{label:'300 €',value:300,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false},
+{id:13,target:'W',category:'W',unit:'Minuten',sentence:'Die Pause dauert {value} Minuten.',text:'Von 90 Minuten sind 20% Pause. Wie viele Minuten Pause sind das?',numbers:[{label:'90 Minuten',value:90,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:false},
+{id:14,target:'W',category:'W',unit:'Birnen',sentence:'{value} Birnen sind reif.',text:'In einer Obstkiste sind 60 Birnen. 30% sind reif. Wie viele Birnen sind reif?',numbers:[{label:'60 Birnen',value:60,type:'G'},{label:'30%',value:30,type:'p'}],hasDistractor:false},
+{id:15,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Ein Fahrrad kostet 240 €. Es gibt 5% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'240 €',value:240,type:'G'},{label:'5%',value:5,type:'p'}],hasDistractor:false},
+{id:16,target:'W',category:'W',unit:'Bäume',sentence:'{value} Tannen stehen im Park.',text:'In einem Park stehen 150 Bäume. 12% sind Tannen. Wie viele Tannen sind das?',numbers:[{label:'150 Bäume',value:150,type:'G'},{label:'12%',value:12,type:'p'}],hasDistractor:false},
+{id:17,target:'W',category:'W',unit:'Kartons',sentence:'{value} Kartons sind reserviert.',text:'In einem Lager stehen 400 Kartons. 15% sind reserviert. Wie viele Kartons sind das?',numbers:[{label:'400 Kartons',value:400,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false},
+{id:18,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder fahren mit dem Bus.',text:'In einer Klasse sind 28 Kinder. 50% fahren mit dem Bus. Wie viele Kinder sind das?',numbers:[{label:'28 Kinder',value:28,type:'G'},{label:'50%',value:50,type:'p'}],hasDistractor:false},
+{id:19,target:'W',category:'W',unit:'Liter',sentence:'Es fehlen {value} Liter.',text:'Ein Becken fasst 900 Liter Wasser. 10% fehlen noch. Wie viel Liter fehlen?',numbers:[{label:'900 Liter',value:900,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false},
+{id:20,target:'W',category:'W',unit:'Jacken',sentence:'{value} Jacken sind blau.',text:'Ein Laden verkauft 80 Jacken. 25% sind blau. Wie viele Jacken sind blau?',numbers:[{label:'80 Jacken',value:80,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false},
+{id:21,target:'W',category:'W',unit:'Aufgaben',sentence:'{value} Aufgaben sind gelöst.',text:'Ein Test hat 50 Aufgaben. 80% sind gelöst. Wie viele Aufgaben sind das?',numbers:[{label:'50 Aufgaben',value:50,type:'G'},{label:'80%',value:80,type:'p'}],hasDistractor:false},
+{id:22,target:'W',category:'W',unit:'€',sentence:'Die Zinsen sind {value} €.',text:'Auf einem Konto sind 1.200 €. Es gibt 3% Zinsen. Wie viel Euro Zinsen gibt es?',numbers:[{label:'1.200 €',value:1200,type:'G'},{label:'3%',value:3,type:'p'}],hasDistractor:false},
+{id:23,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Ein Pullover kostet 50 €. Neben ihm hängen 3 Jacken. Es gibt 20% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'50 €',value:50,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:true},
+{id:24,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder fehlen.',text:'In einer Klasse sind 24 Kinder. 6 sitzen am Fenster. 25% fehlen. Wie viele Kinder fehlen?',numbers:[{label:'24 Kinder',value:24,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:true},
+{id:25,target:'W',category:'W',unit:'Murmeln',sentence:'{value} Murmeln sind rot.',text:'Von 200 Murmeln sind 30% rot. 5 liegen auf dem Tisch. Wie viele Murmeln sind rot?',numbers:[{label:'200 Murmeln',value:200,type:'G'},{label:'30%',value:30,type:'p'}],hasDistractor:true},
+{id:26,target:'W',category:'W',unit:'Plätze',sentence:'{value} Plätze sind reserviert.',text:'Bei einem Konzert gibt es 300 Plätze. Es gibt 2 Eingänge. 40% der Plätze sind reserviert. Wie viele Plätze sind reserviert?',numbers:[{label:'300 Plätze',value:300,type:'G'},{label:'40%',value:40,type:'p'}],hasDistractor:true},
+{id:27,target:'W',category:'W',unit:'€',sentence:'Der Rabatt beträgt {value} €.',text:'Die Bäckerei öffnet um 7 Uhr. Ein Kuchen kostet 16 €. Es gibt 25% Rabatt. Wie viel Euro Rabatt sind das?',numbers:[{label:'16 €',value:16,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:true},
+{id:28,target:'W',category:'W',unit:'Kinder',sentence:'{value} Kinder kaufen ein Eis.',text:'Im Zoo sind 150 Kinder. 20% kaufen ein Eis. 4 Kassen sind geöffnet. Wie viele Kinder sind das?',numbers:[{label:'150 Kinder',value:150,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:true},
+{id:29,target:'W',category:'W',unit:'km',sentence:'Das sind {value} km.',text:'Ein Radweg ist 60 km lang. 2 Pausen wurden gemacht. 50% vom Weg sind geschafft. Wie viele Kilometer sind das?',numbers:[{label:'60 km',value:60,type:'G'},{label:'50%',value:50,type:'p'}],hasDistractor:true},
+{id:30,target:'W',category:'W',unit:'Hefte',sentence:'{value} Hefte sind verkauft.',text:'Ein Laden hatte 500 Hefte. 8% sind verkauft. 10 neue Hefte kommen morgen. Wie viele Hefte sind verkauft?',numbers:[{label:'500 Hefte',value:500,type:'G'},{label:'8%',value:8,type:'p'}],hasDistractor:true}
+];
+
+const PERCENT_RATE_TASKS = [
+{id:31,target:'p',category:'p',unit:'%',sentence:'{value} % tragen eine Brille.',text:'In einer Klasse sind 20 Kinder. 5 Kinder tragen eine Brille. Wie viel Prozent sind das?',numbers:[{label:'20 Kinder',value:20,type:'G'},{label:'5 Kinder',value:5,type:'W'}],hasDistractor:false},
+{id:32,target:'p',category:'p',unit:'%',sentence:'{value} % fehlen.',text:'In einer Klasse sind 30 Kinder. 9 Kinder fehlen. Wie viel Prozent fehlen?',numbers:[{label:'30 Kinder',value:30,type:'G'},{label:'9 Kinder',value:9,type:'W'}],hasDistractor:false},
+{id:33,target:'p',category:'p',unit:'%',sentence:'{value} % sind ausgeliehen.',text:'Von 48 Büchern sind 12 ausgeliehen. Wie viel Prozent sind das?',numbers:[{label:'48 Bücher',value:48,type:'G'},{label:'12 Bücher',value:12,type:'W'}],hasDistractor:false},
+{id:34,target:'p',category:'p',unit:'%',sentence:'{value} % sind rot.',text:'Von 60 Äpfeln sind 15 rot. Wie viel Prozent sind rot?',numbers:[{label:'60 Äpfel',value:60,type:'G'},{label:'15 Äpfel',value:15,type:'W'}],hasDistractor:false},
+{id:35,target:'p',category:'p',unit:'%',sentence:'{value} % sind eingeklebt.',text:'Von 24 Stickern sind 18 schon eingeklebt. Wie viel Prozent sind das?',numbers:[{label:'24 Sticker',value:24,type:'G'},{label:'18 Sticker',value:18,type:'W'}],hasDistractor:false},
+{id:36,target:'p',category:'p',unit:'%',sentence:'{value} % sind richtig.',text:'Von 40 Fragen sind 8 richtig. Wie viel Prozent sind richtig?',numbers:[{label:'40 Fragen',value:40,type:'G'},{label:'8 Fragen',value:8,type:'W'}],hasDistractor:false},
+{id:37,target:'p',category:'p',unit:'%',sentence:'{value} % haben einen Garten.',text:'Von 70 Häusern haben 14 einen Garten. Wie viel Prozent sind das?',numbers:[{label:'70 Häuser',value:70,type:'G'},{label:'14 Häuser',value:14,type:'W'}],hasDistractor:false},
+{id:38,target:'p',category:'p',unit:'%',sentence:'{value} % sind besetzt.',text:'Von 120 Plätzen sind 30 besetzt. Wie viel Prozent sind besetzt?',numbers:[{label:'120 Plätze',value:120,type:'G'},{label:'30 Plätze',value:30,type:'W'}],hasDistractor:false},
+{id:39,target:'p',category:'p',unit:'%',sentence:'{value} % sind Arbeitszeit.',text:'Von 90 Minuten sind 45 Minuten Arbeitszeit. Wie viel Prozent sind das?',numbers:[{label:'90 Minuten',value:90,type:'G'},{label:'45 Minuten',value:45,type:'W'}],hasDistractor:false},
+{id:40,target:'p',category:'p',unit:'%',sentence:'{value} % sind verkauft.',text:'Von 50 T-Shirts sind 6 verkauft. Wie viel Prozent sind das?',numbers:[{label:'50 T-Shirts',value:50,type:'G'},{label:'6 T-Shirts',value:6,type:'W'}],hasDistractor:false},
+{id:41,target:'p',category:'p',unit:'%',sentence:'{value} % sind pünktlich.',text:'Von 28 Kindern sind 21 pünktlich. Wie viel Prozent sind pünktlich?',numbers:[{label:'28 Kinder',value:28,type:'G'},{label:'21 Kinder',value:21,type:'W'}],hasDistractor:false},
+{id:42,target:'p',category:'p',unit:'%',sentence:'{value} % sind gelesen.',text:'Von 64 Seiten sind 16 gelesen. Wie viel Prozent sind das?',numbers:[{label:'64 Seiten',value:64,type:'G'},{label:'16 Seiten',value:16,type:'W'}],hasDistractor:false},
+{id:43,target:'p',category:'p',unit:'%',sentence:'{value} % sind beschädigt.',text:'Von 200 Paketen sind 50 beschädigt. Wie viel Prozent sind beschädigt?',numbers:[{label:'200 Pakete',value:200,type:'G'},{label:'50 Pakete',value:50,type:'W'}],hasDistractor:false},
+{id:44,target:'p',category:'p',unit:'%',sentence:'{value} % sind leer.',text:'Von 36 Flaschen sind 9 leer. Wie viel Prozent sind leer?',numbers:[{label:'36 Flaschen',value:36,type:'G'},{label:'9 Flaschen',value:9,type:'W'}],hasDistractor:false},
+{id:45,target:'p',category:'p',unit:'%',sentence:'{value} % fehlen.',text:'In einer Klasse sind 25 Kinder. 5 Kinder fehlen. 2 Kinder kommen später. Wie viel Prozent fehlen?',numbers:[{label:'25 Kinder',value:25,type:'G'},{label:'5 Kinder',value:5,type:'W'}],hasDistractor:true},
+{id:46,target:'p',category:'p',unit:'%',sentence:'{value} % sind rot.',text:'Von 80 Bonbons sind 20 rot. 6 Bonbons liegen auf dem Tisch. Wie viel Prozent sind rot?',numbers:[{label:'80 Bonbons',value:80,type:'G'},{label:'20 Bonbons',value:20,type:'W'}],hasDistractor:true},
+{id:47,target:'p',category:'p',unit:'%',sentence:'{value} % sind verliehen.',text:'In einer Bücherei sind 160 Bücher. 40 Bücher sind verliehen. 3 Regale sind neu. Wie viel Prozent sind verliehen?',numbers:[{label:'160 Bücher',value:160,type:'G'},{label:'40 Bücher',value:40,type:'W'}],hasDistractor:true},
+{id:48,target:'p',category:'p',unit:'%',sentence:'{value} % sind richtig.',text:'Von 50 Aufgaben sind 35 richtig. 1 Aufgabe ist besonders schwer. Wie viel Prozent sind richtig?',numbers:[{label:'50 Aufgaben',value:50,type:'G'},{label:'35 Aufgaben',value:35,type:'W'}],hasDistractor:true},
+{id:49,target:'p',category:'p',unit:'%',sentence:'Die Pause beträgt {value} %.',text:'Von 90 Minuten sind 18 Minuten Pause. 10 Minuten sind schon vergangen. Wie viel Prozent sind Pause?',numbers:[{label:'90 Minuten',value:90,type:'G'},{label:'18 Minuten',value:18,type:'W'}],hasDistractor:true},
+{id:50,target:'p',category:'p',unit:'%',sentence:'Ich habe {value} % ausgegeben.',text:'8 Geldscheine liegen in meinem Portemonnaie. Ich hatte 300 €, 45 € habe ich ausgegeben. Wie viel Prozent habe ich ausgegeben?',numbers:[{label:'300 €',value:300,type:'G'},{label:'45 €',value:45,type:'W'}],hasDistractor:true}
+];
+
+const BASE_VALUE_TASKS = [
+{id:51,target:'G',category:'G',unit:'€',sentence:'Der ganze Preis ist {value} €.',text:'25% eines Preises sind 10 €. Wie hoch ist der ganze Preis?',numbers:[{label:'25%',value:25,type:'p'},{label:'10 €',value:10,type:'W'}],hasDistractor:false},
+{id:52,target:'G',category:'G',unit:'Kinder',sentence:'In der Klasse sind {value} Kinder.',text:'50% einer Klasse sind 12 Kinder. Wie viele Kinder sind in der Klasse?',numbers:[{label:'50%',value:50,type:'p'},{label:'12 Kinder',value:12,type:'W'}],hasDistractor:false},
+{id:53,target:'G',category:'G',unit:'km',sentence:'Die Strecke ist {value} km lang.',text:'20% einer Strecke sind 16 km. Wie lang ist die ganze Strecke?',numbers:[{label:'20%',value:20,type:'p'},{label:'16 km',value:16,type:'W'}],hasDistractor:false},
+{id:54,target:'G',category:'G',unit:'€',sentence:'Der ganze Preis ist {value} €.',text:'10% eines Preises sind 30 €. Wie hoch ist der ganze Preis?',numbers:[{label:'10%',value:10,type:'p'},{label:'30 €',value:30,type:'W'}],hasDistractor:false},
+{id:55,target:'G',category:'G',unit:'Kinder',sentence:'In der Mannschaft sind {value} Kinder.',text:'40% einer Mannschaft sind 8 Kinder. Wie viele Kinder sind in der Mannschaft?',numbers:[{label:'40%',value:40,type:'p'},{label:'8 Kinder',value:8,type:'W'}],hasDistractor:false},
+{id:56,target:'G',category:'G',unit:'Personen',sentence:'In der Gruppe sind {value} Personen.',text:'75% einer Gruppe sind 18 Personen. Wie viele Personen sind in der Gruppe?',numbers:[{label:'75%',value:75,type:'p'},{label:'18 Personen',value:18,type:'W'}],hasDistractor:false},
+{id:57,target:'G',category:'G',unit:'Äpfel',sentence:'In der Kiste sind {value} Äpfel.',text:'30% einer Obstkiste sind 12 Äpfel. Wie viele Äpfel sind in der Kiste?',numbers:[{label:'30%',value:30,type:'p'},{label:'12 Äpfel',value:12,type:'W'}],hasDistractor:false},
+{id:58,target:'G',category:'G',unit:'€',sentence:'Der ganze Preis ist {value} €.',text:'5% eines Preises sind 4 €. Wie hoch ist der ganze Preis?',numbers:[{label:'5%',value:5,type:'p'},{label:'4 €',value:4,type:'W'}],hasDistractor:false},
+{id:59,target:'G',category:'G',unit:'Liter',sentence:'In die Wanne passen {value} Liter.',text:'60% einer Wanne sind 24 Liter. Wie viele Liter passen in die Wanne?',numbers:[{label:'60%',value:60,type:'p'},{label:'24 Liter',value:24,type:'W'}],hasDistractor:false},
+{id:60,target:'G',category:'G',unit:'Bücher',sentence:'Insgesamt sind es {value} Bücher.',text:'25% der Bücher sind 50 Bücher. Wie viele Bücher gibt es insgesamt?',numbers:[{label:'25%',value:25,type:'p'},{label:'50 Bücher',value:50,type:'W'}],hasDistractor:false},
+{id:61,target:'G',category:'G',unit:'Aufgaben',sentence:'Insgesamt sind es {value} Aufgaben.',text:'80% der Aufgaben sind 32 Aufgaben. Wie viele Aufgaben gibt es insgesamt?',numbers:[{label:'80%',value:80,type:'p'},{label:'32 Aufgaben',value:32,type:'W'}],hasDistractor:false},
+{id:62,target:'G',category:'G',unit:'kg',sentence:'Die ganze Menge ist {value} kg.',text:'15% einer Menge sind 18 kg. Wie groß ist die ganze Menge?',numbers:[{label:'15%',value:15,type:'p'},{label:'18 kg',value:18,type:'W'}],hasDistractor:false},
+{id:63,target:'G',category:'G',unit:'Kinder',sentence:'Im Kindergarten sind {value} Kinder.',text:'12% eines Kindergartens sind 6 Kinder. Wie viele Kinder sind in dem Kindergarten?',numbers:[{label:'12%',value:12,type:'p'},{label:'6 Kinder',value:6,type:'W'}],hasDistractor:false},
+{id:64,target:'G',category:'G',unit:'€',sentence:'Der ganze Betrag ist {value} €.',text:'35% eines Betrags sind 70 €. Wie hoch ist der ganze Betrag?',numbers:[{label:'35%',value:35,type:'p'},{label:'70 €',value:70,type:'W'}],hasDistractor:false},
+{id:65,target:'G',category:'G',unit:'€',sentence:'Der ganze Preis ist {value} €.',text:'20% eines Preises sind 14 €. Im Regal liegen 3 Hefte. Wie hoch ist der ganze Preis?',numbers:[{label:'20%',value:20,type:'p'},{label:'14 €',value:14,type:'W'}],hasDistractor:true},
+{id:66,target:'G',category:'G',unit:'Kinder',sentence:'In der Klasse sind {value} Kinder.',text:'40% einer Klasse sind 10 Kinder. 2 Kinder fehlen heute. Wie viele Kinder hat die Klasse?',numbers:[{label:'40%',value:40,type:'p'},{label:'10 Kinder',value:10,type:'W'}],hasDistractor:true},
+{id:67,target:'G',category:'G',unit:'km',sentence:'Die Strecke ist {value} km lang.',text:'Eine Strecke hat 2 Tunnel. 25% der Strecke sind 30 km. Wie lang ist die ganze Strecke?',numbers:[{label:'25%',value:25,type:'p'},{label:'30 km',value:30,type:'W'}],hasDistractor:true},
+{id:68,target:'G',category:'G',unit:'Liter',sentence:'Die ganze Menge ist {value} Liter.',text:'50% einer Flüssigkeit sind 16 Liter. 4 Flaschen sind leer. Wie groß ist die ganze Menge?',numbers:[{label:'50%',value:50,type:'p'},{label:'16 Liter',value:16,type:'W'}],hasDistractor:true},
+{id:69,target:'G',category:'G',unit:'€',sentence:'Ich habe insgesamt {value} €.',text:'Ich habe 49 Münzen. 10% der Summe sind 9 €. Wie viel Geld habe ich?',numbers:[{label:'10%',value:10,type:'p'},{label:'9 €',value:9,type:'W'}],hasDistractor:true},
+{id:70,target:'G',category:'G',unit:'Personen',sentence:'In der Gruppe sind {value} Personen.',text:'75% einer Gruppe sind 15 Personen. 3 Personen tragen rote Jacken. Wie viele Personen sind in der Gruppe?',numbers:[{label:'75%',value:75,type:'p'},{label:'15 Personen',value:15,type:'W'}],hasDistractor:true}
+];
+
+const NEW_PRICE_TASKS = [
+{id:71,target:'N',category:'N',unit:'€',sentence:'Die Jeans kostet mit Rabatt {value} €.',prompt:'Eine Jeans kostet normalerweise 70,00 €. Heute gibt es 15% Rabatt.',question:'Wie viel kostet die Jeans mit dem Rabatt?',numbers:[{label:'70,00 €',value:70,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:72,target:'N',category:'N',unit:'€',sentence:'Die Schuhe kosten mit Rabatt {value} €.',prompt:'Ein Paar Schuhe kostet 120,00 €. Heute gibt es 25% Rabatt.',question:'Wie viel kosten die Schuhe mit dem Rabatt?',numbers:[{label:'120,00 €',value:120,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:73,target:'N',category:'N',unit:'€',sentence:'Der Schulranzen kostet mit Rabatt {value} €.',prompt:'Ein Schulranzen kostet 95,00 €. Heute gibt es 20% Rabatt.',question:'Wie viel kostet der Schulranzen mit dem Rabatt?',numbers:[{label:'95,00 €',value:95,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:74,target:'N',category:'N',unit:'€',sentence:'Die Jacke kostet für mich {value} €.',prompt:'Eine Winterjacke kostet normalerweise 150,00 €. Ich bekomme 30% Rabatt.',question:'Wie viel kostet die Jacke für mich?',numbers:[{label:'150,00 €',value:150,type:'G'},{label:'30%',value:30,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:75,target:'N',category:'N',unit:'€',sentence:'Der Fahrradhelm kostet mit Rabatt {value} €.',prompt:'Ein Fahrradhelm kostet normalerweise 40,00 €. Heute gibt es 10% Rabatt.',question:'Wie viel kostet der Fahrradhelm mit dem Rabatt?',numbers:[{label:'40,00 €',value:40,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:76,target:'N',category:'N',unit:'€',sentence:'Das Spiel kostet heute {value} €.',prompt:'Ein Spiel kostete gestern 60,00 €. Heute gibt es 50% Rabatt.',question:'Wie viel kostet das Spiel heute?',numbers:[{label:'60,00 €',value:60,type:'G'},{label:'50%',value:50,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:77,target:'N',category:'N',unit:'€',sentence:'Die Tischlampe kostet jetzt {value} €.',prompt:'Eine Tischlampe kostete letzte Woche 80,00 €. Diese Woche gibt es 5% Rabatt.',question:'Wie viel kostet die Tischlampe jetzt?',numbers:[{label:'80,00 €',value:80,type:'G'},{label:'5%',value:5,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:78,target:'N',category:'N',unit:'€',sentence:'Die Bücher kosten für mich {value} €.',prompt:'Ein Buchpaket kostet normalerweise 30,00 €. Ich habe einen Gutschein für 20% Rabatt.',question:'Wie viel kosten die Bücher für mich?',numbers:[{label:'30,00 €',value:30,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:79,target:'N',category:'N',unit:'€',sentence:'Ich muss {value} € bezahlen.',prompt:'Ein Paar Fußballschuhe kostet 90,00 €. Ich bekomme 15% Rabatt.',question:'Wie viel muss ich bezahlen?',numbers:[{label:'90,00 €',value:90,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:80,target:'N',category:'N',unit:'€',sentence:'Der Mantel kostet jetzt {value} €.',prompt:'Ein Mantel kostet 100,00 €. 2 Knöpfe fehlen, deshalb gibt es 25% Rabatt.',question:'Wie viel kostet der Mantel jetzt?',numbers:[{label:'100,00 €',value:100,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:true,priceMode:'discount'},
+{id:81,target:'N',category:'N',unit:'€',sentence:'Die Tablet-Hülle kostet mit Rabatt {value} €.',prompt:'Eine Tablet-Hülle kostet 24,00 €. Heute gibt es 10% Rabatt. Die Hülle hat 3 Fächer.',question:'Wie viel kostet die Tablet-Hülle mit dem Rabatt?',numbers:[{label:'24,00 €',value:24,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:true,priceMode:'discount'},
+{id:82,target:'N',category:'N',unit:'€',sentence:'Die Mütze kostet mit Rabatt {value} €.',prompt:'Eine Mütze kostet normalerweise 18,00 €. Heute gibt es 20% Rabatt. Es gibt 4 Größen.',question:'Wie viel kostet die Mütze mit dem Rabatt?',numbers:[{label:'18,00 €',value:18,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:true,priceMode:'discount'},
+{id:83,target:'N',category:'N',unit:'€',sentence:'Die Reisetasche kostet mit Rabatt {value} €.',prompt:'Eine Reisetasche kostet normalerweise 75,00 €. Heute gibt es 12% Rabatt.',question:'Wie viel kostet die Reisetasche mit dem Rabatt?',numbers:[{label:'75,00 €',value:75,type:'G'},{label:'12%',value:12,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:84,target:'N',category:'N',unit:'€',sentence:'Die Kopfhörer kosten mit Rabatt {value} €.',prompt:'Kopfhörer kosten normalerweise 50,00 €. Heute gibt es 30% Rabatt.',question:'Wie viel kosten die Kopfhörer mit dem Rabatt?',numbers:[{label:'50,00 €',value:50,type:'G'},{label:'30%',value:30,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:85,target:'N',category:'N',unit:'€',sentence:'Das Sofa kostet mit Rabatt {value} €.',prompt:'Ein Sofa kostet normalerweise 400,00 €. Heute gibt es 15% Rabatt.',question:'Wie viel kostet das Sofa mit dem Rabatt?',numbers:[{label:'400,00 €',value:400,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:86,target:'N',category:'N',unit:'€',sentence:'Das Handy kostet heute {value} €.',prompt:'Ein Handy kostete gestern 500,00 €. Heute ist es 5% teurer.',question:'Was kostet das Handy heute?',numbers:[{label:'500,00 €',value:500,type:'G'},{label:'5%',value:5,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:87,target:'N',category:'N',unit:'€',sentence:'Das Fahrrad kostet heute {value} €.',prompt:'Ein Fahrrad kostete gestern 240,00 €. Heute ist es 15% teurer.',question:'Was kostet das Fahrrad heute?',numbers:[{label:'240,00 €',value:240,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:88,target:'N',category:'N',unit:'€',sentence:'Der Laptop kostet heute {value} €.',prompt:'Ein Laptop kostete gestern 800,00 €. Heute ist er 10% teurer.',question:'Was kostet der Laptop heute?',numbers:[{label:'800,00 €',value:800,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:89,target:'N',category:'N',unit:'€',sentence:'Das Konzertticket kostet heute {value} €.',prompt:'Ein Konzertticket kostete gestern 40,00 €. Heute ist es 20% teurer.',question:'Was kostet das Konzertticket heute?',numbers:[{label:'40,00 €',value:40,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:90,target:'N',category:'N',unit:'€',sentence:'Die Busfahrt kostet heute {value} €.',prompt:'Eine Busfahrt kostete gestern 12,00 €. Heute ist sie 25% teurer.',question:'Was kostet die Busfahrt heute?',numbers:[{label:'12,00 €',value:12,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:91,target:'N',category:'N',unit:'€',sentence:'Das Brot kostet mit Rabatt {value} €.',prompt:'Ein Brot kostet normalerweise 4,00 €. Heute gibt es 10% Rabatt.',question:'Wie viel kostet das Brot mit dem Rabatt?',numbers:[{label:'4,00 €',value:4,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:92,target:'N',category:'N',unit:'€',sentence:'Der Rucksack kostet mit Rabatt {value} €.',prompt:'Ein Rucksack kostet normalerweise 50,00 €. Heute gibt es 8% Rabatt.',question:'Wie viel kostet der Rucksack mit dem Rabatt?',numbers:[{label:'50,00 €',value:50,type:'G'},{label:'8%',value:8,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:93,target:'N',category:'N',unit:'€',sentence:'Der Schreibtisch kostet mit Rabatt {value} €.',prompt:'Ein Schreibtisch kostet normalerweise 200,00 €. Heute gibt es 5% Rabatt.',question:'Wie viel kostet der Schreibtisch mit dem Rabatt?',numbers:[{label:'200,00 €',value:200,type:'G'},{label:'5%',value:5,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:94,target:'N',category:'N',unit:'€',sentence:'Die Eintrittskarte kostet mit Rabatt {value} €.',prompt:'Eine Eintrittskarte kostet normalerweise 30,00 €. Heute gibt es 15% Rabatt.',question:'Wie viel kostet die Eintrittskarte mit dem Rabatt?',numbers:[{label:'30,00 €',value:30,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:95,target:'N',category:'N',unit:'€',sentence:'Die Schwimmbadkarte kostet mit Rabatt {value} €.',prompt:'Eine Schwimmbadkarte kostet normalerweise 18,00 €. Heute gibt es 10% Rabatt.',question:'Wie viel kostet die Schwimmbadkarte mit dem Rabatt?',numbers:[{label:'18,00 €',value:18,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:false,priceMode:'discount'},
+{id:96,target:'N',category:'N',unit:'€',sentence:'Die Tasse kostet heute {value} €.',prompt:'Eine Tasse kostete gestern 16,00 €. Heute ist sie 25% teurer.',question:'Was kostet die Tasse heute?',numbers:[{label:'16,00 €',value:16,type:'G'},{label:'25%',value:25,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:97,target:'N',category:'N',unit:'€',sentence:'Die Kamera kostet heute {value} €.',prompt:'Eine Kamera kostete gestern 250,00 €. Heute ist sie 12% teurer.',question:'Was kostet die Kamera heute?',numbers:[{label:'250,00 €',value:250,type:'G'},{label:'12%',value:12,type:'p'}],hasDistractor:false,priceMode:'increase'},
+{id:98,target:'N',category:'N',unit:'€',sentence:'Der Handyvertrag kostet heute {value} €.',prompt:'Ein Handyvertrag kostete gestern 20,00 €. Heute ist er 15% teurer. Es gibt 2 GB extra.',question:'Was kostet der Handyvertrag heute?',numbers:[{label:'20,00 €',value:20,type:'G'},{label:'15%',value:15,type:'p'}],hasDistractor:true,priceMode:'increase'},
+{id:99,target:'N',category:'N',unit:'€',sentence:'Das Zugticket kostet heute {value} €.',prompt:'Ein Zug hält an 3 Bahnhöfen und das Ticket kostete gestern 40,00 €. Heute ist es 10% teurer.',question:'Was kostet das Zugticket heute?',numbers:[{label:'40,00 €',value:40,type:'G'},{label:'10%',value:10,type:'p'}],hasDistractor:true,priceMode:'increase'},
+{id:100,target:'N',category:'N',unit:'€',sentence:'Der Pullover kostet heute {value} €.',prompt:'Ein Pullover kostete gestern 60,00 €. Heute ist er 20% teurer. Es gibt 2 Farben.',question:'Was kostet der Pullover heute?',numbers:[{label:'60,00 €',value:60,type:'G'},{label:'20%',value:20,type:'p'}],hasDistractor:true,priceMode:'increase'}
+];
+
+const CATEGORY_KEYS=['W','p','G','N'];
+function normalizeTask(task){return{...task,category:task.category||task.target,hasDistractor:Boolean(task.hasDistractor),priceMode:task.priceMode||'discount'}}
+const TASK_GROUPS={
+  // 1. Prozentwert gesucht
+  W:[...PERCENT_VALUE_TASKS],
+  // 2. Prozentzahl gesucht
+  p:[...PERCENT_RATE_TASKS],
+  // 3. Grundwert gesucht
+  G:[...BASE_VALUE_TASKS],
+  // 4. Neuer Preis gesucht
+  N:[...NEW_PRICE_TASKS]
+};
+function makeSeededRandom(seed){let state=seed>>>0;return()=>{state=(1664525*state+1013904223)>>>0;return state/4294967296}}
+function createCategorySchedule(length,seed){const rand=makeSeededRandom(seed);const counts=Object.fromEntries(CATEGORY_KEYS.map(key=>[key,0]));const schedule=[];while(schedule.length<length){const last=schedule[schedule.length-1];const lastTwoSame=schedule.length>=2&&last===schedule[schedule.length-2];const minCount=Math.min(...CATEGORY_KEYS.map(key=>counts[key]));const balanced=CATEGORY_KEYS.filter(key=>counts[key]<=minCount+1);const otherChoices=balanced.filter(key=>key!==last);let choice='';const mayRepeatOnce=Boolean(last)&&!lastTwoSame&&counts[last]<=minCount+1&&rand()<0.22;if(mayRepeatOnce){choice=last}else if(otherChoices.length){choice=otherChoices[Math.floor(rand()*otherChoices.length)]}else{const fallback=CATEGORY_KEYS.filter(key=>!(lastTwoSame&&key===last));choice=fallback[Math.floor(rand()*fallback.length)]}counts[choice]+=1;schedule.push(choice)}return schedule}
+function consumeScheduledTasks(groupedQueues,schedule,maxSlots,existingResult=[]){const queues=Object.fromEntries(CATEGORY_KEYS.map(key=>[key,[...(groupedQueues[key]||[])]]));const totalAvailable=CATEGORY_KEYS.reduce((sum,key)=>sum+queues[key].length,0);const phaseLength=Math.min(totalAvailable,Math.max(0,maxSlots-existingResult.length));const rand=makeSeededRandom(20260409+existingResult.length+totalAvailable);const used=Object.fromEntries(CATEGORY_KEYS.map(key=>[key,0]));const result=[...existingResult];while(result.length<existingResult.length+phaseLength){const lastCategory=result[result.length-1]?.category||'';const blockedCategory=result.length>=2&&lastCategory===result[result.length-2]?.category?lastCategory:'';let pool=CATEGORY_KEYS.filter(key=>queues[key].length&&key!==blockedCategory);if(!pool.length)pool=CATEGORY_KEYS.filter(key=>queues[key].length);if(!pool.length)break;const phaseProgress=result.length-existingResult.length+1;const scored=pool.map(key=>{const idealShare=(phaseProgress*groupedQueues[key].length)/phaseLength;const deficit=idealShare-used[key];const repeatPenalty=key===lastCategory?0.35:0;const jitter=rand()*0.12;return{key,score:deficit-repeatPenalty+jitter}}).sort((a,b)=>b.score-a.score);const choice=scored[0].key;result.push(queues[choice].shift());used[choice]+=1}return result.slice(existingResult.length)}
+function buildTaskSequence(tasks,schedule,maxSlots){const groupedTasks=predicate=>Object.fromEntries(CATEGORY_KEYS.map(key=>[key,tasks.filter(task=>task.category===key&&predicate(task))]));const withoutDistractors=consumeScheduledTasks(groupedTasks(task=>!task.hasDistractor),schedule,maxSlots);const withDistractors=consumeScheduledTasks(groupedTasks(task=>task.hasDistractor),schedule,maxSlots,withoutDistractors);return[...withoutDistractors,...withDistractors].slice(0,maxSlots)}
+const ALL_TASKS=CATEGORY_KEYS.flatMap(key=>TASK_GROUPS[key]).map(normalizeTask);
+const CATEGORY_SCHEDULE=createCategorySchedule(500,20260409);
+const TASKS=buildTaskSequence(ALL_TASKS,CATEGORY_SCHEDULE,500);
+const FORMULAS={W:{text:'W = p · G : 100',vars:['p','G']},p:{text:'p = W : G · 100',vars:['W','G']},G:{text:'G = W · 100 : p',vars:['W','p']},N:{text:'W = p · G : 100 → und dann NP = G ± W',vars:['G','p']}};
+const STORAGE_KEY='be2_prozentrechnung_v5';
+const ACTIVE_TIME_KEY='be2_prozentrechnung_active_time_v1';
+let activeMiniKeyboardInput=null;
+let activeMiniKeyboardReplaceValue=false;
+let activeSeconds=loadActiveSeconds();
+let activeTimer=null;
+let appState=loadState();
+let savedKeyboardMode=null;
+let wasMobile=window.innerWidth<=768;
+function createDefaultState(){const solved={};const attempted={};TASKS.forEach(t=>{solved[t.id]=false;attempted[t.id]=false});return{index:0,difficulty:'easy',correct:0,calc:'0',calcJustEvaluated:false,keyboardMode:false,solved,attempted,selectedFormula:'',selectedTarget:'',step1ok:false,step2ok:false,step3ok:false,startTime:Date.now(),needsStartTimeReset:false}};
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return createDefaultState();const parsed=JSON.parse(raw);const base=createDefaultState();const merged={...base,...parsed,solved:{...base.solved,...(parsed.solved||{})},attempted:{...base.attempted,...(parsed.attempted||{})}};merged.index=Math.min(Math.max(Number(merged.index)||0,0),Math.max(TASKS.length-1,0));merged.correct=Object.values(merged.solved).filter(Boolean).length;if(!merged.startTime)merged.startTime=Date.now();return merged}catch(e){return createDefaultState()}}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appState))}
+function loadActiveSeconds(){try{const raw=localStorage.getItem(ACTIVE_TIME_KEY);const n=Number(raw);return Number.isFinite(n)&&n>=0?n:0}catch(e){return 0}}
+function saveActiveSeconds(){localStorage.setItem(ACTIVE_TIME_KEY,String(activeSeconds))}
+function formatActiveTime(totalSeconds){const m=Math.floor(totalSeconds/60);const s=totalSeconds%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function currentTask(){return TASKS[appState.index]}
+function round2(n){return Math.round((n+Number.EPSILON)*100)/100}
+function parseInputNumber(text){const cleaned=String(text).trim().replace(/\./g,'').replace(',', '.');const num=Number(cleaned);return Number.isFinite(num)?num:NaN}
+function computeAnswer(task){const values={};task.numbers.forEach(n=>values[n.type]=Number(n.value));if(task.target==='W')return round2(values.p*values.G/100);if(task.target==='p')return round2(values.W/values.G*100);if(task.target==='G')return round2(values.W*100/values.p);const percentValue=round2(values.p*values.G/100);return task.priceMode==='increase'?round2(values.G+percentValue):round2(values.G-percentValue)}
+function formatNumberDE(value){const n=Number(value);if(Number.isInteger(n))return String(n);return n.toLocaleString('de-DE',{maximumFractionDigits:2,minimumFractionDigits:2})}
+function levelName(level){return level==='easy'?'mit Hilfe rechnen':level==='medium'?'Schritt für Schritt':'alleine rechnen'}
+function escapeHtml(text){return String(text??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function getNewPriceOperator(task){if(task?.target==='N')return task.priceMode==='increase'?'+':'-';const rand=makeSeededRandom((task?.id||0)*97+13);return rand()<0.5?'+':'-'}
+function getFormulaText(key,task){if(key==='N')return `W = p · G : 100 → und dann NP = G ${getNewPriceOperator(task)} W`;return FORMULAS[key].text}
+function formatNewPriceQuestion(question){const safe=escapeHtml(question);if(appState.difficulty!=='easy')return safe;return safe.replace(/^Wie viel kostet/,'<strong>Wie viel kostet</strong>').replace(/^Wie viel kosten/,'<strong>Wie viel kosten</strong>').replace(/^Was kostet/,'<strong>Was kostet</strong>')}
+function getTaskTextHtml(task){if(!task)return'Keine Aufgabe gefunden.';if(task.target==='N'&&task.question){return `${escapeHtml(task.prompt)} ${formatNewPriceQuestion(task.question)}`}return escapeHtml(task.text)}
+function shuffleFormulaOrder(taskId){const arr=['G','W','p','N'];const seed=taskId%arr.length;for(let i=0;i<seed;i++)arr.push(arr.shift());return arr}
+function setFeedback(id,type,text){const el=document.getElementById(id);el.className='feedback '+type;el.innerHTML=text}
+function clearFeedback(){['feedback1','feedback2','feedback3','feedback4','hardFeedback'].forEach(id=>{const el=document.getElementById(id);el.className='';el.textContent=''});document.getElementById('resultBox').classList.add('hidden');document.getElementById('hardResultBox').classList.add('hidden')}
+function bindWrongAnswerClear(inputId,feedbackId,resultId){const input=document.getElementById(inputId);if(!input||input.dataset.wrongClearBound==='1')return;input.dataset.wrongClearBound='1';const clearWrong=()=>{const fb=document.getElementById(feedbackId);if(!fb.classList.contains('bad'))return;input.value='';fb.className='';fb.textContent='';document.getElementById(resultId).classList.add('hidden')};input.addEventListener('focus',clearWrong);input.addEventListener('pointerdown',clearWrong)}
+function clearStep4Answer(){document.getElementById('answerInput').value='';document.getElementById('feedback4').className='';document.getElementById('feedback4').textContent='';document.getElementById('resultBox').classList.add('hidden')}
+function setJumpInputOverwriteState(active){const jumpInput=document.getElementById('jumpInput');if(!jumpInput)return;jumpInput.classList.toggle('overwrite-ready',active);jumpInput.dataset.overwriteOnKeyboard=active?'1':''}
+function selectJumpInputValue(input){if(!input||input.id!=='jumpInput'||appState.keyboardMode)return;requestAnimationFrame(()=>{try{input.select()}catch(e){}})}
+function enhanceInputsForKeyboard(){document.querySelectorAll('input[type="text"], input[type="number"], input[data-mini-kb="true"]').forEach(inp=>{if(inp.dataset.kbBound==='1')return;inp.dataset.kbBound='1';const allowMiniKeyboard=inp.dataset.miniKb!=='false'&&!inp.readOnly;if(!allowMiniKeyboard){inp.addEventListener('focus',()=>inp.blur());inp.addEventListener('pointerdown',e=>{e.preventDefault();inp.blur()});return}inp.addEventListener('pointerdown',e=>{if(isNumberInputSpinnerClick(inp,e)){inp.dataset.skipMiniKeyboard='spinner';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false);hideMiniKeyboard();return}if(inp.id==='jumpInput'){setJumpInputOverwriteState(appState.keyboardMode);selectJumpInputValue(inp)}});inp.addEventListener('focus',()=>{if(inp.dataset.skipMiniKeyboard==='spinner')return;if(inp.id==='jumpInput'&&!appState.keyboardMode){setJumpInputOverwriteState(false);selectJumpInputValue(inp);return}if(appState.keyboardMode)showMiniKeyboard(inp,{overwrite:inp.id==='jumpInput'||inp.dataset.overwriteOnKeyboard==='1'})});inp.addEventListener('click',()=>{if(inp.dataset.skipMiniKeyboard==='spinner'){inp.dataset.skipMiniKeyboard='';setJumpInputOverwriteState(false);hideMiniKeyboard();inp.blur();return}if(inp.id==='jumpInput'){setJumpInputOverwriteState(appState.keyboardMode);if(!appState.keyboardMode){selectJumpInputValue(inp);return}}if(appState.keyboardMode)showMiniKeyboard(inp,{overwrite:inp.id==='jumpInput'||inp.dataset.overwriteOnKeyboard==='1'})});inp.addEventListener('keydown',e=>{if(appState.keyboardMode)e.preventDefault();if(e.key==='Enter'&&inp.id==='jumpInput'){e.preventDefault();goToTask()}})})}
+function isMiniKeyboardTarget(element){return element instanceof Element&&Boolean(element.closest('input[type="text"]:not([data-mini-kb="false"]), input[type="number"], input[data-mini-kb="true"]'))}
+function isNumberInputSpinnerClick(input,event){if(input.type!=='number')return false;const rect=input.getBoundingClientRect();const spinnerZoneWidth=36;return event.clientX>=rect.right-spinnerZoneWidth}
+function positionMiniKeyboard(input){const kb=document.getElementById('miniKeyboard');const r=input.getBoundingClientRect();const kbHeight=170;const spaceBelow=window.innerHeight-r.bottom;const spaceAbove=r.top;let top;if(spaceBelow>=kbHeight+8){top=r.bottom+8}else if(spaceAbove>=kbHeight+8){top=r.top-kbHeight-8}else{top=Math.max(8,window.innerHeight-kbHeight-8)}const left=Math.min(window.innerWidth-240,Math.max(8,r.left));kb.style.top=top+'px';kb.style.left=left+'px'}
+function showMiniKeyboard(input,options={}){activeMiniKeyboardInput=input;activeMiniKeyboardReplaceValue=Boolean(options.overwrite);setJumpInputOverwriteState(input.id==='jumpInput'&&activeMiniKeyboardReplaceValue);positionMiniKeyboard(input);input.blur();document.getElementById('miniKeyboard').style.display='block'}
+function hideMiniKeyboard(){document.getElementById('miniKeyboard').style.display='none';activeMiniKeyboardInput=null;activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false)}
+function renderTask(){removeNextButtonHighlight();if(appState.index>=TASKS.length)appState.index=Math.max(0,TASKS.length-1);const task=currentTask();appState.selectedFormula='';appState.selectedTarget='';appState.step1ok=false;appState.step2ok=false;appState.step3ok=false;clearFeedback();document.getElementById('taskText').innerHTML=getTaskTextHtml(task);document.getElementById('progressText').textContent=`Aufgabe ${appState.index+1} / ${TASKS.length}`;document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;document.getElementById('timeText').textContent='Zeit: '+formatActiveTime(activeSeconds);updateTimeDisplay();document.getElementById('jumpInput').value=task?appState.index+1:1;document.getElementById('jumpInput').max=Math.max(1,TASKS.length);document.getElementById('difficultySelect').value=appState.difficulty;document.getElementById('keyboardToggle').checked=!!appState.keyboardMode;document.getElementById('answerUnit').textContent=task?.unit||'';document.getElementById('hardUnit').textContent=task?.unit||'';document.getElementById('answerInput').value='';document.getElementById('hardAnswerInput').value='';const solvedMark=document.getElementById('solvedMark');if(task&&appState.solved[task.id])solvedMark.classList.add('visible');else solvedMark.classList.remove('visible');if(!task){saveState();return;}renderStep1(task);renderStep2(task);renderStep3(task);document.getElementById('guidedArea').classList.toggle('hidden',appState.difficulty==='hard');document.getElementById('hardArea').classList.toggle('hidden',appState.difficulty!=='hard');updateStepLock();enhanceInputsForKeyboard();hideMiniKeyboard();saveState()}
+function renderStep1(task){const box=document.getElementById('classifyBox');box.innerHTML='';task.numbers.forEach((item,index)=>{const row=document.createElement('div');row.className='choice-row';row.innerHTML=`<div><strong>${item.label}</strong></div><select data-index="${index}"><option value="">Bitte wählen</option><option value="G">Grundwert (G)</option><option value="W">Prozentwert (W)</option><option value="p">Prozentzahl (p)</option></select>`;box.appendChild(row)})}
+function renderStep2(task){const wrap=document.getElementById('formulaChoices');wrap.innerHTML='';document.querySelectorAll('.target-btn').forEach(btn=>{btn.classList.remove('selected');btn.onclick=()=>{document.querySelectorAll('.target-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');appState.selectedTarget=btn.dataset.value;if(appState.difficulty==='medium')clearStep4Answer();renderStep3(currentTask());saveState()}});shuffleFormulaOrder(task.id).forEach(key=>{const div=document.createElement('div');div.className='formula-choice';div.dataset.formula=key;div.innerHTML=`<strong>${getFormulaText(key,task)}</strong>`;div.onclick=()=>{document.querySelectorAll('.formula-choice').forEach(el=>el.classList.remove('selected'));div.classList.add('selected');appState.selectedFormula=key;if(appState.difficulty==='medium')clearStep4Answer();renderStep3(currentTask());saveState()};wrap.appendChild(div)})}
+function formulaHtml(key){if(key==='W')return 'W = <input class="small-input formula-value" data-var="p" type="text" /> · <input class="small-input formula-value" data-var="G" type="text" /> : 100';if(key==='p')return 'p = <input class="small-input formula-value" data-var="W" type="text" /> : <input class="small-input formula-value" data-var="G" type="text" /> · 100';if(key==='N'){const operator=getNewPriceOperator(currentTask());return `W = <input class="small-input formula-value" data-var="p" type="text" /> · <input class="small-input formula-value" data-var="G" type="text" /> : 100<br><span style="display:inline-block;margin-top:8px">NP = <input class="small-input formula-value" data-var="G" type="text" /> ${operator} W (Ergebnis von oben)</span>`}return 'G = <input class="small-input formula-value" data-var="W" type="text" /> · 100 : <input class="small-input formula-value" data-var="p" type="text" />'}
+function renderStep3(task){const box=document.getElementById('formulaEntry');if(appState.difficulty==='easy'){if(!appState.step2ok){box.innerHTML='<div class="help">Erst Schritt 2 richtig lösen.</div>';return}box.innerHTML=`<div><strong>${formulaHtml(task.target)}</strong></div>`;enhanceInputsForKeyboard();return}if(appState.difficulty==='medium'){if(!appState.selectedTarget||!appState.selectedFormula){box.innerHTML='<div class="help">Wähle zuerst den gesuchten Wert und die Formel.</div>';return}box.innerHTML=`<div><strong>${formulaHtml(appState.selectedFormula)}</strong></div>`;enhanceInputsForKeyboard();return}box.innerHTML='<div class="help">Im schweren Niveau gibt es hier keinen Zwischenschritt.</div>'}
+function updateStepLock(){const isMedium=appState.difficulty==='medium';document.getElementById('checkStep1Btn').style.display=isMedium?'none':'inline-block';document.getElementById('checkStep2Btn').style.display=isMedium?'none':'inline-block';document.getElementById('checkStep3Btn').style.display=isMedium?'none':'inline-block';document.getElementById('feedback1').style.display='block';document.getElementById('feedback2').style.display='block';document.getElementById('feedback3').style.display='block';if(appState.difficulty!=='easy'){['step2','step3','step4'].forEach(id=>{document.getElementById(id).style.opacity='1';document.querySelectorAll('#'+id+' input, #'+id+' select, #'+id+' button, #'+id+' .formula-choice, #'+id+' .target-btn').forEach(el=>el.style.pointerEvents='auto')});return}const config=[{id:'step2',active:appState.step1ok},{id:'step3',active:appState.step2ok},{id:'step4',active:appState.step3ok}];config.forEach(item=>{document.getElementById(item.id).style.opacity=item.active?'1':'.45';document.querySelectorAll('#'+item.id+' input, #'+item.id+' select, #'+item.id+' button, #'+item.id+' .formula-choice, #'+item.id+' .target-btn').forEach(el=>el.style.pointerEvents=item.active?'auto':'none')})}
+function checkStep1(){const task=currentTask();const selects=[...document.querySelectorAll('#classifyBox select')];const ok=selects.every((select,i)=>select.value===task.numbers[i].type);appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step1ok=ok;setFeedback('feedback1',ok?'ok':'bad',ok?'Richtig. Du kannst weitergehen.':'Noch nicht richtig. Prüfe die Namen der Werte.');updateStepLock()}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function checkStep2(){const task=currentTask();const targetOk=appState.selectedTarget===task.target;const formulaOk=appState.selectedFormula===task.target;const ok=targetOk&&formulaOk;appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step2ok=ok;let message='Richtig. Die Formel passt.';if(!ok){if(!targetOk&&!formulaOk)message='Noch nicht richtig. Wert und Formel sind falsch.';else if(!targetOk)message='Noch nicht richtig. Der Wert ist falsch.';else message='Noch nicht richtig. Die Formel ist falsch.'}setFeedback('feedback2',ok?'ok':'bad',message);renderStep3(task);updateStepLock()}else{renderStep3(task)}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function checkStep3(){const task=currentTask();const fields=[...document.querySelectorAll('.formula-value')];const ok=fields.every(field=>{const name=field.dataset.var;const expected=Number(task.numbers.find(n=>n.type===name)?.value);return round2(parseInputNumber(field.value))===round2(expected)});appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step3ok=ok;setFeedback('feedback3',ok?'ok':'bad',ok?'Richtig eingesetzt. Jetzt rechnen.':'Noch nicht richtig. Prüfe die Werte in der Formel.');updateStepLock()}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function describeTaskType(type){if(type==='G')return'Grundwert (G)';if(type==='W')return'Prozentwert (W)';if(type==='p')return'Prozentzahl (p)';return'neuer Preis (N)'}
+function evaluateMediumSolution(task,inputId){const step1Selects=[...document.querySelectorAll('#classifyBox select')];const step1Wrong=step1Selects.flatMap((select,i)=>select.value===task.numbers[i].type?[]:[{label:task.numbers[i].label,expected:task.numbers[i].type}]);const step1ok=step1Wrong.length===0;const targetOk=appState.selectedTarget===task.target;const formulaOk=appState.selectedFormula===task.target;const step2ok=targetOk&&formulaOk;const step3Fields=[...document.querySelectorAll('.formula-value')];const step3Ready=step3Fields.length>0;const step3Wrong=step3Fields.flatMap(field=>{const name=field.dataset.var;const expectedValue=Number(task.numbers.find(n=>n.type===name)?.value);return round2(parseInputNumber(field.value))===round2(expectedValue)?[]:[{name,expected:expectedValue}]});const step3ok=step3Ready&&step3Wrong.length===0;const answer=parseInputNumber(document.getElementById(inputId).value);const expected=computeAnswer(task);const answerOk=round2(answer)===round2(expected);return{step1ok,step1Wrong,targetOk,formulaOk,step2ok,step3Ready,step3Wrong,step3ok,answerOk,expected}}
+function applyMediumStepFeedback(task,feedbackId,resultId,inputId){const result=evaluateMediumSolution(task,inputId);const previousStepErrors=[];if(!result.step1ok)previousStepErrors.push('Schritt 1');if(!result.step2ok)previousStepErrors.push('Schritt 2');if(!result.step3ok)previousStepErrors.push('Schritt 3');const step1Message=result.step1ok?'Richtig zugeordnet.':'Noch nicht richtig. Prüfe die Namen der Werte noch einmal genau.';setFeedback('feedback1',result.step1ok?'ok':'bad',step1Message);let step2Message='';if(result.step2ok){step2Message=result.step1ok?'Richtig. Gesuchter Wert und Formel passen.':'Gesuchter Wert und Formel passen. Prüfe aber zuerst noch Schritt 1.';setFeedback('feedback2','ok',step2Message)}else{if(!result.targetOk&&!result.formulaOk)step2Message='Noch nicht richtig. Gesuchter Wert und Formel passen noch nicht.';else if(!result.targetOk)step2Message='Noch nicht richtig. Der gesuchte Wert passt noch nicht.';else step2Message='Noch nicht richtig. Die gewählte Formel passt noch nicht.';if(!result.step1ok)step2Message+=' Das kann auf einem Fehler in Schritt 1 aufbauen.';setFeedback('feedback2','bad',step2Message)}let step3Message='';if(!result.step3Ready){step3Message='Noch unvollständig. Wähle in Schritt 2 zuerst den gesuchten Wert und die Formel.';if(!result.step2ok)step3Message+=' Der Fehler baut auf Schritt 2 auf.';setFeedback('feedback3','bad',step3Message)}else if(result.step3ok){step3Message=result.step2ok?'Werte richtig eingesetzt.':'Die Werte passen zu deiner Auswahl. Wenn du Schritt 2 änderst, prüfe Schritt 3 bitte noch einmal.';setFeedback('feedback3','ok',step3Message)}else{step3Message='Noch nicht richtig. Prüfe die eingesetzten Werte in der Formel.';if(!result.step2ok)step3Message+=' Wahrscheinlich hängt das mit Schritt 2 zusammen.';setFeedback('feedback3','bad',step3Message)}const allStepsOk=result.step1ok&&result.step2ok&&result.step3ok;if(allStepsOk&&result.answerOk){markCorrect(task.id);highlightNextButton();setFeedback(feedbackId,'ok','Richtig.');const box=document.getElementById(resultId);box.textContent=task.sentence.replace('{value}',formatNumberDE(result.expected));box.classList.remove('hidden')}else{let finalMessage='';if(result.answerOk&&!allStepsOk){finalMessage='Das Endergebnis ist richtig. <span style="text-decoration: underline; text-decoration-color: red;">Andere Schritte sind aber noch falsch.</span> Gezählt wird die Aufgabe erst, wenn auch die Schritte davor stimmen.';setFeedback(feedbackId,'ok',finalMessage)}else if(!result.answerOk&&!allStepsOk){finalMessage='Endergebnis noch nicht richtig. Prüfe zuerst die Hinweise aus '+previousStepErrors.join(', ')+'.';setFeedback(feedbackId,'bad',finalMessage)}else{finalMessage='Endergebnis noch nicht richtig. Prüfe die Rechnung im letzten Schritt.';setFeedback(feedbackId,'bad',finalMessage)}}document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function markCorrect(taskId){if(!appState.solved[taskId]){appState.solved[taskId]=true;appState.correct+=1;highlightNextButton()}}
+function highlightNextButton(){const nextBtn=document.getElementById('nextBtn');nextBtn.classList.add('success')}
+function removeNextButtonHighlight(){const nextBtn=document.getElementById('nextBtn');nextBtn.classList.remove('success')}
+function checkFinalAnswer(inputId,feedbackId,resultId){const task=currentTask();appState.attempted[task.id]=true;const answer=parseInputNumber(document.getElementById(inputId).value);const expected=computeAnswer(task);if(appState.difficulty==='medium'){applyMediumStepFeedback(task,feedbackId,resultId,inputId);return}const ok=round2(answer)===round2(expected);if(ok){markCorrect(task.id);highlightNextButton();setFeedback(feedbackId,'ok','Richtig.');const box=document.getElementById(resultId);box.textContent=task.sentence.replace('{value}',formatNumberDE(expected));box.classList.remove('hidden')}else{setFeedback(feedbackId,'bad','Noch nicht richtig. Prüfe deine Rechnung.')}document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function buildCalculator(){const keys=[{label:'AC',type:'action'},{label:'(',type:'op'},{label:')',type:'op'},{label:'÷',value:'/',type:'op'},{label:'7',type:'num'},{label:'8',type:'num'},{label:'9',type:'num'},{label:'×',value:'*',type:'op'},{label:'4',type:'num'},{label:'5',type:'num'},{label:'6',type:'num'},{label:'−',value:'-',type:'op'},{label:'1',type:'num'},{label:'2',type:'num'},{label:'3',type:'num'},{label:'+',type:'op'},{label:'0',type:'num',extra:'zero'},{label:',',value:'.',type:'num'},{label:'=',type:'equal'}];['calcGrid','calcGridOverlay'].forEach(gridId=>{const wrap=document.getElementById(gridId);if(!wrap)return;wrap.innerHTML='';keys.forEach(key=>{const btn=document.createElement('button');btn.className=`calc-btn ${key.type} ${key.extra||''}`;btn.textContent=key.label;btn.addEventListener('click',()=>calcPress(key.value||key.label));wrap.appendChild(btn)})});updateCalcDisplay()}
+function toggleCalcOverlay(){document.getElementById('calcOverlay').classList.toggle('active')}
+function updateCalcDisplay(){let v=appState.calc||'0';if(v.startsWith(','))v='0'+v;if(v.startsWith('-,') )v='-0'+v.slice(1);['calcDisplay','calcDisplayOverlay'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=v})}
+function calcPress(value){if(value==='AC'){appState.calc='0';appState.calcJustEvaluated=false;updateCalcDisplay();saveState();return}if(value==='='){try{const expr=(appState.calc||'0').replace(/,/g,'.');const safe=expr.replace(/[^0-9+\-*/().]/g,'');const result=Function('"use strict"; return ('+safe+')')();appState.calc=String(round2(result)).replace('.',',')}catch(e){appState.calc='Fehler'}appState.calcJustEvaluated=true;updateCalcDisplay();saveState();return}const isOperator=value==='+'||value==='-'||value==='*'||value==='/';if(appState.calcJustEvaluated){if(!isOperator)appState.calc='0';appState.calcJustEvaluated=false}if(appState.calc==='Fehler')appState.calc='0';if(appState.calc==='0'&&!isOperator&&value!=='.'&&value!==',')appState.calc='';appState.calc+=value==='.'?',':value;updateCalcDisplay();saveState()}
+function goToTask(){const nr=parseInt(document.getElementById('jumpInput').value,10);if(Number.isFinite(nr)&&nr>=1&&nr<=TASKS.length){appState.index=nr-1;renderTask()}}
+function goToRandomTask(){const allIndices=TASKS.map((_,index)=>index);const unsolvedIndices=TASKS.map((task,index)=>appState.solved[task.id]?null:index).filter(index=>index!==null);const pool=unsolvedIndices.length?unsolvedIndices:allIndices;let nextIndex=pool[Math.floor(Math.random()*pool.length)];if(pool.length>1&&nextIndex===appState.index){const alternatives=pool.filter(index=>index!==appState.index);nextIndex=alternatives[Math.floor(Math.random()*alternatives.length)]}appState.index=nextIndex;renderTask();window.scrollTo({top:0,behavior:'smooth'})}
+function resetAll(){if(confirm('Wirklich den ganzen Stand löschen?\nAuch die Bearbeitungszeit wird gelöscht.\n\nACHTUNG: Im Unterricht nicht löschen!')){appState=createDefaultState();activeSeconds=0;saveActiveSeconds();buildCalculator();renderTask();updateTimeDisplay()}}
+function startActiveTimer(){if(activeTimer||document.hidden)return;activeTimer=setInterval(()=>{if(!document.hidden&&document.hasFocus()){if(appState.needsStartTimeReset){appState.startTime=Date.now();appState.needsStartTimeReset=false;saveState()}activeSeconds+=1;saveActiveSeconds();updateTimeDisplay()}},1000)}
+function updateTimeDisplay(){const timeText=document.getElementById('timeText');const totalTime=Math.floor((Date.now()-appState.startTime)/1000);const inactiveTime=Math.max(0,totalTime-activeSeconds);if(totalTime>=7200&&!appState.needsStartTimeReset){appState.needsStartTimeReset=true;saveState()}const formattedTime=formatActiveTime(activeSeconds);const displayInactiveTime=appState.needsStartTimeReset?0:inactiveTime;timeText.innerHTML='<span title="Inaktive Zeit: '+formatActiveTime(displayInactiveTime)+'">Zeit</span>: '+formattedTime}
+function stopActiveTimer(){if(activeTimer){clearInterval(activeTimer);activeTimer=null}}
+document.getElementById('calcToggleBtn').addEventListener('click',toggleCalcOverlay);document.getElementById('calcOverlay').addEventListener('click',e=>{if(e.target.id==='calcOverlay'){toggleCalcOverlay()}});document.getElementById('checkStep1Btn').addEventListener('click',checkStep1);document.getElementById('checkStep2Btn').addEventListener('click',checkStep2);document.getElementById('checkStep3Btn').addEventListener('click',checkStep3);document.getElementById('checkAnswerBtn').addEventListener('click',()=>checkFinalAnswer('answerInput','feedback4','resultBox'));document.getElementById('checkHardBtn').addEventListener('click',()=>checkFinalAnswer('hardAnswerInput','hardFeedback','hardResultBox'));bindWrongAnswerClear('answerInput','feedback4','resultBox');bindWrongAnswerClear('hardAnswerInput','hardFeedback','hardResultBox');document.getElementById('prevBtn').addEventListener('click',()=>{appState.index=Math.max(0,appState.index-1);renderTask();window.scrollTo({top:0,behavior:'smooth'})});document.getElementById('nextBtn').addEventListener('click',()=>{appState.index=Math.min(TASKS.length-1,appState.index+1);renderTask();window.scrollTo({top:0,behavior:'smooth'})});document.getElementById('jumpBtn').addEventListener('click',goToTask);document.getElementById('randomTaskBtn').addEventListener('click',goToRandomTask);document.getElementById('resetBtn').addEventListener('click',resetAll);document.getElementById('difficultySelect').addEventListener('change',e=>{appState.difficulty=e.target.value;renderTask()});document.getElementById('keyboardToggle').addEventListener('change',e=>{appState.keyboardMode=e.target.checked;hideMiniKeyboard();saveState();enhanceInputsForKeyboard()});document.getElementById('miniKeyboard').addEventListener('click',e=>{const btn=e.target.closest('[data-key]');if(!btn||!activeMiniKeyboardInput)return;const key=btn.dataset.key;if(key==='DEL'){if(activeMiniKeyboardReplaceValue){activeMiniKeyboardInput.value='';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false);return}activeMiniKeyboardInput.value=activeMiniKeyboardInput.value.slice(0,-1);return}if(activeMiniKeyboardReplaceValue){activeMiniKeyboardInput.value='';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false)}activeMiniKeyboardInput.value+=key});document.addEventListener('click',e=>{const kb=document.getElementById('miniKeyboard');if(kb.style.display==='block'&&!e.target.closest('#miniKeyboard')&&!(appState.keyboardMode&&isMiniKeyboardTarget(e.target))){hideMiniKeyboard()}});document.addEventListener('visibilitychange',()=>{if(document.hidden)stopActiveTimer();else startActiveTimer()});window.addEventListener('focus',startActiveTimer);window.addEventListener('blur',stopActiveTimer);window.addEventListener('scroll',()=>{if(activeMiniKeyboardInput)positionMiniKeyboard(activeMiniKeyboardInput)});window.addEventListener('resize',()=>{if(activeMiniKeyboardInput)positionMiniKeyboard(activeMiniKeyboardInput)});
+function handleMobileKeyboard(){const isMobile=window.innerWidth<=768;if(isMobile&&!wasMobile){savedKeyboardMode=appState.keyboardMode;appState.keyboardMode=true;document.getElementById('keyboardToggle').checked=true;saveState();enhanceInputsForKeyboard()}else if(!isMobile&&wasMobile){if(savedKeyboardMode!==null){appState.keyboardMode=savedKeyboardMode;document.getElementById('keyboardToggle').checked=savedKeyboardMode;savedKeyboardMode=null;saveState();if(!appState.keyboardMode)hideMiniKeyboard()}}wasMobile=isMobile}
+if(window.innerWidth<=768){savedKeyboardMode=appState.keyboardMode;appState.keyboardMode=true;saveState()}
+function updateHeaderHeight(){const header=document.querySelector('header');if(header){const height=header.offsetHeight;document.documentElement.style.setProperty('--header-height',height+'px')}}
+updateHeaderHeight();
+window.addEventListener('resize',()=>{updateHeaderHeight();handleMobileKeyboard()});
+buildCalculator();renderTask();startActiveTimer();
+</script>
+</body>
+</html>

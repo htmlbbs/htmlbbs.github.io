@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kapitel 14 – Lückentext (A2)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; }
+    .container { width: min(900px, 92vw); margin: 24px 0; }
+    h1 { text-align: center; margin: 0 0 12px; }
+    .hint { text-align: center; margin: 0 0 18px; color: #333; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+    .text { font-size: 18px; line-height: 1.7; }
+    input.blank {
+      width: 140px;
+      max-width: 42vw;
+      padding: 6px 8px;
+      margin: 0 4px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-size: 16px;
+      vertical-align: middle;
+    }
+    input.blank.correct { border-color: #2e7d32; background: #e9f6ea; }
+    input.blank.wrong { border-color: #c62828; background: #fdeaea; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    button {
+      padding: 10px 14px; border: none; border-radius: 10px; cursor: pointer;
+      background: #2b6cb0; color: white; font-size: 15px;
+    }
+    button.secondary { background: #555; }
+    .feedback { margin-top: 12px; font-weight: bold; }
+    .scoreboard { margin-top: 10px; font-size: 16px; font-weight: bold; }
+    .wordbank {
+      margin-top: 14px; padding: 12px; border-radius: 10px;
+      background: #f7f7f7; border: 1px dashed #bbb;
+      line-height: 1.6;
+    }
+    .small { font-size: 14px; color: #444; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kapitel 14 – Lückentext</h1>
+    <p class="hint">Thema: <b>Reflexive Verben</b> und <b>Präpositionen</b> (A2)</p>
+
+    <div class="card">
+      <div class="text" id="cloze"></div>
+
+      <div class="toolbar">
+        <button id="checkBtn">Überprüfen</button>
+        <button class="secondary" id="resetBtn">Wiederholen</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+      <div class="scoreboard">Punkte: <span id="score">0</span> / <span id="total">0</span></div>
+
+      <div class="wordbank">
+        <strong>Wortbank:</strong>
+        verabredet · sich · auf · treffen · sich · über · interessiert · sich · für · von · erinnert · sich · an · an · sich · über · sich · auf · kümmern · sich · um
+        <div class="small">Alle Wörter kommen genau so im Text vor.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const blanks = [
+      "verabredet", "sich", "auf", "treffen", "sich", "über",
+      "interessiert", "sich", "für", "von",
+      "erinnert", "sich", "an",
+      "an", "sich", "über",
+      "sich", "auf",
+      "kümmern", "sich", "um"
+    ];
+
+    const textTemplate = `
+      Am Freitag <input class="blank" data-i="0" /> <input class="blank" data-i="1" /> Lina mit einem Bekannten.
+      Sie wartet <input class="blank" data-i="2" /> ihn vor dem Café.
+      Dann <input class="blank" data-i="3" /> sie <input class="blank" data-i="4" /> und sie sprechen <input class="blank" data-i="5" /> das Wochenende.<br><br>
+
+      Lina <input class="blank" data-i="6" /> <input class="blank" data-i="7" /> <input class="blank" data-i="8" /> Sport.
+      Ihr Bekannter erzählt <input class="blank" data-i="9" /> seiner Arbeit.
+      Plötzlich <input class="blank" data-i="10" /> Lina <input class="blank" data-i="11" /> <input class="blank" data-i="12" /> ihre Schulzeit.<br><br>
+
+      Später kommt noch eine Bekannte dazu. Sie nimmt <input class="blank" data-i="13" /> dem Treffen teil.
+      Lina freut <input class="blank" data-i="14" /> <input class="blank" data-i="15" /> die Einladung.
+      Ihr Bekannter freut <input class="blank" data-i="16" /> <input class="blank" data-i="17" /> den nächsten Filmabend.<br><br>
+
+      Zum Schluss <input class="blank" data-i="18" /> sie <input class="blank" data-i="19" /> <input class="blank" data-i="20" /> die Rechnung.
+    `;
+
+    const clozeEl = document.getElementById("cloze");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+    const totalEl = document.getElementById("total");
+
+    function render() {
+      clozeEl.innerHTML = textTemplate;
+      totalEl.textContent = blanks.length;
+      scoreEl.textContent = "0";
+      feedbackEl.textContent = "";
+    }
+
+    function check() {
+      const inputs = document.querySelectorAll("input.blank");
+      let correct = 0;
+
+      inputs.forEach(inp => {
+        const i = Number(inp.dataset.i);
+        const expected = blanks[i];
+        const value = inp.value.trim();
+
+        inp.classList.remove("correct", "wrong");
+
+        if (value === expected) {
+          correct++;
+          inp.classList.add("correct");
+        } else {
+          inp.classList.add("wrong");
+        }
+      });
+
+      scoreEl.textContent = correct;
+
+      if (correct === blanks.length) {
+        feedbackEl.style.color = "green";
+        feedbackEl.textContent = "Sehr gut! Alles richtig.";
+      } else {
+        feedbackEl.style.color = "red";
+        feedbackEl.textContent = `Du hast ${correct} von ${blanks.length} richtig.`;
+      }
+    }
+
+    document.getElementById("checkBtn").addEventListener("click", check);
+    document.getElementById("resetBtn").addEventListener("click", render);
+
+    render();
+  </script>
+</body>
+</html>

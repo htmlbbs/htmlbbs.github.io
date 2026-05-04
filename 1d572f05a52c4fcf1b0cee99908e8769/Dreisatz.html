@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Dreisatz üben</title>
+  <style>
+    :root{
+      --bg:#f4f6fb; --card:#fff; --text:#1f2937; --muted:#6b7280; --line:#d1d5db;
+      --accent:#4f67e8; --accent-soft:#dfe7ff; --ok:#166534; --ok-bg:#dcfce7; --bad:#991b1b; --bad-bg:#fee2e2;
+      --shadow:0 8px 24px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding-bottom:70px;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+    header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}
+    .wrap{max-width:1180px;margin:0 auto;padding:16px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:1.5rem}
+    .sub{color:var(--muted);font-size:.95rem;margin-top:4px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .jump-wrap{display:flex;align-items:center;gap:8px}
+    .jump-controls{display:flex;align-items:center;gap:0}
+    .jump-label{font-size:.95rem;color:var(--text);font-weight:600;white-space:nowrap}
+    select,input,button{font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff}
+    select,input,button{padding:8px 12px;height:38px}
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type="number"]{appearance:textfield;-moz-appearance:textfield}
+    #jumpInput{width:4.5em;border-top-left-radius:0;border-bottom-left-radius:0;border-top-right-radius:0;border-bottom-right-radius:0;text-align:center}
+    #jumpInput.overwrite-ready{background:#dbeafe;border-color:#4f67e8;box-shadow:inset 0 0 0 2px rgba(79,103,232,.18);color:#1d4ed8;font-weight:700}
+    #jumpBtn{min-width:38px;padding:8px 10px 8px;border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-1px;font-weight:400;font-size:1.35rem;display:flex;align-items:center;justify-content:center;line-height:1}
+    #jumpBtn .arrow{display:block;transform:translateY(2px)}
+    #randomTaskBtn{min-width:38px;padding:8px 10px;margin-right:-1px;font-size:1.1rem;display:flex;align-items:center;justify-content:center;line-height:1;border-top-right-radius:0;border-bottom-right-radius:0}
+    .solved-mark{display:none;margin-left:0;padding:2px 10px;border-radius:999px;border:1px solid #156a35;background:#16843f;color:#ecfdf5;font-size:.78rem;font-weight:700;line-height:1}
+    .solved-mark.visible{display:inline-flex;align-items:center}
+    button{cursor:pointer;transition:background-color .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+    button:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    button:active{transform:translateY(1px)}
+    button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    button.primary:hover{background:#4259d8;border-color:#4259d8}
+    button.success{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+    button.success:hover{background:var(--ok-bg);border-color:var(--ok)}
+    .nav-row button.success{background:var(--ok-bg) !important;color:var(--ok) !important;border-color:var(--ok) !important}
+    #keyboardToggle{height:auto;padding:0;margin:0}
+    .toggle-label{display:flex;align-items:center;gap:8px;padding:8px 12px;height:38px;border:1px solid var(--line);border-radius:12px;background:#fff;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .toggle-label:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .toggle-label:has(#keyboardToggle:checked){background:#eceff3;border-color:#9ca3af}
+    main{padding:18px 0 140px}
+    .layout{display:grid;grid-template-columns:1.3fr .9fr;gap:18px}
+    @media (max-width:920px){.layout{grid-template-columns:1fr}aside.card{display:none}#calcToggleBtn{display:flex !important}.toggle-label{display:none !important}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    aside.card{background:transparent;border:none;box-shadow:none;padding:0}
+    .badge{display:inline-block;padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.92rem;margin-right:8px;margin-bottom:8px}
+    .task-panel{position:sticky;top:calc(var(--header-height, 82px) + 10px);z-index:15;background:#eaf3ff;border:3px double #6f8de0;border-radius:18px;padding:12px 16px;margin:0 0 18px;box-shadow:0 0 22px 6px rgba(255,255,255,1),var(--shadow)}
+    .task-label{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--muted);margin:0 0 6px 2px;text-transform:uppercase;letter-spacing:.04em;line-height:1}
+    .task-text{font-size:1.15rem;margin:0;min-height:0;background:transparent;border:none;border-radius:0;padding:0;box-shadow:none}
+    .step{border-top:1px solid #e5e7eb;margin-top:14px;padding-top:14px}
+    .step h2{margin:0 0 8px;font-size:1.05rem}
+    .help{color:var(--muted);font-size:.94rem;margin-bottom:10px}
+    .choice-row{display:grid;grid-template-columns:1fr 230px;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:10px;margin-bottom:10px}
+    @media (max-width:720px){.choice-row{grid-template-columns:1fr}}
+    .formula-choice{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fafafa;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .formula-choice:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .formula-choice.selected{border-color:var(--accent);background:var(--accent-soft)}
+    .pair-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+    .pair-choice{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:12px;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease}
+    .pair-choice:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .pair-choice input{width:18px;height:18px;margin:0}
+    .pair-choice.selected{border-color:var(--accent);background:var(--accent-soft)}
+    .target-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+    .target-btn{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fafafa;cursor:pointer;font-weight:600;text-align:center;transition:background-color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+    .target-btn:hover{background:#eef2ff;border-color:#bcc8f7;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    @media (max-width:720px){.target-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .target-btn.selected{border-color:var(--accent);background:var(--accent-soft)}
+    .formula-entry{border:1px solid var(--line);border-radius:12px;background:#fafafa;padding:12px;min-height:76px}
+    .schema-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px}
+    .schema-table th,.schema-table td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;text-align:center;vertical-align:middle}
+    .schema-table tr > *:last-child{border-right:none}
+    .schema-table tbody tr:last-child > *{border-bottom:none}
+    .schema-table th{background:#eef2ff;font-weight:700}
+    .schema-layout{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:10px;align-items:stretch}
+    .schema-side{position:relative;display:block}
+    .schema-side-spacer{display:block}
+    .schema-side-sign{position:absolute;left:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:700;color:#60a5fa;transform:translate(-50%,-50%)}
+    .schema-side-sign.is-hidden{visibility:hidden}
+    .schema-side-sign.top{top:40%}
+    .schema-side-sign.bottom{top:70%}
+    .schema-row-title{background:#f8fafc;text-align:left;font-weight:700;white-space:nowrap}
+    .schema-x{font-weight:700;color:var(--accent)}
+    .schema-hint{font-size:.9rem;color:var(--muted);text-align:center}
+    .small-input{width:88px;margin:0 4px;padding:6px 8px;height:auto;border-radius:8px;border:1px solid var(--line);background:#fff;vertical-align:middle;text-align:center}
+    .schema-cell.is-correct{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+    .schema-cell.is-wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+    @media (max-width:820px){.schema-layout{grid-template-columns:1fr}.schema-side{display:none}}
+    .feedback{border-radius:12px;padding:10px 12px;margin-top:10px;font-weight:700}
+    .step > button.primary{display:block;margin:22px auto 0}
+    .ok{background:var(--ok-bg);color:var(--ok)}
+    .bad{background:var(--bad-bg);color:var(--bad)}
+    .hidden{display:none}
+    .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .result-box{margin-top:10px;padding:12px;border-radius:12px;background:var(--ok-bg);color:var(--ok);font-weight:700}
+    .nav-row{display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid #e5e7eb;flex-wrap:wrap;justify-content:center}
+    .nav-row button{background:#f3f4f6;border-color:var(--line);color:var(--text);min-width:160px}
+    .nav-row button.success{background:var(--ok-bg) !important;color:var(--ok) !important;border-color:var(--ok) !important;font-weight:700 !important}
+    #nextBtn{margin-left:0}
+    .calc-shell{max-width:360px;margin:0 auto;background:linear-gradient(180deg,#39404b 0%,#1f2937 100%);border-radius:24px;padding:18px;box-shadow:0 16px 40px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);position:sticky;top:calc(var(--header-height, 82px) + 16px)}
+    #calcToggleBtn{position:fixed !important;bottom:40px !important;right:20px !important;width:60px;height:60px;background:rgba(91,111,216,.7);border:2px solid #5b6fd8;border-radius:18px;display:none !important;cursor:pointer;z-index:1000 !important;box-shadow:0 4px 16px rgba(91,111,216,.4);transition:background-color .2s,box-shadow .2s;align-items:center;justify-content:center}
+    #calcToggleBtn:hover{background:rgba(91,111,216,.9);box-shadow:0 6px 20px rgba(91,111,216,.5)}
+    #calcToggleBtn:active{transform:scale(0.95)}
+    #calcToggleBtn .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:36px;height:36px}
+    #calcToggleBtn .symbol{color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;line-height:1}
+    .calc-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+    .calc-overlay.active{display:flex}
+    .calc-overlay .calc-shell{position:static;margin:0;max-height:90vh;overflow-y:auto}
+    .calc-screen-frame{background:#0f172a;border-radius:16px;padding:10px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
+    .calc-screen{width:100%;height:auto;border:none;border-radius:10px;padding:14px 12px;text-align:right;font-size:1.5rem;font-family:"Courier New",monospace;background:#d9f7c8;color:#0f172a}
+    .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .calc-btn{height:58px;border:none;border-radius:14px;font-size:1.1rem;font-weight:700;box-shadow:inset 0 -3px 0 rgba(0,0,0,.16)}
+    .calc-btn.num{background:#f3f4f6}.calc-btn.op{background:#cbd5e1}.calc-btn.action{background:#fecaca}.calc-btn.equal{background:#93c5fd}.calc-btn.zero{grid-column:span 2}
+    footer{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:30}
+    .footerbar{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700}
+    .mini-kb-overlay{position:fixed;z-index:2000;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:10px;display:none;min-width:220px}
+    .mini-kb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .mini-kb-btn{border:none;border-radius:10px;padding:12px 10px;font-weight:700;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+    .mini-kb-num{background:#e5e7eb}.mini-kb-comma{background:#bfdbfe}.mini-kb-del{background:#fecaca}
+    @media (max-height:700px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{position:sticky !important;top:18px !important}
+    }
+    @media (max-height:600px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{max-width:300px;padding:12px;border-radius:18px;position:sticky !important;top:18px !important}
+      .calc-screen-frame{padding:6px;margin-bottom:10px;border-radius:12px}
+      .calc-screen{padding:8px;font-size:1.2rem;border-radius:8px}
+      .calc-grid{gap:6px}
+      .calc-btn{height:42px;font-size:.95rem;border-radius:10px}
+    }
+    @media (max-height:480px) and (min-width:921px){
+      header{position:relative !important}
+      .calc-shell{max-width:260px;padding:8px;border-radius:14px;position:sticky !important;top:18px !important}
+      .calc-screen-frame{padding:4px;margin-bottom:8px;border-radius:10px}
+      .calc-screen{padding:6px;font-size:1rem;border-radius:6px}
+      .calc-grid{gap:4px}
+      .calc-btn{height:36px;font-size:.85rem;border-radius:8px}
+    }
+    @media (max-width:920px){.layout{grid-template-columns:1fr}aside.card{display:none}#calcToggleBtn{display:flex !important}.toggle-label{display:none !important}}
+    @media (max-width:768px){
+      body{padding-bottom:0 !important}
+      header{position:static !important}
+      footer{position:static !important}
+      main{padding:18px 0 !important}
+      .calc-shell{position:static !important}
+      .task-panel{top:8px}
+      .topbar{justify-content:center}
+      .controls{justify-content:center;flex-wrap:wrap}
+      .footerbar{justify-content:center;font-size:.8rem;gap:8px;padding:10px 12px}
+      .toggle-label{display:none !important}
+      h1{font-size:1.2rem}
+      .sub{font-size:.85rem}
+      select,input,button{font-size:.85rem;padding:5px 8px;height:32px}
+        .controls{gap:6px}
+        .controls label{font-size:.85rem;display:flex;align-items:center;gap:4px;white-space:nowrap}
+        .jump-label{font-size:.85rem}
+      #jumpInput{width:50px}
+      #resetBtn{display:inline-flex;align-items:center;justify-content:center}
+    }
+    @media (max-width:480px){
+      h1{font-size:1rem}
+      .sub{display:none}
+      select,input,button{font-size:.8rem;padding:4px 6px;height:30px}
+      .controls{gap:4px}
+      .controls label{font-size:0;gap:2px}
+      .controls label select,.controls label input{font-size:.8rem}
+      .jump-label{font-size:.8rem}
+      #jumpInput{width:45px}
+      #jumpBtn{padding:4px 8px}
+      #randomTaskBtn{padding:4px 8px;margin-right:-1px}
+      .footerbar{font-size:.7rem;gap:6px;padding:8px 10px}
+      .footerbar>div{white-space:nowrap;font-size:.7rem}
+      .wrap{padding:12px}
+      .calc-overlay .calc-shell{max-width:320px;padding:14px;max-height:85vh}
+      .calc-btn{height:50px;font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Dreisatz üben</h1>
+      </div>
+      <div class="controls">
+        <label aria-label="Niveau auswählen">
+          <select id="difficultySelect">
+            <option value="easy">mit Hilfe rechnen</option>
+            <option value="medium">Schritt für Schritt</option>
+            <option value="hard">allein rechnen</option>
+          </select>
+        </label>
+        <div class="jump-wrap">
+          <span class="jump-label">Aufgabe</span>
+          <div class="jump-controls">
+            <button id="randomTaskBtn" aria-label="Zufällige Aufgabe">🎲</button>
+            <input id="jumpInput" type="text" value="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go" data-mini-kb="true" aria-label="Aufgabennummer" />
+            <button id="jumpBtn" aria-label="Zur Aufgabe springen"><span class="arrow">➜</span></button>
+          </div>
+        </div>
+        <label class="toggle-label"><span>Tasten</span><input id="keyboardToggle" type="checkbox" /></label>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="layout">
+    <section class="card">
+      <div class="task-panel">
+        <div class="task-label">Aufgabe <span id="solvedMark" class="solved-mark">✓ fertig</span></div>
+        <div class="task-text" id="taskText">Lade Aufgabe ...</div>
+      </div>
+
+      <div id="guidedArea">
+        <div class="step" id="step1">
+          <h2>1. Welcher Dreisatz ist das?</h2>
+          <div class="help">Ist es ein gleicher Dreisatz (mehr-mehr) oder ein ungleicher Dreisatz (mehr-weniger)?</div>
+          <div id="classifyBox"></div>
+          <button class="primary" id="checkStep1Btn">Prüfen</button>
+          <div id="feedback1"></div>
+        </div>
+        <div class="step" id="step2">
+          <h2>2. Welche Werte gehören zusammen?</h2>
+          <div class="help">Klicke die beiden Werte an, die das gegebene Wertepaar bilden.</div>
+          <div id="pairChoices"></div>
+          <button class="primary" id="checkStep2Btn">Prüfen</button>
+          <div id="feedback2"></div>
+        </div>
+        <div class="step" id="step3">
+          <h2>3. Welcher Wert wird gesucht?</h2>
+          <div class="help">Wähle die gesuchte Größe aus.</div>
+          <div id="soughtValueChoices"></div>
+          <button class="primary" id="checkStep3Btn">Prüfen</button>
+          <div id="feedback3"></div>
+        </div>
+        <div class="step" id="step4">
+          <h2>4. Tabelle aufstellen und ausrechnen</h2>
+          <div class="help">Trage alle Werte in die Dreisatz-Tabelle ein und rechne den gesuchten Wert aus.</div>
+          <div class="formula-entry" id="formulaEntry"></div>
+          <button class="primary" id="checkStep4Btn">Prüfen</button>
+          <div id="feedback4"></div>
+          <div id="step4ResultBox" class="result-box hidden"></div>
+        </div>
+      </div>
+
+      <div id="hardArea" class="hidden">
+        <div class="step" style="border-top:none;margin-top:0;padding-top:0;">
+          <h2>Direkt rechnen</h2>
+          <div class="help">Lies die Aufgabe und rechne direkt.</div>
+          <div class="answer-row">
+            <input id="hardAnswerInput" type="text" placeholder="Lösung" />
+            <span id="hardUnit"></span>
+            <button class="primary" id="checkHardBtn">Antwort prüfen</button>
+          </div>
+          <div id="hardFeedback"></div>
+          <div id="hardResultBox" class="result-box hidden"></div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button id="prevBtn">vorige Aufgabe</button>
+        <button id="nextBtn">nächste Aufgabe</button>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="calc-shell">
+        <div class="calc-screen-frame"><input id="calcDisplay" class="calc-screen" type="text" readonly inputmode="none" virtualkeyboardpolicy="manual" tabindex="-1" aria-readonly="true" data-mini-kb="false" value="0" /></div>
+        <div class="calc-grid" id="calcGrid"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+<button id="calcToggleBtn" type="button" aria-label="Taschenrechner öffnen">
+  <div class="grid">
+    <div class="symbol">+</div>
+    <div class="symbol">÷</div>
+    <div class="symbol">×</div>
+    <div class="symbol">−</div>
+  </div>
+</button>
+<div class="calc-overlay" id="calcOverlay">
+  <div class="calc-shell" id="calcShellOverlay">
+    <div class="calc-screen-frame"><input id="calcDisplayOverlay" class="calc-screen" type="text" readonly inputmode="none" virtualkeyboardpolicy="manual" tabindex="-1" aria-readonly="true" data-mini-kb="false" value="0" /></div>
+    <div class="calc-grid" id="calcGridOverlay"></div>
+  </div>
+</div>
+<footer>
+  <div class="footerbar">
+    <div id="progressText">Aufgabe 1 / 100</div>
+    <div id="correctText">Richtige Lösungen: 0</div>
+    <div id="doneText">Bearbeitet: 0</div>
+    <div id="timeText">Zeit: 00:00</div>
+  </div>
+</footer>
+<div id="miniKeyboard" class="mini-kb-overlay">
+  <div class="mini-kb-grid">
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="1">1</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="2">2</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="3">3</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="4">4</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="5">5</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="6">6</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="7">7</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="8">8</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="9">9</button>
+    <button type="button" class="mini-kb-btn mini-kb-num" data-key="0">0</button>
+    <button type="button" class="mini-kb-btn mini-kb-comma" data-key=",">,</button>
+    <button type="button" class="mini-kb-btn mini-kb-del" data-key="DEL">C</button>
+  </div>
+</div>
+<script>
+const PROPORTIONAL_TASKS = [
+{id:1,category:'P',unit:'€',sentence:'Die Tomaten kosten {value} €.',text:'3 kg Tomaten kosten 9 €. Wie viel kosten 7 kg Tomaten?',numbers:[{label:'3 kg',value:3,type:'A1'},{label:'9 €',value:9,type:'B1'},{label:'7 kg',value:7,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:2,category:'P',unit:'€',sentence:'Die Kartoffeln kosten {value} €.',text:'4 kg Kartoffeln kosten 8 €. Wie viel kosten 9 kg Kartoffeln?',numbers:[{label:'4 kg',value:4,type:'A1'},{label:'8 €',value:8,type:'B1'},{label:'9 kg',value:9,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:3,category:'P',unit:'€',sentence:'Die Brötchen kosten {value} €.',text:'8 Brötchen kosten 4 €. Wie viel kosten 14 Brötchen?',numbers:[{label:'8 Brötchen',value:8,type:'A1'},{label:'4 €',value:4,type:'B1'},{label:'14 Brötchen',value:14,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:4,category:'P',unit:'Liter',sentence:'{value} Liter Suppe braucht man.',text:'Für 12 Gäste braucht man 3 Liter Suppe. Wie viel Suppe braucht man für 30 Gäste?',numbers:[{label:'12 Gäste',value:12,type:'A1'},{label:'3 Liter',value:3,type:'B1'},{label:'30 Gäste',value:30,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:5,category:'P',unit:'ml',sentence:'Man braucht {value} ml Öl.',text:'Für 10 Portionen Salat braucht man 250 ml Öl. Wie viel Öl braucht man für 24 Portionen?',numbers:[{label:'10 Portionen',value:10,type:'A1'},{label:'250 ml',value:250,type:'B1'},{label:'24 Portionen',value:24,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:6,category:'P',unit:'g',sentence:'Man braucht {value} g Reis.',text:'Für 8 Portionen braucht man 960 g Reis. Wie viel Reis braucht man für 20 Portionen?',numbers:[{label:'8 Portionen',value:8,type:'A1'},{label:'960 g',value:960,type:'B1'},{label:'20 Portionen',value:20,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:7,category:'P',unit:'€',sentence:'30 Eier kosten {value} €.',text:'12 Eier kosten 3,60 €. Wie viel kosten 30 Eier?',numbers:[{label:'12 Eier',value:12,type:'A1'},{label:'3,60 €',value:3.60,type:'B1'},{label:'30 Eier',value:30,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:8,category:'P',unit:'Portionen',sentence:'Man kann {value} Portionen servieren.',text:'Mit 15 kg Kartoffeln kann man 75 Portionen servieren. Wie viele Portionen kann man mit 24 kg Kartoffeln servieren?',numbers:[{label:'15 kg',value:15,type:'A1'},{label:'75 Portionen',value:75,type:'B1'},{label:'24 kg',value:24,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:9,category:'P',unit:'Stücke',sentence:'Man bekommt {value} Stücke Kuchen.',text:'Aus 3 Blechen bekommt man 36 Stücke Kuchen. Wie viele Stücke bekommt man aus 5 Blechen?',numbers:[{label:'3 Bleche',value:3,type:'A1'},{label:'36 Stücke',value:36,type:'B1'},{label:'5 Bleche',value:5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:10,category:'P',unit:'€',sentence:'4 kg Käse kosten {value} €.',text:'2,5 kg Käse kosten 30 €. Wie viel kosten 4 kg Käse?',numbers:[{label:'2,5 kg',value:2.5,type:'A1'},{label:'30 €',value:30,type:'B1'},{label:'4 kg',value:4,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:11,category:'P',unit:'Liter',sentence:'Man braucht {value} Liter Saft.',text:'Für 16 Gäste braucht man 4 Liter Saft. Wie viel Saft braucht man für 28 Gäste?',numbers:[{label:'16 Gäste',value:16,type:'A1'},{label:'4 Liter',value:4,type:'B1'},{label:'28 Gäste',value:28,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:12,category:'P',unit:'€',sentence:'20 Orangen kosten {value} €.',text:'6 Orangen kosten 3 €. Wie viel kosten 20 Orangen?',numbers:[{label:'6 Orangen',value:6,type:'A1'},{label:'3 €',value:3,type:'B1'},{label:'20 Orangen',value:20,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:13,category:'P',unit:'g',sentence:'Man braucht {value} g Zucker.',text:'Für 4 Liter Eistee braucht man 320 g Zucker. Wie viel Zucker braucht man für 10 Liter?',numbers:[{label:'4 Liter',value:4,type:'A1'},{label:'320 g',value:320,type:'B1'},{label:'10 Liter',value:10,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:14,category:'P',unit:'€',sentence:'Die Bananen kosten {value} €.',text:'5 kg Bananen kosten 11 €. Wie viel kosten 8 kg Bananen?',numbers:[{label:'5 kg',value:5,type:'A1'},{label:'11 €',value:11,type:'B1'},{label:'8 kg',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:15,category:'P',unit:'Portionen',sentence:'Man kann {value} Portionen kochen.',text:'Aus 6 kg Nudeln kocht man 30 Portionen. Wie viele Portionen kann man aus 14 kg Nudeln kochen?',numbers:[{label:'6 kg',value:6,type:'A1'},{label:'30 Portionen',value:30,type:'B1'},{label:'14 kg',value:14,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:16,category:'P',unit:'€',sentence:'5 kg Lachs kosten {value} €.',text:'3 kg Lachs kosten 54 €. Wie viel kosten 5 kg Lachs?',numbers:[{label:'3 kg',value:3,type:'A1'},{label:'54 €',value:54,type:'B1'},{label:'5 kg',value:5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:17,category:'P',unit:'Minuten',sentence:'Für 7 Bleche brauche ich {value} Minuten.',text:'Ich schäle Äpfel für 4 Bleche Apfelkuchen in 32 Minuten. Wie lange brauche ich für 7 Bleche?',numbers:[{label:'4 Bleche',value:4,type:'A1'},{label:'32 Minuten',value:32,type:'B1'},{label:'7 Bleche',value:7,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:18,category:'P',unit:'g',sentence:'Man braucht {value} g Salz.',text:'Für 20 Liter Suppe braucht man 180 g Salz. Wie viel Salz braucht man für 35 Liter Suppe?',numbers:[{label:'20 Liter',value:20,type:'A1'},{label:'180 g',value:180,type:'B1'},{label:'35 Liter',value:35,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:19,category:'P',unit:'€',sentence:'Das Hähnchenfleisch kostet {value} €.',text:'4 kg Hähnchenfleisch kosten 36 €. Wie viel kosten 11 kg?',numbers:[{label:'4 kg',value:4,type:'A1'},{label:'36 €',value:36,type:'B1'},{label:'11 kg',value:11,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:20,category:'P',unit:'Liter',sentence:'Man braucht {value} Liter Soße.',text:'Für 18 Portionen braucht man 2,7 Liter Soße. Wie viel Soße braucht man für 40 Portionen?',numbers:[{label:'18 Portionen',value:18,type:'A1'},{label:'2,7 Liter',value:2.7,type:'B1'},{label:'40 Portionen',value:40,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:21,category:'P',unit:'€',sentence:'22 Stück Käsekuchen kosten {value} €.',text:'6 Stück Käsekuchen kosten 15 €. Wie viel kosten 22 Stück?',numbers:[{label:'6 Stück',value:6,type:'A1'},{label:'15 €',value:15,type:'B1'},{label:'22 Stück',value:22,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:22,category:'P',unit:'ml',sentence:'Man braucht {value} ml Essig.',text:'Für 12 Portionen braucht man 180 ml Essig. Wie viel Essig braucht man für 28 Portionen?',numbers:[{label:'12 Portionen',value:12,type:'A1'},{label:'180 ml',value:180,type:'B1'},{label:'28 Portionen',value:28,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:23,category:'P',unit:'€',sentence:'150 Servietten kosten {value} €.',text:'40 Servietten kosten 2 €. Wie viel kosten 150 Servietten?',numbers:[{label:'40 Servietten',value:40,type:'A1'},{label:'2 €',value:2,type:'B1'},{label:'150 Servietten',value:150,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:24,category:'P',unit:'Plätze',sentence:'Man kann {value} Plätze eindecken.',text:'Mit 5 Paketen Servietten kann man 120 Plätze eindecken. Wie viele Plätze kann man mit 9 Paketen eindecken?',numbers:[{label:'5 Pakete',value:5,type:'A1'},{label:'120 Plätze',value:120,type:'B1'},{label:'9 Pakete',value:9,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:25,category:'P',unit:'€',sentence:'26 Zitronen kosten {value} €.',text:'9 Zitronen kosten 4,50 €. Wie viel kosten 26 Zitronen?',numbers:[{label:'9 Zitronen',value:9,type:'A1'},{label:'4,50 €',value:4.50,type:'B1'},{label:'26 Zitronen',value:26,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:26,category:'P',unit:'kg',sentence:'Man braucht {value} kg Hackfleisch.',text:'Für 30 Portionen braucht man 6 kg Hackfleisch. Wie viel Hackfleisch braucht man für 45 Portionen?',numbers:[{label:'30 Portionen',value:30,type:'A1'},{label:'6 kg',value:6,type:'B1'},{label:'45 Portionen',value:45,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:27,category:'P',unit:'€',sentence:'Das Mehl kostet {value} €.',text:'7 kg Mehl kosten 10,50 €. Wie viel kosten 18 kg Mehl?',numbers:[{label:'7 kg',value:7,type:'A1'},{label:'10,50 €',value:10.50,type:'B1'},{label:'18 kg',value:18,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:28,category:'P',unit:'Stücke',sentence:'Man kann {value} Stücke Pizza schneiden.',text:'Aus 4 Pizzen schneidet man 32 Stücke. Wie viele Stücke kann man aus 7 Pizzen schneiden?',numbers:[{label:'4 Pizzen',value:4,type:'A1'},{label:'32 Stücke',value:32,type:'B1'},{label:'7 Pizzen',value:7,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:29,category:'P',unit:'€',sentence:'8 Schüsseln Salat kosten {value} €.',text:'3 Schüsseln Salat kosten 18 €. Wie viel kosten 8 Schüsseln?',numbers:[{label:'3 Schüsseln',value:3,type:'A1'},{label:'18 €',value:18,type:'B1'},{label:'8 Schüsseln',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:30,category:'P',unit:'Liter',sentence:'Man braucht {value} Liter Wasser.',text:'Für 14 Portionen Reis braucht man 4,2 Liter Wasser. Wie viel Wasser braucht man für 32 Portionen?',numbers:[{label:'14 Portionen',value:14,type:'A1'},{label:'4,2 Liter',value:4.2,type:'B1'},{label:'32 Portionen',value:32,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:31,category:'P',unit:'€',sentence:'18 Croissants kosten {value} €.',text:'5 Croissants kosten 6,50 €. Wie viel kosten 18 Croissants?',numbers:[{label:'5 Croissants',value:5,type:'A1'},{label:'6,50 €',value:6.50,type:'B1'},{label:'18 Croissants',value:18,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:32,category:'P',unit:'g',sentence:'Man braucht {value} g Butter.',text:'Für 10 Kuchenstücke braucht man 300 g Butter. Wie viel Butter braucht man für 26 Stücke?',numbers:[{label:'10 Kuchenstücke',value:10,type:'A1'},{label:'300 g',value:300,type:'B1'},{label:'26 Stücke',value:26,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:33,category:'P',unit:'€',sentence:'14 Flaschen Olivenöl kosten {value} €.',text:'6 Flaschen Olivenöl kosten 42 €. Wie viel kosten 14 Flaschen?',numbers:[{label:'6 Flaschen',value:6,type:'A1'},{label:'42 €',value:42,type:'B1'},{label:'14 Flaschen',value:14,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:34,category:'P',unit:'Portionen',sentence:'Man kann {value} Portionen Pommes machen.',text:'Aus 12 kg Kartoffeln kann man 48 Portionen Pommes machen. Wie viele Portionen kann man aus 20 kg Kartoffeln machen?',numbers:[{label:'12 kg',value:12,type:'A1'},{label:'48 Portionen',value:48,type:'B1'},{label:'20 kg',value:20,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:35,category:'P',unit:'€',sentence:'40 Flaschen Mineralwasser kosten {value} €.',text:'24 Flaschen Mineralwasser kosten 18 €. Wie viel kosten 40 Flaschen?',numbers:[{label:'24 Flaschen',value:24,type:'A1'},{label:'18 €',value:18,type:'B1'},{label:'40 Flaschen',value:40,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:36,category:'P',unit:'kg',sentence:'Man braucht {value} kg Hähnchenfleisch.',text:'Für 25 Portionen braucht man 7,5 kg Hähnchenfleisch. Wie viel Fleisch braucht man für 36 Portionen?',numbers:[{label:'25 Portionen',value:25,type:'A1'},{label:'7,5 kg',value:7.5,type:'B1'},{label:'36 Portionen',value:36,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:37,category:'P',unit:'€',sentence:'6,5 kg Champignons kosten {value} €.',text:'2 kg Champignons kosten 9 €. Wie viel kosten 6,5 kg Champignons?',numbers:[{label:'2 kg',value:2,type:'A1'},{label:'9 €',value:9,type:'B1'},{label:'6,5 kg',value:6.5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:38,category:'P',unit:'ml',sentence:'Man braucht {value} ml Sahne.',text:'Für 16 Portionen braucht man 800 ml Sahne. Wie viel Sahne braucht man für 30 Portionen?',numbers:[{label:'16 Portionen',value:16,type:'A1'},{label:'800 ml',value:800,type:'B1'},{label:'30 Portionen',value:30,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:39,category:'P',unit:'€',sentence:'28 Flaschen Limonade kosten {value} €.',text:'15 Flaschen Limonade kosten 24 €. Wie viel kosten 28 Flaschen Limonade?',numbers:[{label:'15 Flaschen',value:15,type:'A1'},{label:'24 €',value:24,type:'B1'},{label:'28 Flaschen',value:28,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:40,category:'P',unit:'Tassen',sentence:'Man kann {value} Tassen kochen.',text:'Mit 250 g Kaffeepulver kocht man 50 Tassen. Wie viele Tassen kann man mit 630 g Kaffeepulver kochen?',numbers:[{label:'250 g',value:250,type:'A1'},{label:'50 Tassen',value:50,type:'B1'},{label:'630 g',value:630,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:41,category:'P',unit:'€',sentence:'18 Packungen Nudeln kosten {value} €.',text:'5 Packungen Nudeln kosten 7,50 €. Wie viel kosten 18 Packungen?',numbers:[{label:'5 Packungen',value:5,type:'A1'},{label:'7,50 €',value:7.50,type:'B1'},{label:'18 Packungen',value:18,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:42,category:'P',unit:'g',sentence:'Man braucht {value} g Petersilie.',text:'Für 20 Portionen braucht man 120 g Petersilie. Wie viel Petersilie braucht man für 34 Portionen?',numbers:[{label:'20 Portionen',value:20,type:'A1'},{label:'120 g',value:120,type:'B1'},{label:'34 Portionen',value:34,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:43,category:'P',unit:'€',sentence:'11 kg Paprika kosten {value} €.',text:'4 kg Paprika kosten 10 €. Wie viel kosten 11 kg Paprika?',numbers:[{label:'4 kg',value:4,type:'A1'},{label:'10 €',value:10,type:'B1'},{label:'11 kg',value:11,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:44,category:'P',unit:'Liter',sentence:'Man braucht {value} Liter Brühe.',text:'Für 18 Teller Suppe braucht man 5,4 Liter Brühe. Wie viel Brühe braucht man für 26 Teller Suppe?',numbers:[{label:'18 Teller',value:18,type:'A1'},{label:'5,4 Liter',value:5.4,type:'B1'},{label:'26 Teller',value:26,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:45,category:'P',unit:'€',sentence:'16 Stücke Torte {value} € kosten die Tortenstücke.',text:'7 Tortenstücke kosten 17,50 €. Wie viel kosten 16 Stücke?',numbers:[{label:'7 Tortenstücke',value:7,type:'A1'},{label:'17,50 €',value:17.50,type:'B1'},{label:'16 Stücke',value:16,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:46,category:'P',unit:'Sandwiches',sentence:'Man kann {value} Sandwiches machen.',text:'Aus 9 Broten macht man 54 Sandwiches. Wie viele Sandwiches kann man aus 15 Broten machen?',numbers:[{label:'9 Brote',value:9,type:'A1'},{label:'54 Sandwiches',value:54,type:'B1'},{label:'15 Brote',value:15,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:47,category:'P',unit:'€',sentence:'14 kg Äpfel kosten {value} €.',text:'6 kg Äpfel kosten 13,20 €. Wie viel kosten 14 kg Äpfel?',numbers:[{label:'6 kg',value:6,type:'A1'},{label:'13,20 €',value:13.20,type:'B1'},{label:'14 kg',value:14,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:48,category:'P',unit:'ml',sentence:'Man braucht {value} ml Sirup.',text:'Für 12 Liter eines Getränks braucht man 900 ml Sirup. Wie viel Sirup braucht man für 20 Liter?',numbers:[{label:'12 Liter',value:12,type:'A1'},{label:'900 ml',value:900,type:'B1'},{label:'20 Liter',value:20,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:49,category:'P',unit:'€',sentence:'8 kg Schinken kosten {value} €.',text:'3 kg Schinken kosten 27 €. Wie viel kosten 8 kg Schinken?',numbers:[{label:'3 kg',value:3,type:'A1'},{label:'27 €',value:27,type:'B1'},{label:'8 kg',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+{id:50,category:'P',unit:'Portionen',sentence:'Man kann {value} Portionen Dessert herstellen.',text:'Mit 14 Litern Joghurt macht man 56 Portionen Dessert. Wie viele Portionen kann man mit 22 Litern machen?',numbers:[{label:'14 Liter',value:14,type:'A1'},{label:'56 Portionen',value:56,type:'B1'},{label:'22 Liter',value:22,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'proportional'},
+];
+
+const ANTIPROPORTIONAL_TASKS = [
+{id:51,category:'A',unit:'Stunden',sentence:'Die Arbeit dauert {value} Stunden.',text:'8 Köche schneiden Gemüse in 6 Stunden. Wie lange brauchen 12 Köche für die Aufgabe?',numbers:[{label:'8 Köche',value:8,type:'A1'},{label:'6 Stunden',value:6,type:'B1'},{label:'12 Köche',value:12,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:52,category:'A',unit:'Stunden',sentence:'Das Verteilen dauert {value} Stunden.',text:'6 Mitarbeiter verteilen Werbung in 5 Stunden. Wie lange brauchen 10 Mitarbeiter?',numbers:[{label:'6 Mitarbeiter',value:6,type:'A1'},{label:'5 Stunden',value:5,type:'B1'},{label:'10 Mitarbeiter',value:10,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:53,category:'A',unit:'Tage',sentence:'Der Vorrat reicht {value} Tage.',text:'Für 30 Gäste reicht der Vorrat 8 Tage. Wie lange reicht er für 24 Gäste?',numbers:[{label:'30 Gäste',value:30,type:'A1'},{label:'8 Tage',value:8,type:'B1'},{label:'24 Gäste',value:24,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:54,category:'A',unit:'Stunden',sentence:'Die Reinigung dauert {value} Stunden.',text:'5 Mitarbeiter brauchen 6 Stunden für die Reinigung. Wie lange brauchen 8 Mitarbeiter?',numbers:[{label:'5 Mitarbeiter',value:5,type:'A1'},{label:'6 Stunden',value:6,type:'B1'},{label:'8 Mitarbeiter',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:55,category:'A',unit:'Portionen',sentence:'An jedem Tisch stehen {value} Stühle.',text:'Es gibt 6 Tische. An jedem Tisch stehen 9 Stühle. Wie viele Stühle stehen an jedem Tisch, wenn es 9 gleich große Tische gibt?',numbers:[{label:'6 Tische',value:6,type:'A1'},{label:'9 Stühle',value:9,type:'B1'},{label:'9 Tische',value:9,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:56,category:'A',unit:'Minuten',sentence:'Das Schneiden dauert {value} Minuten.',text:'9 Köche schneiden das Gemüse für  Ratatouille in 40 Minuten. Wie lange brauchen 12 Köche um das Gemüse zu schneiden?',numbers:[{label:'9 Köche',value:9,type:'A1'},{label:'40 Minuten',value:40,type:'B1'},{label:'12 Köche',value:12,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:57,category:'A',unit:'Tage',sentence:'Die Getränke reichen {value} Tage.',text:'Für 20 Hotelgäste reichen die Getränke 15 Tage. Wie lange reichen sie für 25 Gäste?',numbers:[{label:'20 Hotelgäste',value:20,type:'A1'},{label:'15 Tage',value:15,type:'B1'},{label:'25 Gäste',value:25,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:58,category:'A',unit:'Stunden',sentence:'Die Verteilung dauert {value} Stunden.',text:'4 Mitarbeiter verteilen Werbung in 9 Stunden. Wie lange brauchen 6 Mitarbeiter?',numbers:[{label:'4 Mitarbeiter',value:4,type:'A1'},{label:'9 Stunden',value:9,type:'B1'},{label:'6 Mitarbeiter',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:59,category:'A',unit:'Portionen',sentence:'In jeder Schüssel sind {value} Portionen.',text:'In 5 Schüsseln sind jeweils 16 Portionen. Wie viele Portionen kommen in jede Schüssel, wenn alles auf 8 Schüsseln verteilt wird?',numbers:[{label:'5 Schüsseln',value:5,type:'A1'},{label:'16 Portionen',value:16,type:'B1'},{label:'8 Schüsseln',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:60,category:'A',unit:'Stunden',sentence:'Die Reinigung dauert {value} Stunden.',text:'7 Gebäudereiniger reinigen die Fenster in 8 Stunden. Wie lange brauchen 5 Gebäudereiniger?',numbers:[{label:'7 Gebäudereiniger',value:7,type:'A1'},{label:'8 Stunden',value:8,type:'B1'},{label:'5 Gebäudereiniger',value:5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:61,category:'A',unit:'Tage',sentence:'Die Nudeln reichen {value} Tage.',text:'Für 18 Gäste reichen die Nudeln 10 Tage. Wie lange reichen sie für 30 Gäste?',numbers:[{label:'18 Gäste',value:18,type:'A1'},{label:'10 Tage',value:10,type:'B1'},{label:'30 Gäste',value:30,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:62,category:'A',unit:'Minuten',sentence:'Das Schneiden dauert {value} Minuten.',text:'6 Köche brauchen zum Schneiden 50 Minuten. Wie lange brauchen 10 Köche?',numbers:[{label:'6 Köche',value:6,type:'A1'},{label:'50 Minuten',value:50,type:'B1'},{label:'10 Köche',value:10,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:63,category:'A',unit:'Stunden',sentence:'Die Lampen leuchten {value} Stunden.',text:'5 Lampen leuchten mit einem Akku für 12 Stunden. Wie lange leuchten 15 Lampen mit diesem Akku?',numbers:[{label:'5 Lampen',value:5,type:'A1'},{label:'12 Stunden',value:12,type:'B1'},{label:'15 Lampen',value:15,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:64,category:'A',unit:'Tage',sentence:'Die Handtücher reichen für {value} Tage.',text:'Für 12 Hotelgäste reichen die Handtücher für 14 Tage. Wie lange reichen sie, wenn 21 Gäste im Hotel sind?',numbers:[{label:'12 Gäste',value:12,type:'A1'},{label:'14 Tage',value:14,type:'B1'},{label:'21 Gäste',value:21,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:65,category:'A',unit:'Portionen',sentence:'In jedem Regal stehen dann {value} Boxen.',text:'In 4 Regalen stehen jeweils 15 Boxen. Wie viele Boxen stehen in jedem Regal, wenn die Boxen auf 10 Regale verteilt werden?',numbers:[{label:'4 Regale',value:4,type:'A1'},{label:'15 Boxen',value:15,type:'B1'},{label:'10 Regale',value:10,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:66,category:'A',unit:'Stunden',sentence:'Das Streichen dauert {value} Stunden.',text:'10 Maler streichen ein Haus in 3 Stunden. Wie lange brauchen 6 Maler?',numbers:[{label:'10 Maler',value:10,type:'A1'},{label:'3 Stunden',value:3,type:'B1'},{label:'6 Maler',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:67,category:'A',unit:'Tage',sentence:'Die Limonade reicht für {value} Tage.',text:'Für 40 Gäste reicht die Limonade 6 Tage. Wie lange reicht sie für 24 Gäste?',numbers:[{label:'40 Gäste',value:40,type:'A1'},{label:'6 Tage',value:6,type:'B1'},{label:'24 Gäste',value:24,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:68,category:'A',unit:'Minuten',sentence:'Die Zubereitung dauert {value} Minuten.',text:'8 Köche brauchen für das Dessert 45 Minuten. Wie lange brauchen 5 Köche?',numbers:[{label:'8 Köche',value:8,type:'A1'},{label:'45 Minuten',value:45,type:'B1'},{label:'5 Köche',value:5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:69,category:'A',unit:'Stunden',sentence:'Die Arbeit dauert {value} Stunden.',text:'4 Gärtner arbeiten 9 Stunden. Wie lange brauchen 12 Gärtner für die gleiche Arbeit?',numbers:[{label:'4 Gärtner',value:4,type:'A1'},{label:'9 Stunden',value:9,type:'B1'},{label:'12 Gärtner',value:12,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:70,category:'A',unit:'Portionen',sentence:'In jeder Schale sind {value} Portionen.',text:'Es gibt 6 Schalen. In jeder Schale sind 15 Portionen. Wie viele Portionen sind in jeder Schale, wenn das Essen auf 9 Schalen verteilt wird?',numbers:[{label:'6 Schalen',value:6,type:'A1'},{label:'15 Portionen',value:15,type:'B1'},{label:'9 Schalen',value:9,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:71,category:'A',unit:'Tage',sentence:'Der Reis reicht {value} Tage.',text:'Für 25 Gäste reicht der Reis 9 Tage. Wie lange reicht er für 15 Gäste?',numbers:[{label:'25 Gäste',value:25,type:'A1'},{label:'9 Tage',value:9,type:'B1'},{label:'15 Gäste',value:15,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:72,category:'A',unit:'Stunden',sentence:'Die Aufgabe dauert {value} Stunden.',text:'12 Bauarbeiter arbeiten 4 Stunden. Wie lange brauchen 8 Bauarbeiter für die gleiche Aufgabe?',numbers:[{label:'12 Bauarbeiter',value:12,type:'A1'},{label:'4 Stunden',value:4,type:'B1'},{label:'8 Bauarbeiter',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:73,category:'A',unit:'Minuten',sentence:'Die Reinigung dauert {value} Minuten.',text:'5 Auszubildende reinigen die Zimmer in einem Hotel in 72 Minuten. Wie lange brauchen 9 Auszubildende?',numbers:[{label:'5 Auszubildende',value:5,type:'A1'},{label:'72 Minuten',value:72,type:'B1'},{label:'9 Auszubildende',value:9,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:74,category:'A',unit:'Tage',sentence:'Das Fleisch reicht {value} Tage.',text:'Für 28 Gäste reicht das Fleisch 10 Tage. Wie lange reicht es für 35 Gäste?',numbers:[{label:'28 Gäste',value:28,type:'A1'},{label:'10 Tage',value:10,type:'B1'},{label:'35 Gäste',value:35,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:75,category:'A',unit:'Brötchen',sentence:'Auf jedem Tablett sind {value} Brötchen.',text:'Es gibt 8 Tabletts. Auf jedem Tablett sind 9 Brötchen. Wie viele Brötchen sind auf jedem Tablett, wenn sie auf 6 Tabletts verteilt werden?',numbers:[{label:'8 Tabletts',value:8,type:'A1'},{label:'9 Brötchen',value:9,type:'B1'},{label:'6 Tabletts',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:76,category:'A',unit:'Stunden',sentence:'Die Reinigung dauert {value} Stunden.',text:'9 Reinigungskräfte brauchen für eine Gebäudereinigung 5 Stunden. Wie lange brauchen 15 Reinigungskräfte?',numbers:[{label:'9 Reinigungskräfte',value:9,type:'A1'},{label:'5 Stunden',value:5,type:'B1'},{label:'15 Reinigungskräfte',value:15,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:77,category:'A',unit:'Tage',sentence:'Die Getränke reichen {value} Tage.',text:'Für 50 Gäste reichen die Getränke in einem Hotel für 4 Tage. Wie lange reichen die Getränke, wenn nur 20 Gäste dort sind?',numbers:[{label:'50 Gäste',value:50,type:'A1'},{label:'4 Tage',value:4,type:'B1'},{label:'20 Gäste',value:20,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:78,category:'A',unit:'Minuten',sentence:'Das Schneiden dauert {value} Minuten.',text:'5 Köche schneiden Gemüse in 60 Minuten. Wie lange brauchen 6 Köche?',numbers:[{label:'5 Köche',value:5,type:'A1'},{label:'60 Minuten',value:60,type:'B1'},{label:'6 Köche',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:79,category:'A',unit:'Minuten',sentence:'Das Anrichten dauert {value} Minuten.',text:'6 Köche richten die Teller in 10 Minuten an. Wie lange brauchen 4 Köche?',numbers:[{label:'6 Köche',value:6,type:'A1'},{label:'10 Minuten',value:10,type:'B1'},{label:'4 Köche',value:4,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:80,category:'A',unit:'Gläser',sentence:'Auf jedem Tisch stehen {value} Gläser.',text:'Es gibt 10 Tische. Auf jedem Tisch stehen zum Empfang 12 Gläser. Wie viele Gläser wären auf jeden Tisch, wenn es 15 Tische geben würde?',numbers:[{label:'10 Tische',value:10,type:'A1'},{label:'12 Gläser',value:12,type:'B1'},{label:'15 Tische',value:15,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:81,category:'A',unit:'Tage',sentence:'Die Zwiebeln reichen für {value} Tage.',text:'Für 16 Gäste reichen die Zwiebeln 12 Tage. Wie lange reichen sie für 24 Gäste?',numbers:[{label:'16 Gäste',value:16,type:'A1'},{label:'12 Tage',value:12,type:'B1'},{label:'24 Gäste',value:24,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:82,category:'A',unit:'Stunden',sentence:'Das Pflücken dauert {value} Stunden.',text:'6 Personen pflücken alle Äpfel in 4 Stunden. Wie lange brauchen 8 Personen?',numbers:[{label:'6 Personen',value:6,type:'A1'},{label:'4 Stunden',value:4,type:'B1'},{label:'8 Personen',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:83,category:'A',unit:'Minuten',sentence:'Die Vorbereitung dauert {value} Minuten.',text:'4 Köche brauchen für die Vorbereitung 105 Minuten. Wie lange brauchen 7 Köche?',numbers:[{label:'4 Köche',value:4,type:'A1'},{label:'105 Minuten',value:105,type:'B1'},{label:'7 Köche',value:7,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:84,category:'A',unit:'Stunden',sentence:'Die Maschinen brauchen {value} Stunden.',text:'3 Maschinen füllen Saft in Flaschen und brauchen dafür 12 Stunden. Wie lange brauchen 8 Maschinen für die gleiche Menge Saft?',numbers:[{label:'3 Maschinen',value:3,type:'A1'},{label:'12 Stunden',value:12,type:'B1'},{label:'8 Maschinen',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:85,category:'A',unit:'Flaschen',sentence:'In jeder Kiste sind {value} Flaschen.',text:'Es gibt 6 Kisten. In jeder Kiste sind 16 Flaschen. Wie viele Flaschen kommen in jede Kiste, wenn es 8 Kisten gibt?',numbers:[{label:'6 Kisten',value:6,type:'A1'},{label:'16 Flaschen',value:16,type:'B1'},{label:'8 Kisten',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:86,category:'A',unit:'Tage',sentence:'Die Kartoffeln reichen für {value} Tage.',text:'Für 45 Gäste reichen die Kartoffeln 5 Tage. Wie lange reichen sie für 30 Gäste?',numbers:[{label:'45 Gäste',value:45,type:'A1'},{label:'5 Tage',value:5,type:'B1'},{label:'30 Gäste',value:30,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:87,category:'A',unit:'Minuten',sentence:'Das Schneiden dauert {value} Minuten.',text:'14 Küchenkräfte schneiden Zwiebeln in 3 Minuten. Wie lange brauchen 6 Küchenkräfte?',numbers:[{label:'14 Küchenkräfte',value:14,type:'A1'},{label:'3 Minuten',value:3,type:'B1'},{label:'6 Küchenkräfte',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:88,category:'A',unit:'Minuten',sentence:'Das Aufräumen dauert {value} Minuten.',text:'8 Servicekräfte räumen den Saal in 54 Minuten auf. Wie lange brauchen 12 Servicekräfte?',numbers:[{label:'8 Servicekräfte',value:8,type:'A1'},{label:'54 Minuten',value:54,type:'B1'},{label:'12 Servicekräfte',value:12,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:89,category:'A',unit:'Tage',sentence:'Die Nudeln reichen für {value} Tage.',text:'Für 27 Gäste reichen die Nudeln für 8 Tage. Wie lange reichen sie für 18 Gäste?',numbers:[{label:'27 Gäste',value:27,type:'A1'},{label:'8 Tage',value:8,type:'B1'},{label:'18 Gäste',value:18,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:90,category:'A',unit:'Stücke',sentence:'Auf jeder Platte liegen {value} Stücke Kuchen.',text:'Auf 4 Platten liegen jeweils 18 Stücke Kuchen. Wie viele Stücke liegen auf jeder Platte, wenn der Kuchen auf 6 Platten verteilt wird?',numbers:[{label:'4 Platten',value:4,type:'A1'},{label:'18 Stücke',value:18,type:'B1'},{label:'6 Platten',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:91,category:'A',unit:'Stunden',sentence:'Die Ernte dauert {value} Stunden.',text:'5 Erntemaschinen brauchen für die Ernte von Kartoffeln 8 Stunden. Wie lange dauert es mit 4 Erntemaschinen?',numbers:[{label:'5 Erntemaschinen',value:5,type:'A1'},{label:'8 Stunden',value:8,type:'B1'},{label:'4 Erntemaschinen',value:4,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:92,category:'A',unit:'Tage',sentence:'Der Vorrat reicht {value} Tage.',text:'Für 32 Gäste reicht der Vorrat 9 Tage. Wie lange reicht er für 48 Gäste?',numbers:[{label:'32 Gäste',value:32,type:'A1'},{label:'9 Tage',value:9,type:'B1'},{label:'48 Gäste',value:48,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:93,category:'A',unit:'Minuten',sentence:'Das Schneiden dauert {value} Minuten.',text:'10 Küchenkräfte schneiden Obst in 36 Minuten. Wie lange brauchen 6 Küchenkräfte?',numbers:[{label:'10 Küchenkräfte',value:10,type:'A1'},{label:'36 Minuten',value:36,type:'B1'},{label:'6 Küchenkräfte',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:94,category:'A',unit:'Minuten',sentence:'Die Arbeiter brauchen {value} Minuten.',text:'4 Arbeiter schaffen eine Aufgabe in 15 Minuten. Wie lange brauchen 12 Arbeiter für die gleiche Aufgabe?',numbers:[{label:'4 Arbeiter',value:4,type:'A1'},{label:'15 Minuten',value:15,type:'B1'},{label:'12 Arbeiter',value:12,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:95,category:'A',unit:'Kartoffeln',sentence:'In jeder Schale sind dann {value} Kartoffeln.',text:'Es gibt 7 Schalen. In jeder Schale sind 20 Kartoffeln. Wie viele Kartoffeln kommen in jede Schale, wenn es nur 5 Schalen geben soll?',numbers:[{label:'7 Schalen',value:7,type:'A1'},{label:'20 Kartoffeln',value:20,type:'B1'},{label:'5 Schalen',value:5,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:96,category:'A',unit:'Tage',sentence:'Das Mineralwasser reicht für {value} Tage.',text:'Für 36 Gäste reicht das Mineralwasser im Getränkekeller für 7 Tage. Wie lange reicht es für 21 Gäste?',numbers:[{label:'36 Gäste',value:36,type:'A1'},{label:'7 Tage',value:7,type:'B1'},{label:'21 Gäste',value:21,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:97,category:'A',unit:'Minuten',sentence:'Das Abräumen dauert {value} Minuten.',text:'6 Servicekräfte räumen die Tische in 11 Minuten ab. Wie lange brauchen 8 Servicekräfte für das Abräumen?',numbers:[{label:'6 Servicekräfte',value:6,type:'A1'},{label:'11 Minuten',value:11,type:'B1'},{label:'8 Servicekräfte',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:98,category:'A',unit:'Minuten',sentence:'Das Lampenöl reicht für {value} Minuten.',text:'3 Öllampen brennen mit einer Flasche Lampenöl 120 Minuten. Wie lange brennen 8 Öllampen mit der gleichen Menge Lampenöl?',numbers:[{label:'3 Öllampen',value:3,type:'A1'},{label:'120 Minuten',value:120,type:'B1'},{label:'8 Öllampen',value:8,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:99,category:'A',unit:'Brötchen',sentence:'Auf jeder Platte liegen dann {value} Brötchen.',text:'Es gibt 9 Platten. Auf jeder Platte liegen 12 Brötchen. Wie viele Brötchen liegen auf jeder Platte, wenn sie auf 6 Platten verteilt werden?',numbers:[{label:'9 Platten',value:9,type:'A1'},{label:'12 Brötchen',value:12,type:'B1'},{label:'6 Platten',value:6,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+{id:100,category:'A',unit:'Tage',sentence:'Der Saft reicht für {value} Tage.',text:'Für 22 Gäste reicht der Saft 12 Tage. Wie lange reicht er für 33 Gäste?',numbers:[{label:'22 Gäste',value:22,type:'A1'},{label:'12 Tage',value:12,type:'B1'},{label:'33 Gäste',value:33,type:'A2'}],seekType:'B2',hasDistractor:false,relation:'antiproportional'},
+];
+
+
+
+const CATEGORY_KEYS=['P','A'];
+function normalizeTask(task){return{...task,category:task.category||'P',hasDistractor:Boolean(task.hasDistractor),relation:task.relation||'proportional'}}
+const TASK_GROUPS={
+  // 1. Proportionaler Dreisatz
+  P:[...PROPORTIONAL_TASKS],
+  // 2. Antiproportionaler Dreisatz  
+  A:[...ANTIPROPORTIONAL_TASKS]
+};
+function makeSeededRandom(seed){let state=seed>>>0;return()=>{state=(1664525*state+1013904223)>>>0;return state/4294967296}}
+function shuffleSeeded(list,rand){const copy=[...list];for(let i=copy.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+function canArrangeWithRunLimit(remaining,maxRun){const total=CATEGORY_KEYS.reduce((sum,key)=>sum+remaining[key],0);for(const key of CATEGORY_KEYS){const own=remaining[key];const others=total-own;if(own>maxRun*(others+1))return false}return true}
+function buildFixedCategorySequence(counts,maxRun,rand,startLast='',startRunLen=0){const remaining={...counts};const total=CATEGORY_KEYS.reduce((sum,key)=>sum+remaining[key],0);const sequence=[];let last=startLast;let runLen=startRunLen;for(let i=0;i<total;i++){const available=CATEGORY_KEYS.filter(key=>remaining[key]>0&&(key!==last||runLen<maxRun));const feasible=available.filter(key=>{remaining[key]-=1;const ok=canArrangeWithRunLimit(remaining,maxRun);remaining[key]+=1;return ok});const pool=feasible.length?feasible:available;if(!pool.length)break;const weights=pool.map(key=>remaining[key]);const sumWeights=weights.reduce((a,b)=>a+b,0);let pick=rand()*sumWeights;let choice=pool[pool.length-1];for(let idx=0;idx<pool.length;idx++){pick-=weights[idx];if(pick<=0){choice=pool[idx];break}}sequence.push(choice);remaining[choice]-=1;if(choice===last){runLen+=1}else{last=choice;runLen=1}}return sequence}
+function getLastCategoryRun(items){if(!items.length)return{last:'',runLen:0};let last=items[items.length-1].category;let runLen=0;for(let i=items.length-1;i>=0;i--){if(items[i].category===last)runLen+=1;else break}return{last,runLen}}
+function buildFixedTaskSequenceChunk(tasks,seed,maxRun,startLast='',startRunLen=0){const rand=makeSeededRandom(seed);const normalized=tasks.map(normalizeTask);const queues=Object.fromEntries(CATEGORY_KEYS.map(key=>[key,shuffleSeeded(normalized.filter(task=>task.category===key),rand)]));const counts=Object.fromEntries(CATEGORY_KEYS.map(key=>[key,queues[key].length]));const categorySequence=buildFixedCategorySequence(counts,maxRun,rand,startLast,startRunLen);const ordered=[];for(const key of categorySequence){const next=queues[key].shift();if(next)ordered.push(next)}return ordered}
+function buildFixedTaskSequence(tasks,seed,maxRun,options={}){const normalized=tasks.map(normalizeTask);const delayedIds=new Set(options.delayedIds||[]);const minDelayedPosition=Math.max(1,Number(options.minDelayedPosition)||1);if(!delayedIds.size||minDelayedPosition<=1)return buildFixedTaskSequenceChunk(normalized,seed,maxRun);const immediate=normalized.filter(task=>!delayedIds.has(task.id));const delayed=normalized.filter(task=>delayedIds.has(task.id));const earlyLimit=Math.min(Math.max(0,minDelayedPosition-1),immediate.length);const immediateOrdered=buildFixedTaskSequenceChunk(immediate,seed,maxRun);const early=immediateOrdered.slice(0,earlyLimit);const remaining=[...immediateOrdered.slice(earlyLimit),...delayed];const tailStart=getLastCategoryRun(early);const tailOrdered=buildFixedTaskSequenceChunk(remaining,seed+1,maxRun,tailStart.last,tailStart.runLen);return[...early,...tailOrdered]}
+const ALL_TASKS=CATEGORY_KEYS.flatMap(key=>TASK_GROUPS[key]).map(normalizeTask);
+const DELAYED_IDS=[55,59,65,70,75,80,85,90,95,99];
+const TASKS=buildFixedTaskSequence(ALL_TASKS,20260501,3,{delayedIds:DELAYED_IDS,minDelayedPosition:60});
+const STORAGE_KEY='be2_dreisatz_v1';
+const ACTIVE_TIME_KEY='be2_dreisatz_active_time_v1';
+let activeMiniKeyboardInput=null;
+let activeMiniKeyboardReplaceValue=false;
+let activeSeconds=loadActiveSeconds();
+let activeTimer=null;
+let appState=loadState();
+let savedKeyboardMode=null;
+let wasMobile=window.innerWidth<=768;
+function createDefaultState(){const solved={};const attempted={};TASKS.forEach(t=>{solved[t.id]=false;attempted[t.id]=false});return{index:0,difficulty:'easy',correct:0,calc:'0',calcJustEvaluated:false,keyboardMode:false,solved,attempted,selectedFormula:'',selectedTarget:'',step1ok:false,step2ok:false,step3ok:false,step4ok:false,startTime:Date.now(),needsStartTimeReset:false}};
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return createDefaultState();const parsed=JSON.parse(raw);const base=createDefaultState();const merged={...base,...parsed,solved:{...base.solved,...(parsed.solved||{})},attempted:{...base.attempted,...(parsed.attempted||{})}};merged.index=Math.min(Math.max(Number(merged.index)||0,0),Math.max(TASKS.length-1,0));merged.correct=Object.values(merged.solved).filter(Boolean).length;if(!merged.startTime)merged.startTime=Date.now();return merged}catch(e){return createDefaultState()}}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appState))}
+function loadActiveSeconds(){try{const raw=localStorage.getItem(ACTIVE_TIME_KEY);const n=Number(raw);return Number.isFinite(n)&&n>=0?n:0}catch(e){return 0}}
+function saveActiveSeconds(){localStorage.setItem(ACTIVE_TIME_KEY,String(activeSeconds))}
+function formatActiveTime(totalSeconds){const m=Math.floor(totalSeconds/60);const s=totalSeconds%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function currentTask(){return TASKS[appState.index]}
+function round2(n){return Math.round((n+Number.EPSILON)*100)/100}
+function parseInputNumber(text){const cleaned=String(text).trim().replace(/\./g,'').replace(',', '.');const num=Number(cleaned);return Number.isFinite(num)?num:NaN}
+function computeAnswer(task){const values={};task.numbers.forEach(n=>{const key=n.type;values[key]=Number(n.value)});if(task.relation==='proportional'){return round2((values.A2*values.B1)/values.A1)}else{return round2((values.A1*values.B1)/values.A2)}}
+function formatNumberDE(value){const n=Number(value);if(Number.isInteger(n))return String(n);return n.toLocaleString('de-DE',{maximumFractionDigits:2,minimumFractionDigits:2})}
+function levelName(level){return level==='easy'?'mit Hilfe rechnen':level==='medium'?'Schritt für Schritt':'alleine rechnen'}
+function escapeHtml(text){return String(text??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function formatNewPriceQuestion(question){return escapeHtml(question)}
+function getTaskTextHtml(task){if(!task)return'Keine Aufgabe gefunden.';return escapeHtml(task.text)}
+function getRelationLabel(relation){return relation==='proportional'?'gleicher Dreisatz':'ungleicher Dreisatz'}
+function shuffleItemsForTask(items,seed){const rand=makeSeededRandom(seed);const copy=[...items];for(let i=copy.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+function getSelectedSoughtValueIndex(){const selected=document.querySelector('#soughtValueChoices input[name="soughtValue"]:checked');return selected?Number(selected.value):null}
+function getSelectedRelationType(){const selected=document.querySelector('#classifyBox input[name="relationType"]:checked');return selected?selected.value:''}
+function hasAnsweredStep3(){return appState.difficulty==='easy'?appState.step3ok:getSelectedSoughtValueIndex()!==null}
+function getMediumMissingItems(){if(appState.difficulty!=='medium')return[];const missing=[];const hasRelation=Boolean(document.querySelector('#classifyBox input[name="relationType"]:checked'));const checkedPairs=document.querySelectorAll('#pairChoices input:checked').length;const hasSought=Boolean(document.querySelector('#soughtValueChoices input[name="soughtValue"]:checked'));const schemaFields=[...document.querySelectorAll('.schema-cell')];const allSchemaFilled=schemaFields.length>0&&schemaFields.every(field=>String(field.value).trim()!=='');if(!hasRelation)missing.push('Schritt 1 beantworten');if(checkedPairs!==2)missing.push('In Schritt 2 genau 2 Werte wählen');if(!hasSought)missing.push('Schritt 3 beantworten');if(!allSchemaFilled)missing.push('Alle Tabellenfelder ausfüllen');return missing}
+function isMediumReadyForCheck(){return getMediumMissingItems().length===0}
+function updateMediumCheckButtonState(){const btn=document.getElementById('checkStep4Btn');if(!btn)return;const mediumPending=appState.difficulty==='medium'&&!isMediumReadyForCheck();btn.disabled=false;btn.setAttribute('aria-disabled',mediumPending?'true':'false');btn.title=mediumPending?'Bitte erst alle Aufgaben und Felder ausfuellen.':''}
+function getStep3Choices(task){return[task.numbers[0].label.replace(/[0-9.,]+\s*/g,'').trim(),task.numbers[1].label.replace(/[0-9.,]+\s*/g,'').trim()]}
+function getDisplayedTableHeaders(task){const choices=getStep3Choices(task);const selectedIndex=getSelectedSoughtValueIndex();if(selectedIndex===0||selectedIndex===1){return[choices[1-selectedIndex],choices[selectedIndex]]}return choices}
+function getCurrentSchemaValues(){const values={};document.querySelectorAll('.schema-cell').forEach(field=>{values[field.dataset.var]=field.value});return values}
+function bindSchemaCellInteractions(){document.querySelectorAll('.schema-cell').forEach(field=>{if(field.dataset.schemaBound==='1')return;field.dataset.schemaBound='1';const clearWrongField=()=>{if(!field.classList.contains('is-wrong'))return;field.value='';field.classList.remove('is-wrong','is-correct');updateMediumCheckButtonState()};field.addEventListener('focus',clearWrongField);field.addEventListener('pointerdown',clearWrongField)})}
+function setFeedback(id,type,text){const el=document.getElementById(id);el.className='feedback '+type;el.innerHTML=text}
+function clearFeedback(){['feedback1','feedback2','feedback3','feedback4','hardFeedback'].forEach(id=>{const el=document.getElementById(id);el.className='';el.textContent=''});document.getElementById('hardResultBox').classList.add('hidden');document.getElementById('step4ResultBox').classList.add('hidden')}
+function setJumpInputOverwriteState(active){const jumpInput=document.getElementById('jumpInput');if(!jumpInput)return;jumpInput.classList.toggle('overwrite-ready',active);jumpInput.dataset.overwriteOnKeyboard=active?'1':''}
+function selectJumpInputValue(input){if(!input||input.id!=='jumpInput'||appState.keyboardMode)return;requestAnimationFrame(()=>{try{input.select()}catch(e){}})}
+function enhanceInputsForKeyboard(){document.querySelectorAll('input[type="text"], input[type="number"], input[data-mini-kb="true"]').forEach(inp=>{if(inp.dataset.kbBound==='1')return;inp.dataset.kbBound='1';const allowMiniKeyboard=inp.dataset.miniKb!=='false'&&!inp.readOnly;if(!allowMiniKeyboard){inp.addEventListener('focus',()=>inp.blur());inp.addEventListener('pointerdown',e=>{e.preventDefault();inp.blur()});return}inp.addEventListener('pointerdown',e=>{if(isNumberInputSpinnerClick(inp,e)){inp.dataset.skipMiniKeyboard='spinner';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false);hideMiniKeyboard();return}if(inp.id==='jumpInput'){setJumpInputOverwriteState(appState.keyboardMode);selectJumpInputValue(inp)}});inp.addEventListener('focus',()=>{if(inp.dataset.skipMiniKeyboard==='spinner')return;if(inp.id==='jumpInput'&&!appState.keyboardMode){setJumpInputOverwriteState(false);selectJumpInputValue(inp);return}if(appState.keyboardMode)showMiniKeyboard(inp,{overwrite:inp.id==='jumpInput'||inp.dataset.overwriteOnKeyboard==='1'})});inp.addEventListener('click',()=>{if(inp.dataset.skipMiniKeyboard==='spinner'){inp.dataset.skipMiniKeyboard='';setJumpInputOverwriteState(false);hideMiniKeyboard();inp.blur();return}if(inp.id==='jumpInput'){setJumpInputOverwriteState(appState.keyboardMode);if(!appState.keyboardMode){selectJumpInputValue(inp);return}}if(appState.keyboardMode)showMiniKeyboard(inp,{overwrite:inp.id==='jumpInput'||inp.dataset.overwriteOnKeyboard==='1'})});inp.addEventListener('keydown',e=>{if(appState.keyboardMode)e.preventDefault();if(e.key==='Enter'&&inp.id==='jumpInput'){e.preventDefault();goToTask()}})})}
+function isMiniKeyboardTarget(element){return element instanceof Element&&Boolean(element.closest('input[type="text"]:not([data-mini-kb="false"]), input[type="number"], input[data-mini-kb="true"]'))}
+function isNumberInputSpinnerClick(input,event){if(input.type!=='number')return false;const rect=input.getBoundingClientRect();const spinnerZoneWidth=36;return event.clientX>=rect.right-spinnerZoneWidth}
+function positionMiniKeyboard(input){const kb=document.getElementById('miniKeyboard');const r=input.getBoundingClientRect();const kbHeight=170;const spaceBelow=window.innerHeight-r.bottom;const spaceAbove=r.top;let top;if(spaceBelow>=kbHeight+8){top=r.bottom+8}else if(spaceAbove>=kbHeight+8){top=r.top-kbHeight-8}else{top=Math.max(8,window.innerHeight-kbHeight-8)}const left=Math.min(window.innerWidth-240,Math.max(8,r.left));kb.style.top=top+'px';kb.style.left=left+'px'}
+function showMiniKeyboard(input,options={}){activeMiniKeyboardInput=input;activeMiniKeyboardReplaceValue=Boolean(options.overwrite);setJumpInputOverwriteState(input.id==='jumpInput'&&activeMiniKeyboardReplaceValue);positionMiniKeyboard(input);input.blur();document.getElementById('miniKeyboard').style.display='block'}
+function hideMiniKeyboard(){document.getElementById('miniKeyboard').style.display='none';activeMiniKeyboardInput=null;activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false)}
+function renderTask(){removeNextButtonHighlight();if(appState.index>=TASKS.length)appState.index=Math.max(0,TASKS.length-1);const task=currentTask();appState.selectedFormula='';appState.step1ok=false;appState.step2ok=false;appState.step3ok=false;appState.step4ok=false;clearFeedback();document.getElementById('taskText').innerHTML=getTaskTextHtml(task);document.getElementById('progressText').textContent=`Aufgabe ${appState.index+1} / ${TASKS.length}`;document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;document.getElementById('timeText').textContent='Zeit: '+formatActiveTime(activeSeconds);updateTimeDisplay();document.getElementById('jumpInput').value=task?appState.index+1:1;document.getElementById('jumpInput').max=Math.max(1,TASKS.length);document.getElementById('difficultySelect').value=appState.difficulty;document.getElementById('keyboardToggle').checked=!!appState.keyboardMode;document.getElementById('hardUnit').textContent=task?.unit||'';document.getElementById('hardAnswerInput').value='';const solvedMark=document.getElementById('solvedMark');if(task&&appState.solved[task.id])solvedMark.classList.add('visible');else solvedMark.classList.remove('visible');if(!task){saveState();return;}renderStep1(task);renderStep2(task);renderStep3(task);renderStep4(task);document.getElementById('guidedArea').classList.toggle('hidden',appState.difficulty==='hard');document.getElementById('hardArea').classList.toggle('hidden',appState.difficulty!=='hard');updateStepLock();enhanceInputsForKeyboard();hideMiniKeyboard();saveState()}
+function renderStep1(task){const box=document.getElementById('classifyBox');box.innerHTML='';const grid=document.createElement('div');grid.className='pair-grid';const options=[{value:'proportional',label:'gleicher Dreisatz'},{value:'antiproportional',label:'ungleicher Dreisatz'}];options.forEach(option=>{const item=document.createElement('label');item.className='pair-choice';item.innerHTML=`<input type="radio" name="relationType" value="${option.value}" /><span><strong>${escapeHtml(option.label)}</strong></span>`;const input=item.querySelector('input');input.addEventListener('change',()=>{grid.querySelectorAll('.pair-choice').forEach(choice=>choice.classList.remove('selected'));if(input.checked)item.classList.add('selected');if(appState.difficulty==='medium')renderStep4(currentTask());updateMediumCheckButtonState()});grid.appendChild(item)});box.appendChild(grid)}
+function renderStep2(task){const pairWrap=document.getElementById('pairChoices');pairWrap.innerHTML='';const grid=document.createElement('div');grid.className='pair-grid';const shuffledNumbers=shuffleItemsForTask(task.numbers.map((item,index)=>({item,index})),task.id*97+13);shuffledNumbers.forEach(({item,index})=>{const label=document.createElement('label');label.className='pair-choice';label.innerHTML=`<input type="checkbox" data-index="${index}" /><span><strong>${escapeHtml(item.label)}</strong></span>`;const checkbox=label.querySelector('input');checkbox.addEventListener('change',()=>{const checked=[...grid.querySelectorAll('input:checked')];if(checked.length>2){checkbox.checked=false;return}label.classList.toggle('selected',checkbox.checked);grid.querySelectorAll('.pair-choice').forEach(choice=>{const input=choice.querySelector('input');choice.classList.toggle('selected',input.checked)});updateMediumCheckButtonState()});grid.appendChild(label)});pairWrap.appendChild(grid)}
+function renderStep3(task){const wrap=document.getElementById('soughtValueChoices');wrap.innerHTML='';const grid=document.createElement('div');grid.className='pair-grid';const choices=getStep3Choices(task);choices.forEach((choice,index)=>{const label=document.createElement('label');label.className='pair-choice';label.innerHTML=`<input type="radio" name="soughtValue" value="${index}" /><span><strong>${escapeHtml(choice)}</strong></span>`;const input=label.querySelector('input');input.addEventListener('change',()=>{grid.querySelectorAll('.pair-choice').forEach(item=>item.classList.remove('selected'));if(input.checked)label.classList.add('selected');if(appState.difficulty==='medium')renderStep4(currentTask());updateMediumCheckButtonState()});grid.appendChild(label)});wrap.appendChild(grid)}
+function getSchemaSideSigns(task){const relation=appState.difficulty==='medium'?getSelectedRelationType():task.relation;if(!relation)return null;if(relation==='proportional'){return{left:[':','·'],right:[':','·']}}return{left:[':','·'],right:['·',':']}}
+function renderTableSchema(task,options={}){const nums={};task.numbers.forEach(n=>{nums[n.type]=n});const A1=nums['A1'];const B1=nums['B1'];const revealColumnNames=options.revealColumnNames!==false;const showHint=options.showHint!==false;const prefillValues=options.prefillValues||{};const [headerLeft,headerRight]=getDisplayedTableHeaders(task);const unitA=revealColumnNames?headerLeft:'';const unitB=revealColumnNames?headerRight:'';const signs=getSchemaSideSigns(task);const valueFor=key=>escapeHtml(prefillValues[key]??'');const topLeftSign=signs?escapeHtml(signs.left[0]):'·';const bottomLeftSign=signs?escapeHtml(signs.left[1]):'·';const topRightSign=signs?escapeHtml(signs.right[0]):'·';const bottomRightSign=signs?escapeHtml(signs.right[1]):'·';const hiddenClass=signs?'':' is-hidden';const leftSide=`<aside class="schema-side" aria-hidden="true"><span class="schema-side-spacer"></span><span class="schema-side-sign top${hiddenClass}">${topLeftSign}</span><span class="schema-side-sign bottom${hiddenClass}">${bottomLeftSign}</span></aside>`;const rightSide=`<aside class="schema-side" aria-hidden="true"><span class="schema-side-spacer"></span><span class="schema-side-sign top${hiddenClass}">${topRightSign}</span><span class="schema-side-sign bottom${hiddenClass}">${bottomRightSign}</span></aside>`;const hintHtml=showHint?'<div class="schema-hint">Du kannst auch nach jeder Zahl auf "Prüfen" klicken.<br>So siehst du gleich, ob du richtig rechnest.</div>':'';return`<div class="schema-layout">${leftSide}<div><table class="schema-table"><thead><tr><th></th><th>${escapeHtml(unitA)}</th><th>${escapeHtml(unitB)}</th></tr></thead><tbody><tr><td class="schema-row-title">gegebenes Wertepaar</td><td><input class="small-input schema-cell" data-var="A1" type="text" placeholder="?" value="${valueFor('A1')}" /></td><td><input class="small-input schema-cell" data-var="B1" type="text" placeholder="?" value="${valueFor('B1')}" /></td></tr><tr><td class="schema-row-title">Wert für 1</td><td><input class="small-input schema-cell" data-var="A-MID" type="text" placeholder="?" value="${valueFor('A-MID')}" /></td><td><input class="small-input schema-cell" data-var="B-MID" type="text" placeholder="?" value="${valueFor('B-MID')}" /></td></tr><tr><td class="schema-row-title">gesuchtes Wertepaar</td><td><input class="small-input schema-cell" data-var="A2" type="text" placeholder="?" value="${valueFor('A2')}" /></td><td><input class="small-input schema-cell" data-var="B2" type="text" placeholder="?" value="${valueFor('B2')}" /></td></tr></tbody></table>${hintHtml}</div>${rightSide}</div>`}
+function positionSchemaSigns(){const layout=document.querySelector('#formulaEntry .schema-layout');if(!layout)return;const table=layout.querySelector('.schema-table');if(!table)return;const rows=table.querySelectorAll('tbody tr');if(rows.length<2)return;const firstRowRect=rows[0].getBoundingClientRect();const secondRowRect=rows[1].getBoundingClientRect();layout.querySelectorAll('.schema-side').forEach(side=>{const sideRect=side.getBoundingClientRect();const topSign=side.querySelector('.schema-side-sign.top');const bottomSign=side.querySelector('.schema-side-sign.bottom');if(topSign)topSign.style.top=(firstRowRect.bottom-sideRect.top)+'px';if(bottomSign)bottomSign.style.top=(secondRowRect.bottom-sideRect.top)+'px'})}
+function renderStep4(task){const box=document.getElementById('formulaEntry');if(appState.difficulty==='easy'){if(!appState.step3ok){box.innerHTML='<div class="help">Erst Schritt 3 richtig lösen.</div>';return}box.innerHTML=renderTableSchema(task,{revealColumnNames:true,showHint:true});enhanceInputsForKeyboard();bindSchemaCellInteractions();requestAnimationFrame(positionSchemaSigns);return}if(appState.difficulty==='medium'){const prefillValues=getCurrentSchemaValues();box.innerHTML=renderTableSchema(task,{revealColumnNames:hasAnsweredStep3(),showHint:false,prefillValues});enhanceInputsForKeyboard();bindSchemaCellInteractions();box.querySelectorAll('.schema-cell').forEach(field=>{field.addEventListener('input',updateMediumCheckButtonState)});requestAnimationFrame(()=>{positionSchemaSigns();updateMediumCheckButtonState()});return}box.innerHTML='<div class="help">Im schweren Niveau gibt es hier keinen Zwischenschritt.</div>'}
+function updateStepLock(){const isMedium=appState.difficulty==='medium';document.getElementById('checkStep1Btn').style.display=isMedium?'none':'block';document.getElementById('checkStep2Btn').style.display=isMedium?'none':'block';document.getElementById('checkStep3Btn').style.display=isMedium?'none':'block';document.getElementById('checkStep4Btn').style.display='block';document.getElementById('feedback1').style.display='block';document.getElementById('feedback2').style.display='block';document.getElementById('feedback3').style.display='block';document.getElementById('feedback4').style.display='block';if(appState.difficulty!=='easy'){['step2','step3','step4'].forEach(id=>{document.getElementById(id).style.opacity='1';document.querySelectorAll('#'+id+' input, #'+id+' select, #'+id+' button, #'+id+' .formula-choice, #'+id+' .target-btn, #'+id+' .pair-choice').forEach(el=>el.style.pointerEvents='auto')});updateMediumCheckButtonState();return}const config=[{id:'step2',active:appState.step1ok},{id:'step3',active:appState.step2ok},{id:'step4',active:appState.step3ok}];config.forEach(item=>{document.getElementById(item.id).style.opacity=item.active?'1':'.45';document.querySelectorAll('#'+item.id+' input, #'+item.id+' select, #'+item.id+' button, #'+item.id+' .formula-choice, #'+item.id+' .target-btn, #'+item.id+' .pair-choice').forEach(el=>el.style.pointerEvents=item.active?'auto':'none')});updateMediumCheckButtonState()}
+function isStep1Correct(task){const selected=document.querySelector('#classifyBox input[name="relationType"]:checked');return Boolean(selected&&selected.value===task.relation)}
+function isStep2Correct(){const checked=[...document.querySelectorAll('#pairChoices input:checked')].map(input=>Number(input.dataset.index)).sort((a,b)=>a-b);const expected=[0,1];return checked.length===2&&checked.every((value,index)=>value===expected[index])}
+function isStep3Correct(){const selected=document.querySelector('#soughtValueChoices input[name="soughtValue"]:checked');return Boolean(selected&&Number(selected.value)===1)}
+function checkStep1(){const task=currentTask();const selected=document.querySelector('#classifyBox input[name="relationType"]:checked');const ok=selected&&selected.value===task.relation;appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step1ok=Boolean(ok);const successText=task.relation==='proportional'?'Richtig. Auf beiden Seiten wird das gleiche gerechnet.':'Richtig. Auf der rechten Seite wird das Gegenteil gerechnet.';setFeedback('feedback1',ok?'ok':'bad',ok?successText:'Noch nicht richtig. Ist es ein gleicher oder ungleicher Dreisatz?');updateStepLock()}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function checkStep2(){const task=currentTask();const checked=[...document.querySelectorAll('#pairChoices input:checked')].map(input=>Number(input.dataset.index)).sort((a,b)=>a-b);const expected=[0,1];const ok=checked.length===2&&checked.every((value,index)=>value===expected[index]);appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step2ok=ok;setFeedback('feedback2',ok?'ok':'bad',ok?'Richtig. Dieses Wertepaar steht in der Tabelle oben.':'Noch nicht richtig. Markiere genau die beiden Werte, die als gegebenes Wertepaar zusammengehören.');updateStepLock()}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function checkStep3(){const task=currentTask();const selected=document.querySelector('#soughtValueChoices input[name="soughtValue"]:checked');const ok=selected&&Number(selected.value)===1;appState.attempted[task.id]=true;if(appState.difficulty==='easy'){appState.step3ok=Boolean(ok);setFeedback('feedback3',ok?'ok':'bad',ok?'Richtig. Der gesuchte Wert steht in der Tabelle rechts.':'Noch nicht richtig. Gesucht ist die Ergebnis-Spalte.');renderStep4(task);updateStepLock()}else{renderStep4(task)}document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function expectedSchemaValues(task){const nums={};task.numbers.forEach(n=>{nums[n.type]=Number(n.value)});const answer=computeAnswer(task);if(task.relation==='proportional'){return{'A1':nums.A1,'B1':nums.B1,'A-MID':1,'B-MID':round2(nums.B1/nums.A1),'A2':nums.A2,'B2':answer}};return{'A1':nums.A1,'B1':nums.B1,'A-MID':1,'B-MID':round2(nums.A1*nums.B1),'A2':nums.A2,'B2':answer}}
+function checkStep4(){const task=currentTask();const step4ResultBox=document.getElementById('step4ResultBox');if(appState.difficulty==='medium'&&!isMediumReadyForCheck()){const missing=getMediumMissingItems();setFeedback('feedback4','bad','Bitte zuerst vervollständigen:<br>'+missing.join('<br>'));step4ResultBox.classList.add('hidden');return}const expectedValues=expectedSchemaValues(task);const fields=[...document.querySelectorAll('.schema-cell')];fields.forEach(field=>{const isCorrect=round2(parseInputNumber(field.value))===round2(expectedValues[field.dataset.var]);field.classList.remove('is-correct','is-wrong');field.classList.add(isCorrect?'is-correct':'is-wrong')});const tableOk=fields.every(field=>field.classList.contains('is-correct'));appState.attempted[task.id]=true;if(appState.difficulty!=='hard'){if(appState.difficulty==='medium'){const step1Ok=isStep1Correct(task);const step2Ok=isStep2Correct();const step3Ok=isStep3Correct();const wrongSteps=[];if(!step1Ok)wrongSteps.push('Schritt 1');if(!step2Ok)wrongSteps.push('Schritt 2');if(!step3Ok)wrongSteps.push('Schritt 3');appState.step1ok=step1Ok;appState.step2ok=step2Ok;appState.step3ok=step3Ok;appState.step4ok=tableOk;setFeedback('feedback1',step1Ok?'ok':'bad',step1Ok?'Richtig.':'Noch nicht richtig. Ist es ein gleicher oder ungleicher Dreisatz?');setFeedback('feedback2',step2Ok?'ok':'bad',step2Ok?'Richtig.':'Noch nicht richtig. Markiere genau die beiden Werte, die als gegebenes Wertepaar zusammengehören.');setFeedback('feedback3',step3Ok?'ok':'bad',step3Ok?'Richtig.':'Noch nicht richtig. Gesucht ist die Ergebnis-Spalte.');const allOk=step1Ok&&step2Ok&&step3Ok&&tableOk;if(allOk){markCorrect(task.id);highlightNextButton();setFeedback('feedback4','ok','Richtig.');step4ResultBox.textContent=task.sentence.replace('{value}',formatNumberDE(expectedValues.B2));step4ResultBox.classList.remove('hidden')}else if(tableOk){const extraHint=wrongSteps.length?'<br>Bitte prüfe zusätzlich: '+wrongSteps.join(', ')+'.':'';setFeedback('feedback4','bad','Die Tabelle stimmt.<br>Aber mindestens eine Antwort in Schritt 1 bis 3 ist noch falsch.'+extraHint);step4ResultBox.classList.add('hidden')}else{const extraHint=wrongSteps.length?'<br>Außerdem sind noch Fehler in: '+wrongSteps.join(', ')+'.':'';setFeedback('feedback4','bad','Noch nicht richtig. Richtige Werte sind grün markiert, falsche rot.'+extraHint);step4ResultBox.classList.add('hidden')} }else{appState.step4ok=tableOk;if(tableOk){markCorrect(task.id);highlightNextButton();setFeedback('feedback4','ok','Richtig.');step4ResultBox.textContent=task.sentence.replace('{value}',formatNumberDE(expectedValues.B2));step4ResultBox.classList.remove('hidden')}else{setFeedback('feedback4','bad','Noch nicht richtig. Richtige Werte sind grün markiert, falsche rot.');step4ResultBox.classList.add('hidden')}if(appState.difficulty==='easy')updateStepLock()}}document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function describeTaskType(type){if(type==='P')return'gleicher Dreisatz';return'ungleicher Dreisatz'}
+function evaluateMediumSolution(){return null}
+function applyMediumStepFeedback(){return null}
+function markCorrect(taskId){if(!appState.solved[taskId]){appState.solved[taskId]=true;appState.correct+=1;highlightNextButton()}}
+function highlightNextButton(){const nextBtn=document.getElementById('nextBtn');nextBtn.classList.add('success')}
+function removeNextButtonHighlight(){const nextBtn=document.getElementById('nextBtn');nextBtn.classList.remove('success')}
+function checkFinalAnswer(inputId,feedbackId,resultId){const task=currentTask();appState.attempted[task.id]=true;const answer=parseInputNumber(document.getElementById(inputId).value);const expected=computeAnswer(task);const ok=round2(answer)===round2(expected);if(ok){markCorrect(task.id);setFeedback(feedbackId,'ok','Richtig.');const box=document.getElementById(resultId);box.textContent=task.sentence.replace('{value}',formatNumberDE(expected));box.classList.remove('hidden')}else{setFeedback(feedbackId,'bad','Noch nicht richtig. Prüfe deine Rechnung.')}document.getElementById('correctText').textContent=`Richtige Lösungen: ${appState.correct}`;document.getElementById('doneText').textContent=`Bearbeitet: ${Object.values(appState.attempted).filter(Boolean).length}`;saveState()}
+function buildCalculator(){const keys=[{label:'AC',type:'action'},{label:'(',type:'op'},{label:')',type:'op'},{label:'÷',value:'/',type:'op'},{label:'7',type:'num'},{label:'8',type:'num'},{label:'9',type:'num'},{label:'×',value:'*',type:'op'},{label:'4',type:'num'},{label:'5',type:'num'},{label:'6',type:'num'},{label:'−',value:'-',type:'op'},{label:'1',type:'num'},{label:'2',type:'num'},{label:'3',type:'num'},{label:'+',type:'op'},{label:'0',type:'num',extra:'zero'},{label:',',value:'.',type:'num'},{label:'=',type:'equal'}];['calcGrid','calcGridOverlay'].forEach(gridId=>{const wrap=document.getElementById(gridId);if(!wrap)return;wrap.innerHTML='';keys.forEach(key=>{const btn=document.createElement('button');btn.className=`calc-btn ${key.type} ${key.extra||''}`;btn.textContent=key.label;btn.addEventListener('click',()=>calcPress(key.value||key.label));wrap.appendChild(btn)})});updateCalcDisplay()}
+function toggleCalcOverlay(){document.getElementById('calcOverlay').classList.toggle('active')}
+function updateCalcDisplay(){let v=appState.calc||'0';if(v.startsWith(','))v='0'+v;if(v.startsWith('-,') )v='-0'+v.slice(1);['calcDisplay','calcDisplayOverlay'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=v})}
+function calcPress(value){if(value==='AC'){appState.calc='0';appState.calcJustEvaluated=false;updateCalcDisplay();saveState();return}if(value==='='){try{const expr=(appState.calc||'0').replace(/,/g,'.');const safe=expr.replace(/[^0-9+\-*/().]/g,'');const result=Function('"use strict"; return ('+safe+')')();appState.calc=String(round2(result)).replace('.',',')}catch(e){appState.calc='Fehler'}appState.calcJustEvaluated=true;updateCalcDisplay();saveState();return}const isOperator=value==='+'||value==='-'||value==='*'||value==='/';if(appState.calcJustEvaluated){if(!isOperator)appState.calc='0';appState.calcJustEvaluated=false}if(appState.calc==='Fehler')appState.calc='0';if(appState.calc==='0'&&!isOperator&&value!=='.'&&value!==',')appState.calc='';appState.calc+=value==='.'?',':value;updateCalcDisplay();saveState()}
+function goToTask(){const nr=parseInt(document.getElementById('jumpInput').value,10);if(Number.isFinite(nr)&&nr>=1&&nr<=TASKS.length){appState.index=nr-1;renderTask()}}
+function goToRandomTask(){const allIndices=TASKS.map((_,index)=>index);const unsolvedIndices=TASKS.map((task,index)=>appState.solved[task.id]?null:index).filter(index=>index!==null);const pool=unsolvedIndices.length?unsolvedIndices:allIndices;let nextIndex=pool[Math.floor(Math.random()*pool.length)];if(pool.length>1&&nextIndex===appState.index){const alternatives=pool.filter(index=>index!==appState.index);nextIndex=alternatives[Math.floor(Math.random()*alternatives.length)]}appState.index=nextIndex;renderTask();window.scrollTo({top:0,behavior:'smooth'})}
+function resetAll(){if(confirm('Wirklich den ganzen Stand löschen?\nAuch die Bearbeitungszeit wird gelöscht.\n\nACHTUNG: Im Unterricht nicht löschen!')){appState=createDefaultState();activeSeconds=0;saveActiveSeconds();buildCalculator();renderTask();updateTimeDisplay()}}
+function startActiveTimer(){if(activeTimer||document.hidden)return;activeTimer=setInterval(()=>{if(!document.hidden&&document.hasFocus()){if(appState.needsStartTimeReset){appState.startTime=Date.now();appState.needsStartTimeReset=false;saveState()}activeSeconds+=1;saveActiveSeconds();updateTimeDisplay()}},1000)}
+function updateTimeDisplay(){const timeText=document.getElementById('timeText');const totalTime=Math.floor((Date.now()-appState.startTime)/1000);const inactiveTime=Math.max(0,totalTime-activeSeconds);if(totalTime>=7200&&!appState.needsStartTimeReset){appState.needsStartTimeReset=true;saveState()}const formattedTime=formatActiveTime(activeSeconds);const displayInactiveTime=appState.needsStartTimeReset?0:inactiveTime;timeText.innerHTML='<span title="Inaktive Zeit: '+formatActiveTime(displayInactiveTime)+'">Zeit</span>: '+formattedTime}
+function stopActiveTimer(){if(activeTimer){clearInterval(activeTimer);activeTimer=null}}
+document.getElementById('calcToggleBtn').addEventListener('click',toggleCalcOverlay);document.getElementById('calcOverlay').addEventListener('click',e=>{if(e.target.id==='calcOverlay'){toggleCalcOverlay()}});document.getElementById('checkStep1Btn').addEventListener('click',checkStep1);document.getElementById('checkStep2Btn').addEventListener('click',checkStep2);document.getElementById('checkStep3Btn').addEventListener('click',checkStep3);document.getElementById('checkStep4Btn').addEventListener('click',checkStep4);document.getElementById('checkHardBtn').addEventListener('click',()=>checkFinalAnswer('hardAnswerInput','hardFeedback','hardResultBox'));(()=>{const clearWrongHard=()=>{const fb=document.getElementById('hardFeedback');if(!fb.classList.contains('bad'))return;const inp=document.getElementById('hardAnswerInput');inp.value='';fb.className='';fb.textContent='';document.getElementById('hardResultBox').classList.add('hidden')};const inp=document.getElementById('hardAnswerInput');inp.addEventListener('focus',clearWrongHard);inp.addEventListener('pointerdown',clearWrongHard)})();document.getElementById('prevBtn').addEventListener('click',()=>{appState.index=Math.max(0,appState.index-1);renderTask();window.scrollTo({top:0,behavior:'smooth'})});document.getElementById('nextBtn').addEventListener('click',()=>{appState.index=Math.min(TASKS.length-1,appState.index+1);renderTask();window.scrollTo({top:0,behavior:'smooth'})});document.getElementById('jumpBtn').addEventListener('click',goToTask);document.getElementById('randomTaskBtn').addEventListener('click',goToRandomTask);document.getElementById('resetBtn').addEventListener('click',resetAll);document.getElementById('difficultySelect').addEventListener('change',e=>{appState.difficulty=e.target.value;renderTask()});document.getElementById('keyboardToggle').addEventListener('change',e=>{appState.keyboardMode=e.target.checked;hideMiniKeyboard();saveState();enhanceInputsForKeyboard()});document.getElementById('miniKeyboard').addEventListener('click',e=>{const btn=e.target.closest('[data-key]');if(!btn||!activeMiniKeyboardInput)return;const key=btn.dataset.key;if(key==='DEL'){if(activeMiniKeyboardReplaceValue){activeMiniKeyboardInput.value='';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false);return}activeMiniKeyboardInput.value=activeMiniKeyboardInput.value.slice(0,-1);return}if(activeMiniKeyboardReplaceValue){activeMiniKeyboardInput.value='';activeMiniKeyboardReplaceValue=false;setJumpInputOverwriteState(false)}activeMiniKeyboardInput.value+=key});document.addEventListener('click',e=>{const kb=document.getElementById('miniKeyboard');if(kb.style.display==='block'&&!e.target.closest('#miniKeyboard')&&!(appState.keyboardMode&&isMiniKeyboardTarget(e.target))){hideMiniKeyboard()}});document.addEventListener('visibilitychange',()=>{if(document.hidden)stopActiveTimer();else startActiveTimer()});window.addEventListener('focus',startActiveTimer);window.addEventListener('blur',stopActiveTimer);window.addEventListener('scroll',()=>{if(activeMiniKeyboardInput)positionMiniKeyboard(activeMiniKeyboardInput)});window.addEventListener('resize',()=>{if(activeMiniKeyboardInput)positionMiniKeyboard(activeMiniKeyboardInput)});
+function handleMobileKeyboard(){const isMobile=window.innerWidth<=768;if(isMobile&&!wasMobile){savedKeyboardMode=appState.keyboardMode;appState.keyboardMode=true;document.getElementById('keyboardToggle').checked=true;saveState();enhanceInputsForKeyboard()}else if(!isMobile&&wasMobile){if(savedKeyboardMode!==null){appState.keyboardMode=savedKeyboardMode;document.getElementById('keyboardToggle').checked=savedKeyboardMode;savedKeyboardMode=null;saveState();if(!appState.keyboardMode)hideMiniKeyboard()}}wasMobile=isMobile}
+if(window.innerWidth<=768){savedKeyboardMode=appState.keyboardMode;appState.keyboardMode=true;saveState()}
+function updateHeaderHeight(){const header=document.querySelector('header');if(header){const height=header.offsetHeight;document.documentElement.style.setProperty('--header-height',height+'px')}}
+updateHeaderHeight();
+window.addEventListener('resize',()=>{updateHeaderHeight();handleMobileKeyboard();positionSchemaSigns()});
+buildCalculator();renderTask();startActiveTimer();
+</script>
+</body>
+</html>
