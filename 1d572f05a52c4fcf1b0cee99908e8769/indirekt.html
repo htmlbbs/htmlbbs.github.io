@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direkte und indirekte Fragen – Übung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #f8bbd9);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1976d2;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .task {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #e1f5fe;
+            border-radius: 10px;
+            background: #f8fdff;
+        }
+        
+        .task-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 1.1em;
+            border-left: 4px solid #ff9800;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        
+        .feedback.correct {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        
+        .drag-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 2px dashed #bdbdbd;
+        }
+        
+        .draggable {
+            background: #2196f3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: grab;
+            user-select: none;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .draggable:hover {
+            background: #1976d2;
+            transform: scale(1.05);
+        }
+        
+        .draggable:active {
+            cursor: grabbing;
+        }
+        
+        .dropzone {
+            min-height: 60px;
+            background: #f8f8f8;
+            border: 3px dashed #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .dropzone.drag-over {
+            background: #e8f5e8;
+            border-color: #2e7d32;
+        }
+        
+        button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .hint {
+            background: #fff9c4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+            font-style: italic;
+        }
+        
+        .reset-btn {
+            background: #ff9800;
+            margin-left: 10px;
+        }
+        
+        .reset-btn:hover {
+            background: #f57c00;
+        }
+        
+        .progress {
+            background: #e3f2fd;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Direkte und indirekte Fragen</h1>
+        
+        <!-- Aufgabe 1 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 1: Mache aus der direkten Frage eine indirekte Frage</div>
+            <div class="progress">Frage <span id="task1-current">1</span> von 10</div>
+            <div class="question" id="task1-question">Wo wohnst du?</div>
+            <div style="margin: 10px 0; font-size: 1.1em;">
+                <strong>Kannst du mir sagen, </strong>
+                <input type="text" id="input1" placeholder="..." style="width: 300px; display: inline-block;">
+            </div>
+            <button onclick="checkTask1()">Überprüfen</button>
+            <button id="task1-next" onclick="nextTask1()" style="display: none;">Weiter</button>
+            <div class="feedback" id="feedback1"></div>
+            <div class="hint" id="hint1" style="display: none;">
+                Tipp: Bei indirekten Fragen ändert sich die Wortstellung. Das Verb kommt nach dem Subjekt.
+            </div>
+        </div>
+        
+        <!-- Aufgabe 2 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 2: Mache aus der indirekten Frage eine direkte Frage</div>
+            <div class="progress">Frage <span id="task2-current">1</span> von 10</div>
+            <div class="question" id="task2-question">Können Sie mir sagen, wie das Wetter morgen wird?</div>
+            <input type="text" id="input2" placeholder="Schreibe hier deine Antwort...">
+            <button onclick="checkTask2()">Überprüfen</button>
+            <button id="task2-next" onclick="nextTask2()" style="display: none;">Weiter</button>
+            <div class="feedback" id="feedback2"></div>
+            <div class="hint" id="hint2" style="display: none;">
+                Tipp: Bei direkten Fragen steht das Fragewort am Anfang und am Ende kommt ein Fragezeichen.
+            </div>
+        </div>
+        
+        <!-- Aufgabe 3 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 3: Bringe die Wörter in die richtige Reihenfolge</div>
+            <div class="progress">Frage <span id="task3-current">1</span> von 10</div>
+            <div class="question">Ziehe die Wörter in die Box unten, um eine korrekte Frage zu bilden:</div>
+            <div class="drag-container" id="dragWords">
+                <!-- Wörter werden hier eingefügt -->
+            </div>
+            <div>Deine Antwort:</div>
+            <div class="dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)">
+                Ziehe die Wörter hierher...
+            </div>
+            <button onclick="checkTask3()">Überprüfen</button>
+            <button class="reset-btn" onclick="resetTask3()">Zurücksetzen</button>
+            <button id="task3-next" onclick="nextTask3()" style="display: none;">Weiter</button>
+            <div class="feedback" id="feedback3"></div>
+            <div class="hint" id="hint3" style="display: none;">
+                Tipp: Eine indirekte Frage hat die Wortstellung: "Wissen Sie, wann der Bus kommt?"
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Aufgabe 1: Direkte zu indirekter Frage
+        const task1Questions = [
+            { question: "Wo wohnst du?", answer: "wo du wohnst?" },
+            { question: "Wie heißt du?", answer: "wie du heißt?" },
+            { question: "Was machst du gerne?", answer: "was du gerne machst?" },
+            { question: "Wann kommst du nach Hause?", answer: "wann du nach hause kommst?" },
+            { question: "Wie alt bist du?", answer: "wie alt du bist?" },
+            { question: "Woher kommst du?", answer: "woher du kommst?" },
+            { question: "Was isst du gerne?", answer: "was du gerne isst?" },
+            { question: "Wer ist dein bester Freund?", answer: "wer dein bester freund ist?" },
+            { question: "Warum lernst du Deutsch?", answer: "warum du deutsch lernst?" },
+            { question: "Welche Farbe magst du?", answer: "welche farbe du magst?" }
+        ];
+        
+        let task1Current = 0;
+        
+        function checkTask1() {
+            const input = document.getElementById('input1').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback1');
+            const hint = document.getElementById('hint1');
+            const nextBtn = document.getElementById('task1-next');
+            
+            const correctAnswer = task1Questions[task1Current].answer;
+            
+            if (input === correctAnswer) {
+                feedback.textContent = '✓ Richtig! Sehr gut gemacht!';
+                feedback.className = 'feedback correct';
+                hint.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            } else if (input.length > 0) {
+                feedback.textContent = '✗ Das ist noch nicht ganz richtig. Versuche es nochmal!';
+                feedback.className = 'feedback incorrect';
+                hint.style.display = 'block';
+                nextBtn.style.display = 'none';
+            } else {
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+                nextBtn.style.display = 'none';
+            }
+        }
+        
+        function nextTask1() {
+            task1Current++;
+            if (task1Current < task1Questions.length) {
+                document.getElementById('task1-question').textContent = task1Questions[task1Current].question;
+                document.getElementById('task1-current').textContent = task1Current + 1;
+                document.getElementById('input1').value = '';
+                document.getElementById('feedback1').textContent = '';
+                document.getElementById('feedback1').className = 'feedback';
+                document.getElementById('hint1').style.display = 'none';
+                document.getElementById('task1-next').style.display = 'none';
+            } else {
+                document.getElementById('feedback1').textContent = '🎉 Aufgabe 1 abgeschlossen! Alle Fragen richtig beantwortet!';
+                document.getElementById('feedback1').className = 'feedback correct';
+                document.getElementById('task1-next').style.display = 'none';
+            }
+        }
+
+        // Aufgabe 2: Indirekte zu direkter Frage
+        const task2Questions = [
+            { question: "Können Sie mir sagen, wie das Wetter morgen wird?", answer: "wie wird das wetter morgen?" },
+            { question: "Wissen Sie, wo der Bahnhof ist?", answer: "wo ist der bahnhof?" },
+            { question: "Können Sie mir sagen, wie spät es ist?", answer: "wie spät ist es?" },
+            { question: "Ich möchte wissen, wann der Bus kommt.", answer: "wann kommt der bus?" },
+            { question: "Können Sie mir sagen, was das kostet?", answer: "was kostet das?" },
+            { question: "Wissen Sie, wie ich zum Hotel komme?", answer: "wie komme ich zum hotel?" },
+            { question: "Können Sie mir sagen, wer das ist?", answer: "wer ist das?" },
+            { question: "Ich möchte wissen, warum der Zug verspätung hat.", answer: "warum hat der zug verspätung?" },
+            { question: "Können Sie mir sagen, welcher Bus nach München fährt?", answer: "welcher bus fährt nach münchen?" },
+            { question: "Wissen Sie, woher er kommt?", answer: "woher kommt er?" }
+        ];
+        
+        let task2Current = 0;
+        
+        function checkTask2() {
+            const input = document.getElementById('input2').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback2');
+            const hint = document.getElementById('hint2');
+            const nextBtn = document.getElementById('task2-next');
+            
+            const correctAnswer = task2Questions[task2Current].answer;
+            
+            if (input === correctAnswer) {
+                feedback.textContent = '✓ Perfekt! Das ist richtig!';
+                feedback.className = 'feedback correct';
+                hint.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            } else if (input.length > 0) {
+                feedback.textContent = '✗ Noch nicht richtig. Versuche es nochmal!';
+                feedback.className = 'feedback incorrect';
+                hint.style.display = 'block';
+                nextBtn.style.display = 'none';
+            } else {
+                feedback.textContent = '';
+                feedback.className = 'feedback';
+                nextBtn.style.display = 'none';
+            }
+        }
+        
+        function nextTask2() {
+            task2Current++;
+            if (task2Current < task2Questions.length) {
+                document.getElementById('task2-question').textContent = task2Questions[task2Current].question;
+                document.getElementById('task2-current').textContent = task2Current + 1;
+                document.getElementById('input2').value = '';
+                document.getElementById('feedback2').textContent = '';
+                document.getElementById('feedback2').className = 'feedback';
+                document.getElementById('hint2').style.display = 'none';
+                document.getElementById('task2-next').style.display = 'none';
+            } else {
+                document.getElementById('feedback2').textContent = '🎉 Aufgabe 2 abgeschlossen! Alle Fragen richtig beantwortet!';
+                document.getElementById('feedback2').className = 'feedback correct';
+                document.getElementById('task2-next').style.display = 'none';
+            }
+        }
+
+        // Aufgabe 3: Drag & Drop
+        const task3Questions = [
+            { words: ['Wissen', 'Sie', ',', 'wann', 'der', 'Bus', 'kommt', '?'], correct: ['Wissen', 'Sie', ',', 'wann', 'der', 'Bus', 'kommt', '?'] },
+            { words: ['Können', 'Sie', 'mir', 'sagen', ',', 'wo', 'das', 'Restaurant', 'ist', '?'], correct: ['Können', 'Sie', 'mir', 'sagen', ',', 'wo', 'das', 'Restaurant', 'ist', '?'] },
+            { words: ['Ich', 'möchte', 'wissen', ',', 'wie', 'viel', 'das', 'kostet', '.'], correct: ['Ich', 'möchte', 'wissen', ',', 'wie', 'viel', 'das', 'kostet', '.'] },
+            { words: ['Wissen', 'Sie', ',', 'welcher', 'Zug', 'nach', 'Berlin', 'fährt', '?'], correct: ['Wissen', 'Sie', ',', 'welcher', 'Zug', 'nach', 'Berlin', 'fährt', '?'] },
+            { words: ['Können', 'Sie', 'mir', 'sagen', ',', 'wie', 'spät', 'es', 'ist', '?'], correct: ['Können', 'Sie', 'mir', 'sagen', ',', 'wie', 'spät', 'es', 'ist', '?'] },
+            { words: ['Ich', 'möchte', 'wissen', ',', 'warum', 'der', 'Laden', 'geschlossen', 'ist', '.'], correct: ['Ich', 'möchte', 'wissen', ',', 'warum', 'der', 'Laden', 'geschlossen', 'ist', '.'] },
+            { words: ['Wissen', 'Sie', ',', 'wer', 'der', 'neue', 'Lehrer', 'ist', '?'], correct: ['Wissen', 'Sie', ',', 'wer', 'der', 'neue', 'Lehrer', 'ist', '?'] },
+            { words: ['Können', 'Sie', 'mir', 'sagen', ',', 'woher', 'er', 'kommt', '?'], correct: ['Können', 'Sie', 'mir', 'sagen', ',', 'woher', 'er', 'kommt', '?'] },
+            { words: ['Ich', 'möchte', 'wissen', ',', 'was', 'sie', 'gerne', 'macht', '.'], correct: ['Ich', 'möchte', 'wissen', ',', 'was', 'sie', 'gerne', 'macht', '.'] },
+            { words: ['Wissen', 'Sie', ',', 'welche', 'Farbe', 'sie', 'mag', '?'], correct: ['Wissen', 'Sie', ',', 'welche', 'Farbe', 'sie', 'mag', '?'] }
+        ];
+        
+        let task3Current = 0;
+
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function createDraggables() {
+            const dragContainer = document.getElementById('dragWords');
+            dragContainer.innerHTML = '';
+            const shuffledWords = shuffle(task3Questions[task3Current].words);
+            
+            shuffledWords.forEach((word, idx) => {
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.className = 'draggable';
+                span.draggable = true;
+                span.id = 'word-' + idx;
+                span.addEventListener('dragstart', dragStart);
+                dragContainer.appendChild(span);
+            });
+        }
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const id = e.dataTransfer.getData('text/plain');
+            const wordElem = document.getElementById(id);
+            if (wordElem) {
+                e.currentTarget.appendChild(wordElem);
+            }
+        }
+
+        // Drag over Handler für Drag Container
+        document.getElementById('dragWords').addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.getElementById('dragWords').addEventListener('drop', function(e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const wordElem = document.getElementById(id);
+            if (wordElem) {
+                e.currentTarget.appendChild(wordElem);
+            }
+        });
+
+        // Drag over event für dropzone beenden
+        document.getElementById('dropZone').addEventListener('dragleave', function(e) {
+            e.currentTarget.classList.remove('drag-over');
+        });
+
+        function checkTask3() {
+            const dropZone = document.getElementById('dropZone');
+            const children = Array.from(dropZone.children);
+            const answer = children.map(child => child.textContent);
+            const feedback = document.getElementById('feedback3');
+            const hint = document.getElementById('hint3');
+            const nextBtn = document.getElementById('task3-next');
+            
+            if (answer.length === 0) {
+                feedback.textContent = 'Bitte ziehe zuerst die Wörter in die Box.';
+                feedback.className = 'feedback';
+                return;
+            }
+            
+            if (JSON.stringify(answer) === JSON.stringify(task3Questions[task3Current].correct)) {
+                feedback.textContent = '✓ Ausgezeichnet! Die Wortstellung ist perfekt!';
+                feedback.className = 'feedback correct';
+                hint.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            } else {
+                feedback.textContent = '✗ Die Reihenfolge ist noch nicht richtig. Versuche es nochmal!';
+                feedback.className = 'feedback incorrect';
+                hint.style.display = 'block';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        function nextTask3() {
+            task3Current++;
+            if (task3Current < task3Questions.length) {
+                document.getElementById('task3-current').textContent = task3Current + 1;
+                document.getElementById('feedback3').textContent = '';
+                document.getElementById('feedback3').className = 'feedback';
+                document.getElementById('hint3').style.display = 'none';
+                document.getElementById('task3-next').style.display = 'none';
+                
+                // Dropzone leeren
+                document.getElementById('dropZone').innerHTML = 'Ziehe die Wörter hierher...';
+                
+                // Neue Wörter erstellen
+                createDraggables();
+            } else {
+                document.getElementById('feedback3').textContent = '🎉 Aufgabe 3 abgeschlossen! Alle Sätze richtig sortiert!';
+                document.getElementById('feedback3').className = 'feedback correct';
+                document.getElementById('task3-next').style.display = 'none';
+                document.getElementById('dragWords').innerHTML = '';
+                document.getElementById('dropZone').innerHTML = '';
+            }
+        }
+
+        function resetTask3() {
+            // Alle Wörter zurück in den Drag-Container
+            const dropZone = document.getElementById('dropZone');
+            const dragContainer = document.getElementById('dragWords');
+            const words = Array.from(dropZone.children);
+            
+            words.forEach(word => {
+                dragContainer.appendChild(word);
+            });
+            
+            // Dropzone Text zurücksetzen wenn leer
+            if (dropZone.children.length === 0) {
+                dropZone.innerHTML = 'Ziehe die Wörter hierher...';
+            }
+            
+            // Feedback zurücksetzen
+            document.getElementById('feedback3').textContent = '';
+            document.getElementById('feedback3').className = 'feedback';
+            document.getElementById('hint3').style.display = 'none';
+            document.getElementById('task3-next').style.display = 'none';
+            
+            // Neue zufällige Reihenfolge
+            createDraggables();
+        }
+
+        // Seite laden
+        window.onload = function() {
+            createDraggables();
+        };
+    </script>
+</body>
+</html>

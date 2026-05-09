@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Interaktive Lernseite – Störungsbilder (DQR6)</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; background:#f0f2f5; }
+h1, h2, h3 { color: #2c3e50; }
+.container { max-width: 900px; margin: auto; }
+.question { margin-bottom: 20px; background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+.feedback { font-weight: bold; margin-top: 10px; padding: 5px 10px; border-radius: 5px; display:inline-block; }
+button { margin-top: 10px; padding: 6px 12px; border: none; border-radius: 6px; background: #3498db; color: white; cursor: pointer; }
+button:hover { background: #2980b9; }
+.collapse-btn { background:#e0e0e0; color:#333; border:none; border-radius:5px; padding:5px 10px; cursor:pointer; margin-bottom:10px;}
+.collapse-content { display:none; padding:10px; border-left:3px solid #3498db; margin-bottom:10px; background:#f9f9f9;}
+.progress-container { background:#ddd; border-radius:10px; overflow:hidden; margin-bottom:20px; }
+.progress-bar { width:0%; height:20px; background:#3498db; text-align:center; color:white; line-height:20px;}
+@media(max-width:600px){ .question{ padding:15px; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Interaktive Lernseite – Störungsbilder (DQR6)</h1>
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar">0%</div>
+</div>
+
+<!-- Aufgabe 1–4 wie vorher (ASS, ADHS, Sozialverhalten, Angststörungen) -->
+<!-- ... kopiere hier die vorherigen 4 Aufgaben ... -->
+
+<!-- Aufgabe 1: ASS -->
+<div class="question">
+<h2>1. Autismus-Spektrum-Störungen (ASS)</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>In einer Grundschulklasse fällt einem Kind auf, dass ein Mitschüler den Blickkontakt meidet, sich wiederholt nur mit einem bestimmten Thema beschäftigt und Schwierigkeiten hat, die Gefühle anderer Kinder zu erkennen.</p>
+</div><br>
+<label><input type="checkbox" id="ass1"> Vermeidung von Blickkontakt</label><br>
+<label><input type="checkbox" id="ass2"> Hohes Fieber</label><br>
+<label><input type="checkbox" id="ass3"> Spezielle Interessen mit außergewöhnlichem Detailwissen</label><br>
+<label><input type="checkbox" id="ass4"> Schwierigkeiten, Gesichtsausdrücke zu interpretieren</label><br>
+<button onclick="checkASS(this)">Überprüfen</button>
+<div class="feedback" id="feedback1"></div>
+</div>
+
+<!-- Aufgabe 2: ADHS -->
+<div class="question">
+<h2>2. Aufmerksamkeitsdefizit-/Hyperaktivitätsstörung (ADHS)</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Ein 10-jähriger Schüler zeigt im Unterricht impulsives Verhalten, wechselt ständig zwischen Aufgaben und vergisst Materialien.</p>
+</div><br>
+<label><input type="checkbox" id="adhs1"> Betroffene Kinder können sich immer gut konzentrieren</label><br>
+<label><input type="checkbox" id="adhs2"> Impulsives Verhalten ist ein Hauptmerkmal</label><br>
+<label><input type="checkbox" id="adhs3"> Die Symptome treten in verschiedenen Lebensbereichen auf</label><br>
+<label><input type="checkbox" id="adhs4"> ADHS verschwindet immer mit der Pubertät</label><br>
+<button onclick="checkADHS(this)">Überprüfen</button>
+<div class="feedback" id="feedback2"></div>
+</div>
+
+<!-- Aufgabe 3: Störung des Sozialverhaltens -->
+<div class="question">
+<h2>3. Fallbeispiel Lisa – Störung des Sozialverhaltens</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Lisa, 14 Jahre, wurde mehrfach beim Ladendiebstahl erwischt, schwänzt die Schule und zeigt aggressives Verhalten gegenüber Mitschülern.</p>
+</div><br>
+<label><input type="radio" name="lisa" value="a"> Autismus-Spektrum-Störung</label><br>
+<label><input type="radio" name="lisa" value="b"> ADHS</label><br>
+<label><input type="radio" name="lisa" value="c"> Störung des Sozialverhaltens</label><br>
+<label><input type="radio" name="lisa" value="d"> Angststörung</label><br>
+<button onclick="checkLisa(this)">Überprüfen</button>
+<div class="feedback" id="feedback3"></div>
+</div>
+
+<!-- Aufgabe 4: Angststörungen -->
+<div class="question">
+<h2>4. Angststörungen</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiele ein-/ausklappen</button>
+<div class="collapse-content">
+<p>1. Soziale Phobie: Angst, vor der Klasse zu sprechen.<br>
+2. Generalisierte Angststörung: Sorgen über Schule, Familie, Freizeit.<br>
+3. Spezifische Phobie: Panische Reaktion auf Spinnen.<br>
+4. Trennungsangst: Kind weint regelmäßig beim Verlassen der Eltern.</p>
+</div><br>
+<p>1. Soziale Phobie:
+<select id="angst1">
+<option value="">-- auswählen --</option>
+<option value="A">Angst vor bestimmten Objekten oder Situationen</option>
+<option value="B">Anhaltende, übermäßige Angst in sozialen Situationen</option>
+<option value="C">Ständige Sorgen über verschiedene Lebensbereiche</option>
+<option value="D">Übermäßige Angst bei Trennung von Bezugspersonen</option>
+</select>
+</p>
+<p>2. Generalisierte Angststörung:
+<select id="angst2">
+<option value="">-- auswählen --</option>
+<option value="A">Angst vor bestimmten Objekten oder Situationen</option>
+<option value="B">Anhaltende, übermäßige Angst in sozialen Situationen</option>
+<option value="C">Ständige Sorgen über verschiedene Lebensbereiche</option>
+<option value="D">Übermäßige Angst bei Trennung von Bezugspersonen</option>
+</select>
+</p>
+<p>3. Spezifische Phobie:
+<select id="angst3">
+<option value="">-- auswählen --</option>
+<option value="A">Angst vor bestimmten Objekten oder Situationen</option>
+<option value="B">Anhaltende, übermäßige Angst in sozialen Situationen</option>
+<option value="C">Ständige Sorgen über verschiedene Lebensbereiche</option>
+<option value="D">Übermäßige Angst bei Trennung von Bezugspersonen</option>
+</select>
+</p>
+<p>4. Trennungsangst:
+<select id="angst4">
+<option value="">-- auswählen --</option>
+<option value="A">Angst vor bestimmten Objekten oder Situationen</option>
+<option value="B">Anhaltende, übermäßige Angst in sozialen Situationen</option>
+<option value="C">Ständige Sorgen über verschiedene Lebensbereiche</option>
+<option value="D">Übermäßige Angst bei Trennung von Bezugspersonen</option>
+</select>
+</p>
+<button onclick="checkAngst(this)">Überprüfen</button>
+<div class="feedback" id="feedback4"></div>
+</div>
+
+<!-- Aufgabe 5: Lese-Rechtschreib-Störung -->
+<div class="question">
+<h2>5. Fallbeispiel Mia – Lese-Rechtschreib-Störung (Legasthenie)</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Mia, 9 Jahre, hat trotz normaler Intelligenz Schwierigkeiten beim Lesen und Schreiben. Probleme treten besonders beim Erlernen von Fremdsprachen auf.</p>
+</div><br>
+<label><input type="checkbox" id="lr1"> Legasthenie bedeutet immer eine verminderte Intelligenz</label><br>
+<label><input type="checkbox" id="lr2"> Betroffene Kinder haben oft Probleme beim Erlernen von Fremdsprachen</label><br>
+<label><input type="checkbox" id="lr3"> Die Störung verschwindet automatisch mit zunehmendem Alter</label><br>
+<label><input type="checkbox" id="lr4"> Gezielte Förderung kann die Symptome deutlich verbessern</label><br>
+<button onclick="checkLR(this)">Überprüfen</button>
+<div class="feedback" id="feedback5"></div>
+</div>
+
+<!-- Aufgabe 6: Rechenstörung -->
+<div class="question">
+<h2>6. Fallbeispiel Tim – Rechenstörung (Dyskalkulie)</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Tim, 9 Jahre, hat große Schwierigkeiten beim Kopfrechnen und beim Lösen von Textaufgaben. Rechenzeichen werden häufig verwechselt, in anderen Fächern zeigt er gute Leistungen.</p>
+</div><br>
+<label><input type="radio" name="tim" value="a"> ADHS</label><br>
+<label><input type="radio" name="tim" value="b"> Lese-Rechtschreib-Störung</label><br>
+<label><input type="radio" name="tim" value="c"> Rechenstörung</label><br>
+<label><input type="radio" name="tim" value="d"> Autismus-Spektrum-Störung</label><br>
+<button onclick="checkTim(this)">Überprüfen</button>
+<div class="feedback" id="feedback6"></div>
+</div>
+
+<!-- Aufgabe 7: Depression -->
+<div class="question">
+<h2>7. Fallbeispiel Jonas – Depression</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Jonas, 16 Jahre, berichtet über anhaltend gedrückte Stimmung, Interessenverlust, Müdigkeit und Konzentrationsprobleme.</p>
+</div><br>
+<label><input type="checkbox" id="dep1"> Übermäßige Energie</label><br>
+<label><input type="checkbox" id="dep2"> Schlafstörungen</label><br>
+<label><input type="checkbox" id="dep3"> Gefühle der Wertlosigkeit</label><br>
+<label><input type="checkbox" id="dep4"> Euphorie</label><br>
+<button onclick="checkDep(this)">Überprüfen</button>
+<div class="feedback" id="feedback7"></div>
+</div>
+
+<!-- Aufgabe 8: Essstörungen -->
+<div class="question">
+<h2>8. Fallbeispiel Lara – Essstörungen</h2>
+<button class="collapse-btn" onclick="toggleCollapse(this)">Fallbeispiel ein-/ausklappen</button>
+<div class="collapse-content">
+<p>Lara, 15 Jahre, berichtet über unkontrollierte Essanfälle und absichtliches Erbrechen, um Gewichtszunahme zu vermeiden.</p>
+</div><br>
+<p>1. Anorexia nervosa:
+<select id="ess1">
+<option value="">-- auswählen --</option>
+<option value="A">Unkontrollierte Essanfälle mit anschließendem Erbrechen</option>
+<option value="B">Übermäßige Nahrungsaufnahme ohne Kompensation</option>
+<option value="C">Restriktive Nahrungsaufnahme und Untergewicht</option>
+</select>
+</p>
+<p>2. Bulimia nervosa:
+<select id="ess2">
+<option value="">-- auswählen --</option>
+<option value="A">Unkontrollierte Essanfälle mit anschließendem Erbrechen</option>
+<option value="B">Übermäßige Nahrungsaufnahme ohne Kompensation</option>
+<option value="C">Restriktive Nahrungsaufnahme und Untergewicht</option>
+</select>
+</p>
+<p>3. Binge-Eating-Störung:
+<select id="ess3">
+<option value="">-- auswählen --</option>
+<option value="A">Unkontrollierte Essanfälle mit anschließendem Erbrechen</option>
+<option value="B">Übermäßige Nahrungsaufnahme ohne Kompensation</option>
+<option value="C">Restriktive Nahrungsaufnahme und Untergewicht</option>
+</select>
+</p>
+<button onclick="checkEss(this)">Überprüfen</button>
+<div class="feedback" id="feedback8"></div>
+</div>
+
+<script>
+function toggleCollapse(btn){
+  const content = btn.nextElementSibling;
+  content.style.display = content.style.display==='block' ? 'none' : 'block';
+}
+
+let totalQuestions = 8;
+let answered = 0;
+function updateProgress(){
+  const percent = Math.round((answered/totalQuestions)*100);
+  const bar = document.getElementById("progressBar");
+  bar.style.width = percent + "%";
+  bar.textContent = percent + "%";
+}
+
+function giveFeedback(el, correct){
+  const feedbackDiv = el.nextElementSibling;
+  if(correct){
+    feedbackDiv.textContent = "✅ Richtig!";
+    feedbackDiv.style.backgroundColor = "#d4edda";
+    feedbackDiv.style.color = "#155724";
+  }else{
+    feedbackDiv.textContent = "❌ Falsch. Analysiere die Hinweise noch einmal.";
+    feedbackDiv.style.backgroundColor = "#f8d7da";
+    feedbackDiv.style.color = "#721c24";
+  }
+  answered++;
+  updateProgress();
+}
+
+function checkASS(btn){ giveFeedback(btn, document.getElementById("ass1").checked && !document.getElementById("ass2").checked && document.getElementById("ass3").checked && document.getElementById("ass4").checked);}
+function checkADHS(btn){ giveFeedback(btn, !document.getElementById("adhs1").checked && document.getElementById("adhs2").checked && document.getElementById("adhs3").checked && !document.getElementById("adhs4").checked);}
+function checkLisa(btn){ const val = document.querySelector("input[name='lisa']:checked"); giveFeedback(btn, val && val.value==="c");}
+function checkAngst(btn){ const correct = document.getElementById("angst1").value==="B" && document.getElementById("angst2").value==="C" && document.getElementById("angst3").value==="A" && document.getElementById("angst4").value==="D"; giveFeedback(btn, correct);}
+function checkLR(btn){ const correct = !document.getElementById("lr1").checked && document.getElementById("lr2").checked && !document.getElementById("lr3").checked && document.getElementById("lr4").checked; giveFeedback(btn, correct);}
+function checkTim(btn){ const val = document.querySelector("input[name='tim']:checked"); giveFeedback(btn, val && val.value==="c");}
+function checkDep(btn){ const correct = !document.getElementById("dep1").checked && document.getElementById("dep2").checked && document.getElementById("dep3").checked && !document.getElementById("dep4").checked; giveFeedback(btn, correct);}
+function checkEss(btn){ const correct = document.getElementById("ess1").value==="C" && document.getElementById("ess2").value==="A" && document.getElementById("ess3").value==="B"; giveFeedback(btn, correct);}
+</script>
+
+</div>
+</body>
+</html>

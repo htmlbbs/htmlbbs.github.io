@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesepfad: Didaktische Prinzipien der Bewegungserziehung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #b2dfdb;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lesepfad: Didaktische Prinzipien der Bewegungserziehung</h1>
+
+    <div class="section" id="section1">
+        <h2>1. Kindgemäßheit</h2>
+        <p>
+            Bewegungsangebote im Kindergarten sollten sich grundsätzlich an den Interessen, Bedürfnissen und Fähigkeiten der Kinder orientieren. Sie sollten zum Handeln herausgefordert, in ihren Fähigkeiten jedoch nicht überfordert werden. Die Angebote müssen den intensiven Bewegungsbedürfnissen der Kinder entsprechen und ihnen Möglichkeiten zum Ausleben ihres Bewegungsdranges geben.
+        </p>
+        <div class="question">
+            <p>Frage 1: Warum ist es wichtig, dass Bewegungsangebote kindgemäß sind?</p>
+            <input type="checkbox" id="q1a1"> a) Um den Kindern Freude an der Bewegung zu vermitteln.<br>
+            <input type="checkbox" id="q1a2"> b) Um die Kinder zu überfordern.<br>
+
+            <p>Frage 2: Was sollten Bewegungsangebote den Kindern ermöglichen?</p>
+            <input type="checkbox" id="q1b1"> a) Möglichkeiten zum Ausleben ihres Bewegungsdranges.<br>
+            <input type="checkbox" id="q1b2"> b) Strikte Einhaltung von Regeln.<br>
+
+            <button onclick="checkAnswers('section1', ['q1a1', 'q1b1'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <div class="section" id="section2" style="display:none;">
+        <h2>2. Offenheit</h2>
+        <p>
+            Die Bewegungssituationen sollen offen sein für situative Interessen der Kinder. Trotz der Planungen durch die pädagogische Fachkraft, die sich vor allem auf die Auswahl der Inhalte und die Gestaltung der Rahmenbedingungen beziehen, muss ausreichend Raum für spontane Einfälle der Kinder vorhanden sein.
+        </p>
+        <div class="question">
+            <p>Frage 1: Was bedeutet Offenheit in der Bewegungserziehung?</p>
+            <input type="checkbox" id="q2a1"> a) Raum für spontane Einfälle der Kinder lassen.<br>
+            <input type="checkbox" id="q2a2"> b) Strikte Einhaltung des Plans ohne Abweichungen.<br>
+
+            <p>Frage 2: Warum ist Flexibilität in der Planung wichtig?</p>
+            <input type="checkbox" id="q2b1"> a) Um auf aktuelle Ereignisse reagieren zu können.<br>
+            <input type="checkbox" id="q2b2"> b) Um den Plan strikt einzuhalten.<br>
+
+            <button onclick="checkAnswers('section2', ['q2a1', 'q2b1'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <div class="section" id="section3" style="display:none;">
+        <h2>3. Freiwilligkeit</h2>
+        <p>
+            Grundsätzlich sollte die Beteiligung an dem Bewegungsangebot den Kindern freigestellt werden. Im Vertrauen auf den Aufforderungscharakter der Geräte und Spielsituationen kann die Erzieherin dem Kind die Entscheidung darüber überlassen, ob und wie es sich in das Spiel einbringt.
+        </p>
+        <div class="question">
+            <p>Frage 1: Warum ist Freiwilligkeit in Bewegungsangeboten wichtig?</p>
+            <input type="checkbox" id="q3a1"> a) Kinder sollen selbst entscheiden, ob sie teilnehmen möchten.<br>
+            <input type="checkbox" id="q3a2"> b) Kinder müssen zur Teilnahme gezwungen werden.<br>
+
+            <p>Frage 2: Was sollten Erzieherinnen vermeiden?</p>
+            <input type="checkbox" id="q3b1"> a) Kinder zu überreden oder zu zwingen.<br>
+            <input type="checkbox" id="q3b2"> b) Kinder zu ermutigen.<br>
+
+            <button onclick="checkAnswers('section3', ['q3a1', 'q3b1'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <div class="section" id="section4" style="display:none;">
+        <h2>4. Erlebnisorientiertheit und Sinnhaftigkeit</h2>
+        <p>
+            Bewegungsangebote sollten sich an der unmittelbaren Erlebniswelt des Kindes orientieren. Bewegungsgeschichten können die Spielhandlungen begleiten und auch Impulse für Veränderungen des Spielgeschehens geben.
+        </p>
+        <div class="question">
+            <p>Frage 1: Was bedeutet Erlebnisorientiertheit in der Bewegungserziehung?</p>
+            <input type="checkbox" id="q4a1"> a) Bewegungsangebote sollen an der Erlebniswelt des Kindes orientiert sein.<br>
+            <input type="checkbox" id="q4a2"> b) Bewegungsangebote sollen keine Geschichten enthalten.<br>
+
+            <p>Frage 2: Welche Rolle spielen Bewegungsgeschichten?</p>
+            <input type="checkbox" id="q4b1"> a) Sie begleiten die Spielhandlungen.<br>
+            <input type="checkbox" id="q4b2"> b) Sie sind irrelevant.<br>
+
+            <button onclick="checkAnswers('section4', ['q4a1', 'q4b1'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <div class="section" id="section5" style="display:none;">
+        <h2>5. Entscheidungsmöglichkeit</h2>
+        <p>
+            Sich entscheiden zu können bedeutet immer auch, alternative Wahlmöglichkeiten zu haben. Dies betrifft sowohl die generelle Teilnahme am Bewegungsangebot als auch die Entscheidung, innerhalb der Bewegungsspiele bestimmte Rollen einzunehmen oder eine Gerätekombination anderen vorziehen zu können.
+        </p>
+        <div class="question">
+            <p>Frage 1: Warum ist die Entscheidungsmöglichkeit wichtig?</p>
+            <input type="checkbox" id="q5a1"> a) Kinder sollen alternative Wahlmöglichkeiten haben.<br>
+            <input type="checkbox" id="q5a2"> b) Kinder sollen keine Entscheidungen treffen dürfen.<br>
+
+            <p>Frage 2: Was sollte vermieden werden?</p>
+            <input type="checkbox" id="q5b1"> a) Kinder zu überfordern.<br>
+            <input type="checkbox" id="q5b2"> b) Kindern alle Entscheidungen abzunehmen.<br>
+
+            <button onclick="checkAnswers('section5', ['q5a1', 'q5b1', 'q5b2'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <div class="section" id="section6" style="display:none;">
+        <h2>6. Selbsttätigkeit</h2>
+        <p>
+            Handeln aus eigenem Antrieb ist für Kinder die Voraussetzung für die Entwicklung des »Ich«. Kinder werden auf diesem Weg dazu befähigt, selbst die Initiative zu ergreifen und für ihr Handeln auch Verantwortung zu übernehmen.
+        </p>
+        <div class="question">
+            <p>Frage 1: Was fördert die Selbsttätigkeit bei Kindern?</p>
+            <input type="checkbox" id="q6a1"> a) Kinder sollen aus eigenem Antrieb handeln.<br>
+            <input type="checkbox" id="q6a2"> b) Kinder sollen immer auf Anweisungen warten.<br>
+
+            <p>Frage 2: Was ist eine Voraussetzung für die Entwicklung des »Ich«?</p>
+            <input type="checkbox" id="q6b1"> a) Eigeninitiative der Kinder.<br>
+            <input type="checkbox" id="q6b2"> b) Ständige Anleitung durch Erwachsene.<br>
+
+            <button onclick="checkAnswers('section6', ['q6a1', 'q6b1'])">Überprüfen</button>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswers(sectionId, correctAnswers) {
+            const section = document.getElementById(sectionId);
+            const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+            const selectedAnswers = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.id);
+            const buttons = section.querySelectorAll('button');
+
+            if (JSON.stringify(selectedAnswers.sort()) === JSON.stringify(correctAnswers.sort())) {
+                section.querySelector('.question').innerHTML += '<p class="correct">Richtig!</p>';
+                const nextSection = document.getElementById('section' + (parseInt(sectionId.replace('section', '')) + 1));
+                if (nextSection) {
+                    nextSection.style.display = 'block';
+                }
+            } else {
+                section.querySelector('.question').innerHTML += '<p class="incorrect">Falsch, bitte versuche es erneut.</p>';
+                checkboxes.forEach(checkbox => checkbox.checked = false);
+            }
+        }
+    </script>
+
+</body>
+</html>

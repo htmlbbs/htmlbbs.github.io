@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Sinnersche Kreis</title>
+
+<style>
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#667085;
+  --line:#e5e7eb;
+
+  --chemie:#95c90e;
+  --mechanik:#0ba0d3;
+  --temperatur:#e52b1f;
+  --zeit:#f5bd00;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:radial-gradient(circle at top,#fff 0,#f5f7fb 48%,#eef2f7 100%);
+  color:var(--text);
+}
+
+main{
+  width:min(100%,760px);
+  margin:0 auto;
+  padding:20px 16px 28px;
+}
+
+h1{
+  margin:18px 0 10px;
+  font-size:clamp(36px,10vw,58px);
+  line-height:.95;
+  letter-spacing:-.05em;
+}
+
+.lead{
+  margin:0;
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.55;
+}
+
+.card{
+  margin-top:18px;
+  background:var(--card);
+  border-radius:28px;
+  box-shadow:0 14px 35px rgba(15,23,42,.10);
+  overflow:hidden;
+}
+
+.card-inner{
+  padding:18px;
+}
+
+#presetTitle{
+  display:none;
+  margin:0 0 12px;
+  text-align:center;
+  font-size:clamp(18px,5vw,25px);
+  font-weight:850;
+}
+
+#presetTitle.visible{
+  display:block;
+}
+
+.circle-wrap{
+  width:min(100%,390px);
+  margin:0 auto;
+}
+
+canvas{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.panel{
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:18px;
+  background:#fff;
+  border:4px solid var(--line);
+  transition:border-color .15s ease;
+}
+
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:3px;
+}
+
+.panel h2{
+  margin:0;
+  font-size:23px;
+}
+
+.percent{
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  font-weight:800;
+}
+
+.panel p{
+  margin:0;
+  line-height:1.5;
+  font-size:15px;
+  font-weight:600;
+}
+
+.controls{
+  display:grid;
+  gap:12px;
+  margin-top:14px;
+}
+
+.control{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+}
+
+.control-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:17px;
+  font-weight:750;
+}
+
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+
+.value-lock{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+button{
+  border:0;
+  border-radius:16px;
+  min-height:46px;
+  padding:12px;
+  background:#111827;
+  color:#fff;
+  font-weight:750;
+  font-size:15px;
+  cursor:pointer;
+  user-select:none;
+}
+
+button:focus,
+button:focus-visible{
+  outline:none;
+  box-shadow:none;
+}
+
+button.secondary{
+  background:#eef2f7;
+  color:#172033;
+}
+
+.lock{
+  min-width:42px;
+  min-height:36px;
+  padding:8px;
+  border-radius:999px;
+  background:#eef2f7;
+  color:#172033;
+  border:1px solid var(--line);
+}
+
+.lock.active{
+  background:#111827;
+  color:#fff;
+}
+
+.lock:disabled{
+  opacity:.4;
+}
+
+.slider-row{
+  display:grid;
+  grid-template-columns:38px 1fr 38px;
+  gap:8px;
+  align-items:center;
+}
+
+.step{
+  min-height:38px;
+  padding:0;
+  border-radius:999px;
+  background:#f3f4f6;
+  color:#475467;
+  border:1px solid var(--line);
+  font-size:18px;
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:#111827;
+}
+
+input[type=range]:disabled,
+.step:disabled{
+  opacity:.35;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:14px;
+}
+
+.buttons button{
+  flex:1;
+  max-width:210px;
+}
+
+.section-title{
+  margin:24px 2px 10px;
+  font-size:24px;
+  font-weight:850;
+  letter-spacing:-.02em;
+}
+
+.category-switches{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.category-btn{
+  background:#eef2f7;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:999px;
+}
+
+.category-btn.active{
+  background:#111827;
+  color:#fff;
+}
+
+.examples{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+
+.example{
+  text-align:left;
+  background:#fff;
+  color:var(--text);
+  border:1px solid var(--line);
+  box-shadow:0 7px 18px rgba(15,23,42,.06);
+  padding:15px;
+}
+
+.example.active{
+  border-color:#111827;
+  box-shadow:0 0 0 2px #111827 inset;
+}
+
+.example strong{
+  display:block;
+  margin-bottom:4px;
+}
+
+.example span{
+  display:block;
+  color:var(--muted);
+  font-weight:500;
+  line-height:1.35;
+}
+
+.explain{
+  display:grid;
+  gap:12px;
+  margin-top:12px;
+}
+
+.mini{
+  min-height:132px;
+  background:#fff;
+  border:7px solid;
+  border-radius:28px;
+  padding:16px 18px;
+  display:grid;
+  grid-template-columns:1fr 72px;
+  gap:14px;
+  align-items:center;
+}
+
+.icon-wrap{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f8fafc;
+  flex-shrink:0;
+}
+
+.icon{
+  width:42px;
+  height:42px;
+  stroke-width:2.2;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.mini-content h3{
+  margin:0 0 6px;
+  color:#374151;
+  font-size:20px;
+  line-height:1.15;
+}
+
+.mini-content p{
+  margin:0;
+  color:#374151;
+  font-size:16px;
+  line-height:1.35;
+  font-weight:500;
+}
+
+.chemie-box{border-color:var(--chemie);}
+.mechanik-box{border-color:var(--mechanik);}
+.temperatur-box{border-color:var(--temperatur);}
+.zeit-box{border-color:var(--zeit);}
+
+footer{
+  width:fit-content;
+  margin:22px auto 0;
+  padding-top:9px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:13px;
+}
+
+@media(min-width:680px){
+  .controls{grid-template-columns:1fr 1fr;}
+  .examples{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+
+<body>
+<main>
+  <h1>Der Sinnersche Kreis</h1>
+
+  <p class="lead">
+    Reinigung entsteht durch vier Faktoren:
+    <strong>Chemie</strong>, <strong>Mechanik</strong>,
+    <strong>Temperatur</strong> und <strong>Zeit</strong>.
+    Verändert sich ein Faktor, müssen das die anderen ausgleichen.
+  </p>
+
+  <section class="card">
+    <div class="card-inner">
+      <div id="presetTitle"></div>
+
+      <div class="circle-wrap">
+        <canvas id="circle" width="600" height="600"></canvas>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2 id="activeName">Chemie</h2>
+          <div class="percent" id="activePercent">25%</div>
+        </div>
+        <p id="activeText"></p>
+      </div>
+
+      <div class="controls" id="controls"></div>
+
+      <div class="buttons">
+        <button class="secondary" id="resetBtn">Zurücksetzen</button>
+        <button id="randomBtn">Beispiel</button>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="section-title">Schnelleinstellungen</h2>
+
+  <section class="category-switches">
+    <button class="category-btn active" data-category="waesche">Wäsche</button>
+    <button class="category-btn" data-category="geschirr">Geschirr</button>
+    <button class="category-btn" data-category="boden">Boden</button>
+  </section>
+
+  <section class="examples" id="examples"></section>
+
+  <h2 class="section-title">Das ist wichtig:</h2>
+
+  
+
+<section class="explain">
+
+  <div class="mini chemie-box">
+    <div class="mini-content">
+      <h3>1. Vier Faktoren</h3>
+      <p>Chemie, Mechanik, Temperatur und Zeit wirken gemeinsam.</p>
+    </div>
+    <div class="icon-wrap">
+      <svg class="icon" style="stroke:var(--chemie)" viewBox="0 0 24 24">
+        <circle cx="12" cy="5" r="2"></circle>
+        <circle cx="19" cy="12" r="2"></circle>
+        <circle cx="12" cy="19" r="2"></circle>
+        <circle cx="5" cy="12" r="2"></circle>
+        <path d="M12 7v4"></path>
+        <path d="M17 12h-4"></path>
+        <path d="M12 17v-4"></path>
+        <path d="M7 12h4"></path>
+      </svg>
+    </div>
+  </div>
+
+  <div class="mini mechanik-box">
+    <div class="mini-content">
+      <h3>2. Ausgleich</h3>
+      <p>Wird ein Faktor reduziert, müssen andere Faktoren mehr beitragen.</p>
+    </div>
+    <div class="icon-wrap">
+      <svg class="icon" style="stroke:var(--mechanik)" viewBox="0 0 24 24">
+        <path d="M4 12h16"></path>
+        <path d="M8 8l-4 4 4 4"></path>
+        <path d="M16 8l4 4-4 4"></path>
+      </svg>
+    </div>
+  </div>
+
+  
+<div class="mini temperatur-box">
+    <div class="mini-content">
+      <h3>3. Keine Einheitslösung</h3>
+      <p>Die passende Mischung hängt immer von dem Material, der Verschmutzung und dem Ziel ab.</p>
+    </div>
+    <div class="icon-wrap">
+      <svg class="icon" style="stroke:var(--temperatur)" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8"></circle>
+        <circle cx="12" cy="12" r="5"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+        <path d="M12 4v2"></path>
+        <path d="M12 18v2"></path>
+        <path d="M4 12h2"></path>
+        <path d="M18 12h2"></path>
+      </svg>
+    </div>
+  </div>
+
+
+  <div class="mini zeit-box">
+    <div class="mini-content">
+      <h3>4. Wirkung statt Einzelwert</h3>
+      <p>Entscheidend ist nicht ein einzelner Faktor, sondern das passende Zusammenspiel.</p>
+    </div>
+    <div class="icon-wrap">
+      <svg class="icon" style="stroke:var(--zeit)" viewBox="0 0 24 24">
+        <circle cx="9" cy="12" r="4"></circle>
+        <circle cx="16" cy="12" r="4"></circle>
+      </svg>
+    </div>
+  </div>
+
+</section>
+
+
+
+  <footer>für BBS Ritterplan mit KI erstellt</footer>
+</main>
+
+<script>
+const factors=[
+  {key:"chemie",label:"Chemie",color:"#95c90e",text:"Mehr oder wirksamere Reinigungsmittel lösen Schmutz leichter. Dafür können Zeit, Temperatur oder mechanische Kraft sinken."},
+  {key:"mechanik",label:"Mechanik",color:"#0ba0d3",text:"Mechanische Wirkung löst Schmutz durch Reiben, Bürsten, Druck oder Bewegung."},
+  {key:"temperatur",label:"Temperatur",color:"#e52b1f",text:"Wärme beschleunigt viele Reinigungsvorgänge. Bei empfindlichen Materialien muss sie oft reduziert werden."},
+  {key:"zeit",label:"Zeit",color:"#f5bd00",text:"Längere Einwirkzeit kann Chemie, Mechanik oder Temperatur teilweise ersetzen."}
+];
+
+const categoryLabels={
+  waesche:"Wäsche",
+  geschirr:"Geschirr",
+  boden:"Boden"
+};
+
+const examplesByCategory={
+  waesche:[
+    {title:"Tägliches Waschen",note:"Ausgewogene Reinigung bei normaler Verschmutzung.",values:{chemie:25,mechanik:25,temperatur:30,zeit:20}},
+    {title:"Empfindlicher Stoff",note:"Wenig Wärme und wenig Bewegung – dafür mehr Zeit.",values:{chemie:25,mechanik:20,temperatur:15,zeit:40}},
+    {title:"Stark verschmutzte Arbeitskleidung",note:"Mehr Chemie, Mechanik und Temperatur helfen gegen starken Schmutz.",values:{chemie:30,mechanik:30,temperatur:30,zeit:10}},
+    {title:"Schnelle Auffrischung",note:"Wenig Zeit braucht mehr Unterstützung durch die anderen Faktoren.",values:{chemie:30,mechanik:30,temperatur:30,zeit:10}}
+  ],
+  geschirr:[
+    {title:"Normales Geschirr",note:"Gleichmäßige Verteilung für alltägliche Reinigung.",values:{chemie:25,mechanik:25,temperatur:25,zeit:25}},
+    {title:"Fettige Pfanne",note:"Chemie und Wärme lösen Fett besser.",values:{chemie:35,mechanik:25,temperatur:30,zeit:10}},
+    {title:"Angetrocknete Speisereste",note:"Einweichen spart mechanische Kraft.",values:{chemie:25,mechanik:15,temperatur:20,zeit:40}},
+    {title:"Empfindliche Gläser",note:"Wenig Mechanik und weniger Temperatur schützen das Material.",values:{chemie:25,mechanik:15,temperatur:15,zeit:45}}
+  ],
+  boden:[
+    {title:"Tägliches Wischen",note:"Ausgewogene Reinigung bei normaler Verschmutzung.",values:{chemie:25,mechanik:25,temperatur:20,zeit:30}},
+    {title:"Fettiger Küchenboden",note:"Mehr Chemie und Wärme lösen fettige Rückstände besser.",values:{chemie:35,mechanik:25,temperatur:30,zeit:10}},
+    {title:"Empfindlicher Holzboden",note:"Wenig Wasser, Wärme und Chemie – dafür schonend und mit Zeit.",values:{chemie:15,mechanik:25,temperatur:10,zeit:50}},
+    {title:"Eingetrockneter Schmutz",note:"Einwirken lassen und anschließend mechanisch lösen.",values:{chemie:25,mechanik:30,temperatur:15,zeit:30}}
+  ]
+};
+
+let values={chemie:25,mechanik:25,temperatur:25,zeit:25};
+let active="chemie";
+let fixed=new Set();
+let activeCategory="waesche";
+let activeExample=null;
+
+const canvas=document.getElementById("circle");
+const ctx=canvas.getContext("2d");
+const controls=document.getElementById("controls");
+const activeName=document.getElementById("activeName");
+const activePercent=document.getElementById("activePercent");
+const activeText=document.getElementById("activeText");
+const examples=document.getElementById("examples");
+const presetTitle=document.getElementById("presetTitle");
+
+
+function displayValues(){
+  const result={};
+  const parts=factors.map(f=>{
+    const raw=values[f.key];
+    const floored=Math.floor(raw);
+    result[f.key]=floored;
+    return {key:f.key,rest:raw-floored};
+  });
+
+  let missing=100-Object.values(result).reduce((s,v)=>s+v,0);
+
+  parts
+    .sort((a,b)=>b.rest-a.rest)
+    .forEach(part=>{
+      if(missing>0){
+        result[part.key]+=1;
+        missing--;
+      }
+    });
+
+  while(Object.values(result).reduce((s,v)=>s+v,0)>100){
+    const key=Object.keys(result).sort((a,b)=>result[b]-result[a])[0];
+    result[key]-=1;
+  }
+
+  return result;
+}
+
+function displayValue(key){
+  return displayValues()[key];
+}
+
+function strongestKey(obj){
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function clearPreset(){
+  activeExample=null;
+}
+
+function updatePresetTitle(){
+  if(activeExample===null){
+    presetTitle.textContent="";
+    presetTitle.classList.remove("visible");
+    return;
+  }
+  const ex=examplesByCategory[activeCategory][activeExample];
+  presetTitle.textContent=`${ex.title} (${categoryLabels[activeCategory]})`;
+  presetTitle.classList.add("visible");
+}
+
+function normalize(changedKey,newValue){
+  clearPreset();
+  if(fixed.has(changedKey)) return;
+  if(fixed.size===3 && !fixed.has(changedKey)) return;
+
+  const keys=factors.map(f=>f.key);
+  const fixedKeys=keys.filter(k=>fixed.has(k));
+  const others=keys.filter(k=>!fixed.has(k)&&k!==changedKey);
+
+  const fixedSum=fixedKeys.reduce((s,k)=>s+values[k],0);
+  const minOther=others.length*1;
+  const maxChanged=Math.min(97,100-fixedSum-minOther);
+  const minChanged=1;
+
+  values[changedKey]=Math.max(minChanged,Math.min(maxChanged,Number(newValue)));
+
+  let remaining=100-fixedSum-values[changedKey];
+
+  if(others.length===1){
+    values[others[0]]=remaining;
+  }else if(others.length>1){
+    const current=others.reduce((s,k)=>s+values[k],0);
+    others.forEach(k=>{
+      values[k]=current ? values[k]/current*remaining : remaining/others.length;
+      values[k]=Math.max(1,Math.min(97,values[k]));
+    });
+
+    const total=keys.reduce((s,k)=>s+values[k],0);
+    const diff=100-total;
+    const adjustable=others.find(k=>values[k]+diff>=1&&values[k]+diff<=97);
+    if(adjustable) values[adjustable]+=diff;
+  }
+
+  render();
+}
+
+function drawCircle(){
+  ctx.clearRect(0,0,600,600);
+
+  const cx=300,cy=300,baseOuter=248,activeOuter=272,inner=92;
+  let angle=-Math.PI/2;
+
+  factors.forEach(f=>{
+    const value=values[f.key];
+    const sweep=value/100*Math.PI*2;
+    const outer=f.key===active ? activeOuter : baseOuter;
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,outer,angle,angle+sweep);
+    ctx.arc(cx,cy,inner,angle+sweep,angle,true);
+    ctx.closePath();
+    ctx.fillStyle=f.color;
+    ctx.fill();
+
+    ctx.lineWidth=8;
+    ctx.strokeStyle="#fff";
+    ctx.stroke();
+
+    const mid=angle+sweep/2;
+    const labelRadius=f.key===active ? 176 : 165;
+    const lx=cx+Math.cos(mid)*labelRadius;
+    const ly=cy+Math.sin(mid)*labelRadius;
+
+    ctx.fillStyle="#fff";
+    ctx.font="800 28px system-ui";
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.fillText(f.label,lx,ly-18);
+
+    ctx.font="800 26px system-ui";
+    ctx.fillText(`${displayValue(f.key)}%${fixed.has(f.key)?" 🔒":""}`,lx,ly+22);
+
+    angle+=sweep;
+  });
+
+  ctx.beginPath();
+  ctx.arc(cx,cy,inner-2,0,Math.PI*2);
+  ctx.fillStyle="#fff";
+  ctx.fill();
+
+  ctx.fillStyle="#111827";
+  ctx.font="800 34px system-ui";
+  ctx.textAlign="center";
+  ctx.fillText("Reinigung",cx,cy-10);
+
+  ctx.fillStyle="#667085";
+  ctx.font="700 22px system-ui";
+  ctx.fillText("100% Wirkung",cx,cy+34);
+}
+
+canvas.addEventListener("click",e=>{
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/rect.width*600-300;
+  const y=(e.clientY-rect.top)/rect.height*600-300;
+  const dist=Math.sqrt(x*x+y*y);
+
+  if(dist<92||dist>272) return;
+
+  let a=Math.atan2(y,x)+Math.PI/2;
+  if(a<0) a+=Math.PI*2;
+
+  let start=0;
+  for(const f of factors){
+    const sweep=values[f.key]/100*Math.PI*2;
+    const outer=f.key===active ? 272 : 248;
+    if(dist<=outer && a>=start&&a<=start+sweep){
+      active=f.key;
+      clearPreset();
+      render();
+      return;
+    }
+    start+=sweep;
+  }
+});
+
+function renderControls(){
+  controls.innerHTML="";
+
+  factors.forEach(f=>{
+    const locked=fixed.has(f.key);
+    const wrap=document.createElement("div");
+    wrap.className="control";
+
+    wrap.innerHTML=`
+      <div class="control-head">
+        <div class="name">
+          <span class="dot" style="background:${f.color}"></span>
+          <span>${f.label}</span>
+        </div>
+        <div class="value-lock">
+          <strong>${displayValue(f.key)}%</strong>
+          <button class="lock ${locked?"active":""}" ${fixed.size>=3&&!locked?"disabled":""}>${locked?"🔒":"🔓"}</button>
+        </div>
+      </div>
+      <div class="slider-row">
+        <button class="step minus" ${locked?"disabled":""}>−</button>
+        <input type="range" min="1" max="97" step="1" value="${Math.round(values[f.key])}" ${locked?"disabled":""}>
+        <button class="step plus" ${locked?"disabled":""}>+</button>
+      </div>
+    `;
+
+    wrap.querySelector(".lock").onclick=()=>{
+      if(fixed.has(f.key)) fixed.delete(f.key);
+      else if(fixed.size<3) fixed.add(f.key);
+      render();
+    };
+
+    wrap.querySelector("input").oninput=e=>{
+      active=f.key;
+      normalize(f.key,e.target.value);
+    };
+
+    wrap.querySelector(".minus").onclick=()=>{
+      active=f.key;
+      normalize(f.key,values[f.key]-1);
+    };
+
+    wrap.querySelector(".plus").onclick=()=>{
+      active=f.key;
+      normalize(f.key,values[f.key]+1);
+    };
+
+    controls.appendChild(wrap);
+  });
+}
+
+function renderActive(){
+  const f=factors.find(x=>x.key===active);
+  activeName.textContent=f.label+(fixed.has(f.key)?" 🔒":"");
+  activePercent.textContent=`${displayValue(f.key)}%`;
+  activeText.textContent=f.text;
+
+  document.querySelector('.panel').style.borderColor=f.color;
+
+  activeName.style.color='#111827';
+  activePercent.style.color='#111827';
+  activeText.style.color='#111827';
+}
+
+function renderExamples(){
+  document.querySelectorAll(".category-btn").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.category===activeCategory);
+  });
+
+  examples.innerHTML="";
+
+  examplesByCategory[activeCategory].forEach((ex,i)=>{
+    const btn=document.createElement("button");
+    btn.className="example"+(i===activeExample?" active":"");
+    btn.innerHTML=`<strong>${ex.title}</strong><span>${ex.note}</span>`;
+    btn.onclick=()=>{
+      values={...ex.values};
+      fixed.clear();
+      active=strongestKey(values);
+      activeExample=i;
+      render();
+      document.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
+    };
+    examples.appendChild(btn);
+  });
+}
+
+function render(){
+  updatePresetTitle();
+  drawCircle();
+  renderActive();
+  renderControls();
+  renderExamples();
+}
+
+document.getElementById("resetBtn").onclick=()=>{
+  values={chemie:25,mechanik:25,temperatur:25,zeit:25};
+  fixed.clear();
+  active="chemie";
+  activeExample=null;
+  render();
+  document.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
+};
+
+document.getElementById("randomBtn").onclick=()=>{
+  const cats=Object.keys(examplesByCategory);
+  activeCategory=cats[Math.floor(Math.random()*cats.length)];
+  activeExample=Math.floor(Math.random()*examplesByCategory[activeCategory].length);
+  const ex=examplesByCategory[activeCategory][activeExample];
+
+  values={...ex.values};
+  fixed.clear();
+  active=strongestKey(values);
+  render();
+  document.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
+};
+
+document.querySelectorAll(".category-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    activeCategory=btn.dataset.category;
+    activeExample=null;
+    render();
+  };
+});
+
+render();
+</script>
+</body>
+</html>

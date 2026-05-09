@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relativsätze Übung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .task {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .hint {
+            background-color: #ffeb3b;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 5px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct-answer {
+            color: green;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Übungen zu Relativsätzen</h1>
+
+<div class="hint">
+    Du hast für jede Aufgabe drei Versuche. Nach dem dritten Versuch wird die Lösung angezeigt. Achte darauf, dass du alle Wörter richtig schreibst und denke auch an alle Satzzeichen (Komma und Punkt).
+</div>
+
+<div class="task">
+    <h2>Aufgabe 1: Relativsätze umformulieren</h2>
+    <p>1. Das Mädchen ist meine Schwester. Sie spielt Klavier.<br>
+    <input type="text" id="answer1_1" placeholder="Deine Antwort"></p>
+    <p>2. Der Hund ist sehr freundlich. Er gehört meinem Freund.<br>
+    <input type="text" id="answer1_2" placeholder="Deine Antwort"></p>
+    <p>3. Die Stadt ist sehr groß. Ich lebe dort. <b>Benutze "in" statt "dort"!</b><br>
+    <input type="text" id="answer1_3" placeholder="Deine Antwort"></p>
+    <p>4. Der Lehrer ist sehr geduldig. Er unterrichtet Mathematik.<br>
+    <input type="text" id="answer1_4" placeholder="Deine Antwort"></p>
+    <p>5. Die Filme sind spannend. Sie laufen im Kino.<br>
+    <input type="text" id="answer1_5" placeholder="Deine Antwort"></p>
+    <button onclick="checkAnswer1()">Überprüfen</button>
+    <div class="result" id="result1"></div>
+</div>
+
+<div class="task">
+    <h2>Aufgabe 2: Relativsätze in Texten finden</h2>
+    <p>Lies den folgenden Text und schreibe die Relativsätze auf. <strong>Benutze hier keine Satzzeichen!</strong></p>
+    <p>1. Die Stadt, in der ich lebe, hat viele Sehenswürdigkeiten.<br>2. Das Museum, das sich im Zentrum befindet, ist sehr bekannt.<br>3. Die Menschen, die dort wohnen, sind freundlich und hilfsbereit.<br>4. Es gibt auch einen Park, in dem man spazieren gehen kann.<br>5. Die Cafés, die in der Nähe sind, bieten leckeren Kaffee an.</p>
+    <p>1. <input type="text" id="answer2_1" placeholder="Relativsatz 1"></p>
+    <p>2. <input type="text" id="answer2_2" placeholder="Relativsatz 2"></p>
+    <p>3. <input type="text" id="answer2_3" placeholder="Relativsatz 3"></p>
+    <p>4. <input type="text" id="answer2_4" placeholder="Relativsatz 4"></p>
+    <p>5. <input type="text" id="answer2_5" placeholder="Relativsatz 5"></p>
+    <button onclick="checkAnswer2()">Überprüfen</button>
+    <div class="result" id="result2"></div>
+</div>
+
+<div class="task">
+    <h2>Aufgabe 3: Relativsätze kombinieren</h2>
+    <p>1. Die Lehrerin ist sehr nett. Sie unterrichtet Englisch.<br>
+    <input type="text" id="answer3_1" placeholder="Deine Antwort"></p>
+    <p>2. Der Film war spannend. Ich habe ihn gestern gesehen.<br>
+    <input type="text" id="answer3_2" placeholder="Deine Antwort"></p>
+    <p>3. Das Buch ist interessant. Es liegt auf dem Tisch.<br>
+    <input type="text" id="answer3_3" placeholder="Deine Antwort"></p>
+    <p>4. Die Schüler sind fleißig. Sie lernen für die Prüfung.<br>
+    <input type="text" id="answer3_4" placeholder="Deine Antwort"></p>
+    <p>5. Die Blumen sind schön. Sie wachsen im Garten.<br>
+    <input type="text" id="answer3_5" placeholder="Deine Antwort"></p>
+    <button onclick="checkAnswer3()">Überprüfen</button>
+    <div class="result" id="result3"></div>
+</div>
+
+<div class="task">
+    <h2>Aufgabe 4: Relativpronomen im Kontext</h2>
+    <p>Fülle die Lücken mit dem passenden Relativpronomen (der, die, das).</p>
+    <p>1. Der Mann, ___________ dort steht, ist mein Onkel.<br>
+    <input type="text" id="answer4_1" placeholder="Deine Antwort"></p>
+    <p>2. Die Bücher, ___________ auf dem Tisch liegen, gehören mir.<br>
+    <input type="text" id="answer4_2" placeholder="Deine Antwort"></p>
+    <p>3. Das Auto, ___________ ich gekauft habe, ist rot.<br>
+    <input type="text" id="answer4_3" placeholder="Deine Antwort"></p>
+    <p>4. Die Kinder, ___________ im Park spielen, sind laut.<br>
+    <input type="text" id="answer4_4" placeholder="Deine Antwort"></p>
+    <p>5. Die Stadt, ___________ ich besucht habe, ist sehr alt.<br>
+    <input type="text" id="answer4_5" placeholder="Deine Antwort"></p>
+    <button onclick="checkAnswer4()">Überprüfen</button>
+    <div class="result" id="result4"></div>
+</div>
+
+<div class="hint">
+    Für diese Aufgaben gibt es keine Lösung. Zeige sie deiner Lehrkraft, wenn du fertig bist.
+</div>
+
+<div class="task">
+    <h2>Aufgabe 5: Eigene Relativsätze erstellen</h2>
+    <p>Erstelle eigene Sätze mit Relativsätzen zu den folgenden Themen:</p>
+    <ol>
+        <li>Dein Lieblingsbuch<br>
+        <input type="text" id="answer5_1" placeholder="Deine Antwort"></li>
+        <li>Ein Freund oder eine Freundin<br>
+        <input type="text" id="answer5_2" placeholder="Deine Antwort"></li>
+        <li>Ein Haustier<br>
+        <input type="text" id="answer5_3" placeholder="Deine Antwort"></li>
+        <li>Ein Ort, den du gerne besuchst<br>
+        <input type="text" id="answer5_4" placeholder="Deine Antwort"></li>
+        <li>Ein Hobby oder eine Freizeitbeschäftigung<br>
+        <input type="text" id="answer5_5" placeholder="Deine Antwort"></li>
+    </ol>
+</div>
+
+<script>
+    let attempts1 = [0, 0, 0, 0, 0];
+    let attempts2 = [0, 0, 0, 0, 0];
+    let attempts3 = [0, 0, 0, 0, 0];
+    let attempts4 = [0, 0, 0, 0, 0];
+
+    function checkAnswer1() {
+        const answers = [
+            "Das Mädchen, das Klavier spielt, ist meine Schwester.",
+            "Der Hund, der meinem Freund gehört, ist sehr freundlich.",
+            "Die Stadt, in der ich lebe, ist sehr groß.",
+            "Der Lehrer, der Mathematik unterrichtet, ist sehr geduldig.",
+            "Die Filme, die im Kino laufen, sind spannend."
+        ];
+        let results = "";
+        for (let i = 1; i <= 5; i++) {
+            const userAnswer = document.getElementById(`answer1_${i}`).value.trim();
+            if (userAnswer === answers[i - 1]) {
+                results += `Antwort ${i}: Richtig! \n`;
+                attempts1[i - 1] = 0; // Reset attempts on correct answer
+            } else {
+                attempts1[i - 1]++;
+                results += `Antwort ${i}: Falsch! `;
+                if (attempts1[i - 1] === 3) {
+                    results += `Richtig wäre: ${answers[i - 1]} \n`;
+                }
+            }
+        }
+        document.getElementById("result1").innerText = results;
+    }
+
+    function checkAnswer2() {
+        const answers = [
+            "in der ich lebe",
+            "das sich im Zentrum befindet",
+            "die dort wohnen",
+            "in dem man spazieren gehen kann",
+            "die in der Nähe sind"
+        ];
+        let results = "";
+        for (let i = 1; i <= 5; i++) {
+            const userAnswer = document.getElementById(`answer2_${i}`).value.trim();
+            if (userAnswer === answers[i - 1]) {
+                results += `Antwort ${i}: Richtig! \n`;
+                attempts2[i - 1] = 0; // Reset attempts on correct answer
+            } else {
+                attempts2[i - 1]++;
+                results += `Antwort ${i}: Falsch! `;
+                if (attempts2[i - 1] === 3) {
+                    results += `Richtig wäre: ${answers[i - 1]} \n`;
+                }
+            }
+        }
+        document.getElementById("result2").innerText = results;
+    }
+
+    function checkAnswer3() {
+        const answers = [
+            "Die Lehrerin, die Englisch unterrichtet, ist sehr nett.",
+            "Der Film, den ich gestern gesehen habe, war spannend.",
+            "Das Buch, das auf dem Tisch liegt, ist interessant.",
+            "Die Schüler, die für die Prüfung lernen, sind fleißig.",
+            "Die Blumen, die im Garten wachsen, sind schön."
+        ];
+        let results = "";
+        for (let i = 1; i <= 5; i++) {
+            const userAnswer = document.getElementById(`answer3_${i}`).value.trim();
+            if (userAnswer === answers[i - 1]) {
+                results += `Antwort ${i}: Richtig! \n`;
+                attempts3[i - 1] = 0; // Reset attempts on correct answer
+            } else {
+                attempts3[i - 1]++;
+                results += `Antwort ${i}: Falsch! `;
+                if (attempts3[i - 1] === 3) {
+                    results += `Richtig wäre: ${answers[i - 1]} \n`;
+                }
+            }
+        }
+        document.getElementById("result3").innerText = results;
+    }
+
+    function checkAnswer4() {
+        const answers = [
+            "der",
+            "die",
+            "das",
+            "die",
+            "die"
+        ];
+        let results = "";
+        for (let i = 1; i <= 5; i++) {
+            const userAnswer = document.getElementById(`answer4_${i}`).value.trim();
+            if (userAnswer === answers[i - 1]) {
+                results += `Antwort ${i}: Richtig! \n`;
+                attempts4[i - 1] = 0; // Reset attempts on correct answer
+            } else {
+                attempts4[i - 1]++;
+                results += `Antwort ${i}: Falsch! `;
+                if (attempts4[i - 1] === 3) {
+                    results += `Richtig wäre: ${answers[i - 1]} \n`;
+                }
+            }
+        }
+        document.getElementById("result4").innerText = results;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Groß- und Kleinschreibung – Berufsfachschule Sozialpädagogische Assistenz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#f7f7fb;
+      --card:#ffffff;
+      --ink:#152038;
+      --muted:#5b6475;
+      --accent:#2962ff;
+      --ok:#2e7d32;
+      --warn:#ef6c00;
+      --bad:#c62828;
+      --chip:#eef2ff;
+      --drop:#e8f5e9;
+      --drop2:#fff3e0;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+      --border:#e3e6ef;
+      --cap:#0d47a1;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      color:var(--ink); background:var(--bg);
+    }
+    header{
+      position:sticky; top:0; z-index:5; background:linear-gradient(180deg,#ffffff 0%, #fafbff 100%);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:16px 20px;}
+    h1{font-size:1.4rem; margin:0 0 6px 0;}
+    .scorebar{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted);
+      font-size:.95rem;
+    }
+    .scorebar .pill{
+      background:var(--card); border:1px solid var(--border); border-radius:100px; padding:6px 10px;
+    }
+    .pill.neutral{ background:var(--card); color:inherit; border-color:var(--border) }
+    .pill.danger{ background:#fdecea; color:#b71c1c; border-color:#f5c6cb }
+    .pill.bad{ background:#ffebee; color:#c62828; border-color:#ffcdd2 }
+    .pill.mid{ background:#fff9c4; color:#7a6e00; border-color:#fff59d }
+    .pill.ok{ background:#e8f5e9; color:#1b5e20; border-color:#c8e6c9 }
+    .pill.good{ background:#d0f0d7; color:#1b5e20; border-color:#b2dfbd }
+    .pill.excellent{ background:#c8e6c9; color:#1b5e20; border-color:#a5d6a7 }
+    main .section{
+      background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px;
+      margin:16px auto; box-shadow:var(--shadow);
+    }
+    h2{font-size:1.2rem; margin:0 0 8px 0;}
+    .desc{color:var(--muted); margin-bottom:12px;}
+    .area{display:grid; gap:14px;}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start;}
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--chip); border:1px solid #d6dcff; color:#1b2a6f;
+      padding:8px 10px; border-radius:999px; cursor:grab; user-select:none;
+      transition:.15s transform ease;
+    }
+    .chip:active{transform:scale(.97); cursor:grabbing;}
+    .bins{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    .bin{
+      min-height:84px; border:2px dashed var(--border); border-radius:12px; padding:10px; background:#fafbff;
+    }
+    .bin-title{font-weight:600; margin-bottom:6px;}
+    .bin.gr{background:var(--drop)}
+    .bin.kl{background:var(--drop2)}
+    .pool{min-height:84px; border:2px dashed var(--border); border-radius:12px; padding:10px; background:#fff;}
+    .btnbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:6px;}
+    button{
+      appearance:none; border:none; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px;
+      cursor:pointer; font-weight:600; box-shadow:0 2px 10px rgba(41,98,255,.25);
+    }
+    button.secondary{background:#e8ebf8; color:#1b2a6f; box-shadow:none}
+    button.ghost{background:transparent; color:#muted; box-shadow:none}
+    button:disabled{opacity:.5; cursor:not-allowed}
+    .hint{color:var(--muted); font-size:1.0rem}
+    .smallcaps{font-variant:small-caps; letter-spacing:.03em; color:#0d47a1; border-bottom:1px dotted #90caf9; cursor:pointer;}
+    .smallcaps.pending{ background:#ffe0b2; color:#8a4b00; padding:0 2px; border-radius:4px }
+    .popup{
+      position:absolute; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow);
+      padding:6px; display:none; z-index:10;
+    }
+    .popup button{padding:6px 10px; margin:2px; box-shadow:none}
+    .sentence{line-height:1.7}
+    .card{border:1px solid var(--border); border-radius:12px; padding:12px; background:#fff}
+    .locked{opacity:.65; pointer-events:none}
+    .ok{color:#2e7d32} .bad{color:#c62828} .warn{color:#ef6c00}
+    .tag{display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#1b2a6f; font-size:.85rem; margin-left:6px}
+    .result{font-weight:700}
+    .texttokens{line-height:1.9}
+    .tok{padding:2px 2px; border-radius:4px; cursor:pointer}
+    .tok.cap{background:#e3f2fd; border:1px solid #bbdefb}
+    .tok.correct{box-shadow:inset 0 0 0 2px #a5d6a7}
+    .preview{border:1px dashed var(--border); border-radius:10px; padding:10px; background:#fcfcff}
+    #story4src{ font-size:1.2rem; user-select:none }
+    .mark-cap{background:#fff3cd}
+    .mark-typo{background:#ffebee}
+    textarea{width:100%; min-height:140px; resize:vertical; padding:10px; border:1px solid var(--border); border-radius:10px; font-size:1.4rem;}
+    .counter{color:var(--muted); font-size:.92rem}
+    .badge{display:inline-block; padding:2px 8px; border-radius:12px; background:#f0f4ff; color:#1b2a6f; font-size:.82rem; margin-left:6px}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+    .sentence.error{border-color:#ef9a9a; background:#fff7f7}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Übungen: Groß- und Kleinschreibung – Sozialpädagogische Assistenz</h1>
+    <div class="desc">Kontexte: Kita, Krippe, Hort, Schule, Praktikum, Teamarbeit, Elternarbeit.</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="task1">
+    <h2>Aufgabe 1 – Wörter zu „groß“ oder „klein“ ziehen <span class="badge">20 Punkte</span></h2>
+    <div class="desc">
+      Ziehe jedes Wort in das richtige Feld. Beurteile die Schreibweise <b>im Satz (nicht am Satzanfang)</b>.
+      Fokus: Begriffe aus dem Berufsalltag.
+    </div>
+    <div class="area">
+      <div class="row">
+        <div class="card" style="flex:1">
+          <div class="bin-title">Nicht sortiert</div>
+          <div id="pool1" class="pool" data-accept="any"></div>
+        </div>
+      </div>
+      <div class="bins">
+        <div class="card">
+          <div class="bin-title">groß (Nomen, Eigennamen)</div>
+          <div id="binUpper" class="bin gr" data-accept="upper"></div>
+        </div>
+        <div class="card">
+          <div class="bin-title">klein (Verben, Adjektive, Präpositionen, Artikel)</div>
+          <div id="binLower" class="bin kl" data-accept="lower"></div>
+        </div>
+      </div>
+      <div class="btnbar">
+        <button id="check1" disabled>Prüfen – Versuch 1</button>
+        <button id="retry1" class="secondary" disabled>Zweiter Versuch</button>
+        <span class="hint">Im 2. Versuch gibt es halbe Punkte für nachträglich richtig zugeordnete Wörter.</span>
+      </div>
+      <div class="result" id="res1"></div>
+    </div>
+  </section>
+
+  <section class="section" id="task2">
+    <h2>Aufgabe 2 – Wähle „groß/klein“ in Sätzen <span class="badge">20 Punkte</span></h2>
+    <div class="desc">
+      In jedem Satz sind zwei Wörter markiert. Klicke und wähle, ob sie groß oder klein geschrieben werden.
+      <b>Hinweis:</b> Die Auswahl ist durchmischt – es gibt bewusst groß <i>und</i> klein.
+    </div>
+    <div id="sentences" class="area"></div>
+    <div class="btnbar">
+      <button id="check2" disabled>Prüfen – Versuch 1</button>
+      <button id="retry2" class="secondary" disabled>Zweiter Versuch</button>
+      <span class="hint">Halbe Punkte im 2. Versuch.</span>
+    </div>
+    <div class="popup" id="popup2">
+      <button data-choice="upper">groß</button>
+      <button data-choice="lower">klein</button>
+    </div>
+    <div class="result" id="res2"></div>
+  </section>
+
+  <section class="section" id="task3">
+    <h2>Aufgabe 3 – Klicke die Wörter groß <span class="badge">30 Punkte</span></h2>
+    <div class="desc">
+      Alle Wörter sind klein geschrieben. Klicke alle Wörter, die groß geschrieben werden müssen (Satzanfänge, Nomen, Eigennamen, Einrichtungen).
+    </div>
+    <div id="story3" class="card texttokens"></div>
+    <div class="btnbar">
+      <button id="check3">Prüfen – Versuch 1</button>
+      <button id="retry3" class="secondary" disabled>Zweiter Versuch</button>
+    </div>
+    <div class="result" id="res3"></div>
+  </section>
+
+  <section class="section" id="task4">
+    <h2>Aufgabe 4 – Richtig abschreiben <span class="badge">30 Punkte</span></h2>
+    <div class="desc">
+      Schreibe die klein geschriebene Praxis-Geschichte in das Textfeld ab – mit korrekter Groß-/Kleinschreibung.
+      <b>Bitte vergesse beim Abschreiben keine Wörter.</b>
+    </div>
+    <div id="story4src" class="preview mono"></div>
+    <div class="row">
+      <textarea id="story4txt" spellcheck="false" placeholder="Hier korrekt abschreiben …"></textarea>
+    </div>
+    <div class="btnbar">
+      <button id="check4" disabled>Prüfen – Versuch 1</button>
+      <button id="retry4" class="secondary" disabled>Zweiter Versuch</button>
+      <span class="counter" id="c4"></span>
+    </div>
+    <div class="preview" id="story4feedback"></div>
+    <div class="result" id="res4"></div>
+  </section>
+
+</main>
+
+<section class="wrap section" id="summary">
+  <h2>Punkte</h2>
+  <div class="scorebar" id="scorebarBottom">
+    <div class="pill" id="totalPill">Gesamt: <span id="totalScore">0</span> / 100</div>
+    <div class="pill" id="pill1">A1: <span id="s1">0</span>/20</div>
+    <div class="pill" id="pill2">A2: <span id="s2">0</span>/20</div>
+    <div class="pill" id="pill3">A3: <span id="s3">0</span>/30</div>
+    <div class="pill" id="pill4">A4: <span id="s4">0</span>/30</div>
+  </div>
+  <div id="completeInfo" class="result ok" style="display:none; margin-top:8px">Alle Aufgaben abgeschlossen.</div>
+  <div id="reloadTip" class="desc" style="display:none">Tipp: Seite neu laden → andere zufällige Inhalte.</div>
+  <br/>
+</section>
+
+<footer class="wrap" style="color:var(--muted); padding-bottom:40px"></footer>
+
+<script>
+(function(){
+  const rnd = (n)=>Math.floor(Math.random()*n);
+  const shuffle = (arr)=>arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  const pickN = (arr, n)=>shuffle(arr.slice()).slice(0,n);
+  const deLower = s => s.toLocaleLowerCase('de-DE');
+  const deUpper = s => s.toLocaleUpperCase('de-DE');
+  const capFirst = s => s.replace(/^([a-zäöüß])/i, (m)=>m.toLocaleUpperCase('de-DE'));
+  const isWord = (t)=>/^[A-Za-zÄÖÜäöüß\\-]+$/.test(t);
+  const stripPunct = (t)=>t.replace(/^[^\\p{L}]+|[^\\p{L}]+$/gu,'');
+  const tokenize = (text)=>{
+    const parts = [];
+    let m, re = /([A-Za-zÄÖÜäöüß\\-]+|[0-9]+|[^\\sA-Za-zÄÖÜäöüß0-9\\-]+)/g;
+    while((m=re.exec(text))!==null){ parts.push(m[0]); }
+    return parts;
+  };
+
+  // =========================
+  // Inhalte (Berufskontext)
+  // =========================
+  const NOUNS = [
+    'die Eingewöhnung','die Entwicklungsdokumentation','der Beobachtungsbogen','die Elternversammlung','das Elterngespräch','die Schweigepflicht',
+    'der Bildungsplan','der Hygieneplan','die Aufsichtspflicht','der Tagesablauf','die Mahlzeitengestaltung','die Wickelsituation',
+    'der Ruheraum','der Gruppenraum','die Materialvorbereitung','die Sprachförderung','die Feinmotorik','die Grobmotorik',
+    'die Teamkonferenz','die Dienstbesprechung','der Träger','die Einrichtung','die Kita','die Krippe','der Hort',
+    'die Bezugserzieherin','der Gruppendienst','die Anleitung','die Reflexion','die Hospitation','der Förderbedarf',
+    'die Kooperation','die Inklusion','der Praktikumsbericht','das Portfolio','das Fallbeispiel','der Schutzauftrag',
+    'die Kindeswohlgefährdung','die Ersthelferin','der Notfallplan','die Morgenrunde','der Morgenkreis','der Elternbrief',
+    'die Projektplanung','die Wochenplanung','die Übergabe','der Spätdienst','der Frühdienst','die Raumgestaltung'
+  ];
+  const VERBS = [
+    'beobachten','dokumentieren','reflektieren','fördern','begleiten','anleiten','intervenieren','trösten','wickeln','gestalten',
+    'vorbereiten','durchführen','evaluieren','kooperieren','kommunizieren','moderieren','protokollieren','strukturieren',
+    'organisieren','beaufsichtigen','sichern','planen','besprechen','vereinbaren','abstimmen','unterstützen','motivieren'
+  ];
+  const ADJS = [
+    'einfühlsam','zuverlässig','pünktlich','empathisch','ressourcenorientiert','kindgerecht','sicher','hygienisch','wertschätzend',
+    'verantwortungsvoll','strukturiert','flexibel','lösungsorientiert','praxisnah','teamfähig'
+  ];
+  const PREPS = ['in','auf','unter','über','neben','vor','hinter','zwischen','mit','ohne','für','gegen','durch','wegen','bei','zu','nach','von','seit','um'];
+  const ARTS = ['der','die','das','ein','eine','einen','einem','einer','den','dem','des','mein','meine','dein','deine','sein','seine','ihr','ihre','kein'];
+
+  // Wortbank aufbauen
+  const wordsDB = (()=> {
+    const o = [];
+    NOUNS.forEach(w=>o.push({word:w,pos:'Nomen', expect:'upper', base: stripPunct(w.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\\s+/,'')).toLowerCase()}));
+    VERBS.forEach(w=>o.push({word:w,pos:'Verb', expect:'lower', base: w.toLowerCase()}));
+    PREPS.forEach(w=>o.push({word:w,pos:'Präposition', expect:'lower', base: w.toLowerCase()}));
+    ADJS.forEach(w=>o.push({word:w,pos:'Adjektiv', expect:'lower', base: w.toLowerCase()}));
+    ARTS.forEach(w=>o.push({word:w,pos:'Artikel', expect:'lower', base: w.toLowerCase()}));
+    const seen = {};
+    o.forEach(it=>{ seen[it.base] = seen[it.base] || new Set(); seen[it.base].add(it.expect); });
+    const filtered = o.filter(it=> seen[it.base].size === 1);
+    return filtered;
+  })();
+
+  // Aufgabe 2 – Sätze mit Berufskontext
+  function buildSentences(){
+    return [
+      { tokens:['Im','Praktikum','führt','Mira','eine','Beobachtung','im','Gruppenraum','durch.'], targets:[{i:1,should:'upper'},{i:7,should:'upper'}] },
+      { tokens:['Vor','dem','Elterngespräch','bereitet','der','Schüler','die','Unterlagen','vor.'], targets:[{i:2,should:'upper'},{i:6,should:'upper'}] },
+      { tokens:['Heute','reflektiert','das','Team','die','Eingewöhnung','und','plant','Maßnahmen.'], targets:[{i:3,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Während','des','Frühdienstes','dokumentiert','Sara','ruhig','und','sorgfältig.'], targets:[{i:2,should:'upper'},{i:5,should:'lower'}] },
+      { tokens:['Im','Morgenkreis','übt','die','Klasse','Spielregeln','für','den','Hof.'], targets:[{i:1,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Nach','dem','Wickeln','achtet','Jonas','auf','hygienisches','Arbeiten.'], targets:[{i:2,should:'upper'},{i:6,should:'lower'}] },
+      { tokens:['Die','Schülerin','moderiert','den','Kreis','und','fördert','sprachliche','Teilnahme.'], targets:[{i:1,should:'upper'},{i:4,should:'upper'}] },
+      { tokens:['Im','Portfolio','klebt','Lina','Fotos','ein','und','schreibt','Texte.'], targets:[{i:1,should:'upper'},{i:8,should:'upper'}] },
+      { tokens:['Für','die','Teamkonferenz','bereiten','wir','Protokolle','und','Fragen','vor.'], targets:[{i:2,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Heute','besprechen','wir','den','Hygieneplan','mit','der','Gruppe.'], targets:[{i:4,should:'upper'},{i:7,should:'upper'}] },
+      { tokens:['Im','Hort','organisiert','Noah','die','Mahlzeit','und','beaufsichtigt','die','Kinder.'], targets:[{i:1,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Bei','der','Raumgestaltung','arbeiten','alle','kreativ','zusammen.'], targets:[{i:2,should:'upper'},{i:5,should:'lower'}] },
+      { tokens:['Die','Lehrkraft','stellt','den','Bildungsplan','vor','und','erklärt','Beispiele.'], targets:[{i:1,should:'upper'},{i:4,should:'upper'}] },
+      { tokens:['Im','Ruheraum','achtet','das','Team','auf','leises','Sprechen.'], targets:[{i:1,should:'upper'},{i:6,should:'lower'}] },
+      { tokens:['Heute','dokumentiere','ich','die','Sprachförderung','bei','Zeynep.'], targets:[{i:4,should:'upper'},{i:6,should:'upper'}] },
+      { tokens:['Nach','der','Übergabe','geht','die','Gruppe','in','den','Garten.'], targets:[{i:2,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Im','Praktikumsbericht','reflektiert','Lea','die','Herausforderungen','der','Woche.'], targets:[{i:1,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Der','Schüler','protokolliert','die','Dienstbesprechung','sorgfältig.'], targets:[{i:1,should:'upper'},{i:4,should:'upper'}] },
+      { tokens:['Morgens','plant','die','Gruppe','den','Tagesablauf','und','verteilt','Aufgaben.'], targets:[{i:3,should:'upper'},{i:8,should:'upper'}] },
+      { tokens:['Im','Notfallplan','stehen','Nummern','der','Ersthelferin','und','der','Praxisanleitung.'], targets:[{i:1,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Während','der','Projektplanung','koordiniert','Kim','die','Materialien.'], targets:[{i:2,should:'upper'},{i:6,should:'upper'}] },
+      { tokens:['Heute','führt','der','Kurs','ein','Elterncafé','durch.'], targets:[{i:3,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Bei','der','Eingewöhnung','ist','ein','wertschätzender','Umgang','wichtig.'], targets:[{i:2,should:'upper'},{i:6,should:'lower'}] },
+      { tokens:['Im','Hygieneplan','sind','klare','Regeln','formuliert.'], targets:[{i:1,should:'upper'},{i:4,should:'upper'}] },
+      { tokens:['Die','Anleitung','gibt','Feedback','und','plant','weitere','Ziele.'], targets:[{i:1,should:'upper'},{i:7,should:'upper'}] },
+      { tokens:['Nach','dem','Gespräch','mit','den','Eltern','schreibt','Timo','eine','Notiz.'], targets:[{i:2,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Im','Gruppendienst','achtet','Mara','auf','Sicherheit','und','Struktur.'], targets:[{i:1,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Die','Kita','arbeitet','eng','mit','der','Schule','zusammen.'], targets:[{i:1,should:'upper'},{i:6,should:'upper'}] },
+      { tokens:['Heute','besucht','die','Klasse','die','Einrichtung','„Sonnenblume“.'], targets:[{i:3,should:'upper'},{i:5,should:'upper'}] },
+      { tokens:['Im','Gruppenraum','werden','die','Regeln','transparent','ausgehängt.'], targets:[{i:1,should:'upper'},{i:4,should:'upper'}] },
+      { tokens:['Bei','der','Raumgestaltung','arbeiten','alle','achtsam','weiter.'], targets:[{i:2,should:'upper'},{i:5,should:'lower'}] }
+    ];
+  }
+  const sentencesDB = buildSentences();
+
+  // Geschichten
+  function genStories(){
+    return [
+      { correct: 'Im Morgenkreis begrüßt die Erzieherin die Kinder und erklärt den Tagesablauf. Danach wählen die Kinder Stationen und arbeiten selbstständig im Gruppenraum.' },
+      { correct: 'Während der Eingewöhnung bleibt die Mutter zunächst im Raum. Die Bezugserzieherin beobachtet feinfühlig und dokumentiert die Reaktionen des Kindes.' },
+      { correct: 'Vor dem Mittagessen waschen alle sorgfältig die Hände. Anschließend erinnert Jonas an die Tischregeln und achtet auf einen ruhigen Ablauf.' },
+      { correct: 'Im Portfolio sammelt Lara Fotos und kurze Texte zur Entwicklung eines Kindes. Am Freitag reflektiert sie die Woche mit ihrer Anleitung.' },
+      { correct: 'Bei der Teamkonferenz stellt die Klasse die Ergebnisse aus dem Projekt vor. Die Lehrkraft gibt Rückmeldung und vereinbart nächste Schritte.' },
+      { correct: 'Im Hort planen zwei Schüler eine Bewegungsstation im Hof. Sie sichern den Bereich, erklären die Regeln und begleiten die Gruppe.' },
+      { correct: 'Nach der Ruhezeit liest die Praktikantin eine Bilderbuchgeschichte vor. Die Kinder stellen Fragen und erzählen eigene Erfahrungen.' },
+      { correct: 'Im Ruheraum überprüft Paul die Temperatur und lüftet kurz. Danach trägt er Beobachtungen in den Bogen zur Schlafsituation ein.' },
+      { correct: 'Für das Elterngespräch bereitet Aylin konkrete Beispiele aus der Entwicklungsdokumentation vor. Sie formuliert wertschätzend und lösungsorientiert.' },
+      { correct: 'Im Frühdienst richtet Kim das Frühstücksbuffet kindgerecht an. Dabei achtet sie auf Hygiene und auf eine ruhige Atmosphäre.' },
+      { correct: 'Während der Freispielzeit moderiert Lea einen Konflikt zwischen zwei Kindern. Sie hört aktiv zu und sucht gemeinsam mit ihnen nach Regeln.' },
+      { correct: 'Im Praktikumsbericht beschreibt Felix die Planung einer Kreativphase. Er begründet seine Materialwahl und reflektiert den Lernerfolg.' },
+      { correct: 'Bei der Dienstbesprechung stellt das Team den neuen Notfallplan vor. Zuständigkeiten werden geklärt und im Flur ausgehängt.' },
+      { correct: 'Im Bewegungsraum baut die Gruppe einen Parcours auf. Die Schülerin sichert die Stationen und motiviert die Kinder zu eigenen Ideen.' },
+      { correct: 'Nach dem Elternabend verschickt die Klassenleitung einen Elternbrief. Darin stehen Termine, Ziele und Hinweise zur Kooperation.' },
+      { correct: 'Im Gruppenraum differenziert die Praktikantin Aufgaben nach Alter und Interesse. So können alle Kinder selbstständig mitarbeiten.' },
+      { correct: 'Während der Sprachförderung trainiert die Klasse Reime und Silben. Die Schülerin dokumentiert die Teilnahme und plant Anschlussaufgaben.' },
+      { correct: 'Im Wickelbereich bereitet Tom alle Materialien vor und desinfiziert die Fläche. Danach achtet er auf Datenschutz und respektvolle Kommunikation.' },
+      { correct: 'Bei der Raumgestaltung ordnet Sofie Materialien sichtbar und erreichbar. Die Kinder finden dadurch schneller passende Angebote.' },
+      { correct: 'Im Morgenkreis wiederholt die Gruppe Tages- und Wochenziele. Anschließend verteilen die Schüler Dienste und schreiben sie an die Tafel.' },
+      { correct: 'Für die Projektplanung sammelt das Team Ideen im Plenum. Danach bilden sich kleine Gruppen und arbeiten an unterschiedlichen Stationen.' },
+      { correct: 'Im Gespräch mit der Anleitung formuliert Jana Lernziele für die nächste Woche. Sie plant Beobachtungssequenzen und bereitet Karten vor.' },
+      { correct: 'Während der Pause bespricht die Klasse eine schwierige Situation vom Vormittag. Gemeinsam entwickeln sie eine klare, kindgerechte Regel.' },
+      { correct: 'Im Abschlusskreis geben die Kinder Rückmeldungen zu den Angeboten. Die Schülerin fasst die Ergebnisse zusammen und bedankt sich.' }
+    ];
+  }
+  const storiesDB = genStories();
+
+  // ============ Gemeinsame Logik ============
+
+  function hardDisableButton(selector){
+    const btn = document.querySelector(selector);
+    if(!btn) return;
+    const clone = btn.cloneNode(true);
+    clone.disabled = true;
+    btn.replaceWith(clone);
+  }
+
+  const state = { scores:[0,0,0,0], attempts:[0,0,0,0] };
+  const updateScoreBar = ()=>{
+    for(let i=0;i<4;i++){ document.getElementById('s'+(i+1)).textContent = String(Math.round(state.scores[i])); }
+    const total = state.scores.reduce((a,b)=>a+b,0);
+    document.getElementById('totalScore').textContent = String(Math.round(total));
+    const allDone = state.attempts.every((att, idx)=>{ const max = [20,20,30,30][idx]; return att>=2 || Math.round(state.scores[idx]*10)/10 >= max - 1e-9; });
+    document.getElementById('completeInfo').style.display = allDone ? 'block' : 'none';
+    const tip = document.getElementById('reloadTip'); if(tip) tip.style.display = allDone ? 'block' : 'none';
+    const thresholds = (pct)=>{ if(pct < 30) return 'danger'; if(pct < 50) return 'bad'; if(pct < 67) return 'mid'; if(pct < 80) return 'ok'; if(pct < 90) return 'good'; return 'excellent'; };
+    const maxPer = [20,20,30,30];
+    for(let i=0;i<4;i++){
+      const pill = document.getElementById('pill'+(i+1));
+      if(!pill) continue;
+      pill.classList.remove('neutral','danger','bad','mid','ok','good','excellent');
+      if(state.attempts[i]===0){ pill.classList.add('neutral'); }
+      else{
+        const pct = Math.max(0, Math.min(100, (state.scores[i]/maxPer[i])*100));
+        pill.classList.add(thresholds(pct));
+      }
+    }
+    const totalPill = document.getElementById('totalPill');
+    if(totalPill){
+      totalPill.classList.remove('neutral','danger','bad','mid','ok','good','excellent');
+      if(!allDone){ totalPill.classList.add('neutral'); }
+      else{ const pct = Math.max(0, Math.min(100, (total/100)*100)); totalPill.classList.add(thresholds(pct)); }
+    }
+  };
+
+  // Aufgabe 1
+  let a1 = { items:[], firstCorrect:new Set() };
+  function updateTask1CheckEnabled(){
+    const remaining = document.querySelector('#pool1').querySelectorAll('.chip').length;
+    const firstAttemptAvailable = state.attempts[0] === 0;
+    document.getElementById('check1').disabled = !firstAttemptAvailable || remaining>0;
+  }
+  function initTask1(){
+    a1 = { items: pickN(wordsDB,20).map((it,idx)=>({id:'w'+idx, ...it})), firstCorrect:new Set() };
+    const pool = document.getElementById('pool1'); pool.innerHTML='';
+    document.getElementById('binUpper').innerHTML=''; document.getElementById('binLower').innerHTML='';
+    a1.items.forEach(it=>{
+      const chip = document.createElement('div');
+      chip.className='chip'; chip.draggable=true; chip.id=it.id;
+      const base = it.word.replace(/^der |^die |^das |^den |^dem |^des |^ein |^eine |^einen |^einem |^einer /,'');
+      chip.textContent = deLower(base);
+      chip.dataset.expect = it.expect;
+      chip.title = `${it.pos}`;
+      chip.addEventListener('dragstart', ev=>{ ev.dataTransfer.setData('text/plain', it.id); });
+      pool.appendChild(chip);
+    });
+    [document.getElementById('pool1'), document.getElementById('binUpper'), document.getElementById('binLower')].forEach(bin=>{
+      bin.addEventListener('dragover', ev=>ev.preventDefault());
+      bin.addEventListener('drop', ev=>{
+        ev.preventDefault();
+        const id = ev.dataTransfer.getData('text/plain');
+        const el = document.getElementById(id);
+        if(!el) return;
+        bin.appendChild(el);
+        updateTask1CheckEnabled();
+      });
+    });
+    document.getElementById('res1').textContent='';
+    document.getElementById('check1').disabled=true;
+    document.getElementById('retry1').disabled=true;
+  }
+  initTask1();
+
+  function computeTwoAttemptPoints(totalItems, correctFirst, correctSecondOnly, maxPoints=20){
+    const frac = (correctFirst + 0.5*correctSecondOnly) / Math.max(1,totalItems);
+    return Math.max(0, Math.min(maxPoints, frac*maxPoints));
+  }
+
+  function checkTask1(isRetry=false){
+    const total = a1.items.length;
+    let newlyCorrect = 0;
+    const pool = document.getElementById('pool1');
+
+    a1.items.forEach(it=>{
+      const el = document.getElementById(it.id);
+      const parent = el.parentElement;
+      const placedZone = (parent && parent.classList.contains('bin')) ? parent.dataset.accept : null;
+      const ok = (placedZone === it.expect);
+      if(!isRetry){ if(ok) a1.firstCorrect.add(it.id); }
+      else{ if(ok && !a1.firstCorrect.has(it.id)) newlyCorrect++; }
+      if(ok){ el.style.boxShadow = 'inset 0 0 0 2px #a5d6a7'; el.classList.add('locked'); el.draggable=false; }
+      else{ el.style.boxShadow = ''; pool.appendChild(el); }
+    });
+
+    let points;
+    if(!isRetry){
+      points = computeTwoAttemptPoints(total, a1.firstCorrect.size, 0, 20);
+      document.getElementById('res1').innerHTML = `Richtig im 1. Versuch: ${a1.firstCorrect.size}/${total} → <span class="ok">${points.toFixed(1)} Punkte</span>`;
+      document.getElementById('check1').disabled=true; document.getElementById('retry1').disabled=false;
+      hardDisableButton('#check1');
+    }else{
+      points = computeTwoAttemptPoints(total, a1.firstCorrect.size, newlyCorrect, 20);
+      document.getElementById('res1').innerHTML = `Nach 2. Versuch: +${(newlyCorrect*0.5*20/total).toFixed(1)} Punkte → <span class="ok">${points.toFixed(1)} Punkte</span>`;
+      document.getElementById('check1').disabled=true; document.getElementById('retry1').disabled=true;
+      hardDisableButton('#check1'); hardDisableButton('#retry1');
+      a1.items.forEach(it=>{
+        const el = document.getElementById(it.id);
+        const parent = el.parentElement;
+        const placedZone = (parent && parent.classList.contains('bin')) ? parent.dataset.accept : null;
+        const ok = (placedZone === it.expect);
+        if(!ok){
+          const targetBin = it.expect === 'upper' ? document.getElementById('binUpper') : document.getElementById('binLower');
+          targetBin.appendChild(el);
+          el.style.boxShadow = 'inset 0 0 0 2px #ef9a9a';
+          el.style.background = '#fff7f7';
+        } else { el.style.boxShadow = 'inset 0 0 0 2px #a5d6a7'; }
+        el.classList.add('locked'); el.draggable = false;
+      });
+    }
+    state.scores[0] = points;
+    state.attempts[0] = isRetry ? 2 : 1;
+    updateScoreBar();
+    updateTask1CheckEnabled();
+  }
+  document.getElementById('check1').addEventListener('click', ()=>checkTask1(false));
+  document.getElementById('retry1').addEventListener('click', ()=>checkTask1(true));
+
+  // ========= Aufgabe 2 mit Misch-Logik =========
+  let a2 = { data:[], firstCorrect:new Set() };
+  function updateTask2CheckEnabled(){
+    const all = Array.from(document.querySelectorAll('#sentences .smallcaps'));
+    const decided = all.filter(sp=> (sp.dataset.choice||'') !== '');
+    const firstAttemptAvailable = state.attempts[1] === 0;
+    document.getElementById('check2').disabled = !firstAttemptAvailable || decided.length !== all.length || all.length===0;
+  }
+
+  function pickMixedSentences(src, n=10){
+    // Ziel: Anteil "upper" unter allen Zielwörtern zwischen 40% und 60%
+    const maxTries = 400;
+    for(let t=0; t<maxTries; t++){
+      const sample = shuffle(src).slice(0,n);
+      let upper=0, total=0;
+      sample.forEach(s=>{ s.targets.forEach(tt=>{ if(tt.should==='upper') upper++; total++; }); });
+      const ratio = upper/Math.max(1,total);
+      if(ratio >= 0.4 && ratio <= 0.6) return sample;
+    }
+    // Fallback: sortiert nach "upper"-Anteil, nehme Mischung
+    const sorted = src.slice().sort((a,b)=>{
+      const au=a.targets.filter(t=>t.should==='upper').length, bu=b.targets.filter(t=>t.should==='upper').length;
+      return au-bu;
+    });
+    const half = Math.floor(n/2);
+    return sorted.slice(0,half).concat(sorted.slice(-half));
+  }
+
+  function renderTask2(){
+    a2 = { data: pickMixedSentences(sentencesDB, 10), firstCorrect:new Set() };
+    const container = document.getElementById('sentences'); container.innerHTML='';
+    a2.data.forEach((s, si)=>{
+      const card = document.createElement('div'); card.className='card sentence'; card.dataset.si = si;
+      const line = document.createElement('div');
+      s.tokens.forEach((tok, i)=>{
+        const tinfo = s.targets.find(t=>t.i===i);
+        if(tinfo){
+          const m = /^(.+?)([.,;:!?]+)?$/.exec(tok) || [];
+          const base = m[1] || tok;
+          const punc = m[2] || '';
+          const sp = document.createElement('span');
+          sp.className='smallcaps pending';
+          sp.textContent = deLower(base);
+          sp.dataset.si = si;
+          sp.dataset.ti = i;
+          sp.dataset.correct = tinfo.should;
+          sp.dataset.choice = '';
+          sp.addEventListener('click', onPopup);
+          line.appendChild(sp);
+          if(punc) line.append(punc);
+        }else{
+          line.append(tok);
+        }
+        if(i < s.tokens.length-1) line.append(' ');
+      });
+      card.appendChild(line);
+      container.appendChild(card);
+    });
+    document.getElementById('res2').textContent='';
+    document.getElementById('check2').disabled=true; document.getElementById('retry2').disabled=true;
+    updateTask2CheckEnabled();
+  }
+  renderTask2();
+
+  const popup = document.getElementById('popup2');
+  function onPopup(ev){
+    const target = ev.currentTarget;
+    const rect = target.getBoundingClientRect();
+    popup.style.left = Math.max(8, rect.left + window.scrollX) + 'px';
+    popup.style.top = (rect.top + window.scrollY - 42) + 'px';
+    popup.style.display='block';
+    popup.dataset.targetSi = target.dataset.si;
+    popup.dataset.targetTi = target.dataset.ti;
+  }
+  document.addEventListener('click', (e)=>{ if(!popup.contains(e.target) && !e.target.classList.contains('smallcaps')){ popup.style.display='none'; } });
+  popup.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const si = Number(popup.dataset.targetSi);
+      const ti = Number(popup.dataset.targetTi);
+      const choice = btn.dataset.choice;
+      const span = document.querySelector(`#task2 .smallcaps[data-si="${si}"][data-ti="${ti}"]`);
+      if(span){
+        span.dataset.choice = choice;
+        const current = span.textContent;
+        const wordLower = deLower(current);
+        span.style.fontWeight = '700';
+        if(choice==='upper'){ span.textContent = capFirst(wordLower); }
+        else{ span.textContent = wordLower; }
+        span.classList.remove('pending');
+      }
+      popup.style.display='none';
+      updateTask2CheckEnabled();
+    });
+  });
+
+  function checkTask2(isRetry=false){
+    let totalTargets=0, newly=0;
+    const wrongSentences = new Set();
+    a2.data.forEach((s, si)=>{
+      let sentenceOK = true;
+      s.targets.forEach(t=>{
+        totalTargets++;
+        const span = document.querySelector(`#task2 .smallcaps[data-si="${si}"][data-ti="${t.i}"]`);
+        const choice = span?.dataset.choice || '';
+        const ok = (choice === t.should);
+        if(!ok) sentenceOK = false;
+        if(!isRetry){ if(ok){ a2.firstCorrect.add(`${si}-${t.i}`); } }
+        else{ if(ok && !a2.firstCorrect.has(`${si}-${t.i}`)) newly++; }
+      });
+      const card = document.querySelector(`#task2 .sentence[data-si="${si}"]`);
+      card.classList.toggle('error', !sentenceOK);
+      if(!sentenceOK) wrongSentences.add(si);
+    });
+    const pts = computeTwoAttemptPoints(totalTargets, a2.firstCorrect.size, newly, 20);
+    if(!isRetry){
+      document.getElementById('res2').innerHTML = `Sätze mit Fehlern: ${wrongSentences.size} von ${a2.data.length} → <span class="ok">${pts.toFixed(1)} Punkte</span>`;
+      wrongSentences.forEach(si=>{
+        const spans = Array.from(document.querySelectorAll(`#task2 .smallcaps[data-si="${si}"]`));
+        spans.forEach(sp=>{
+          sp.dataset.choice = '';
+          sp.style.fontWeight = '400';
+          const wordLower = deLower(sp.textContent);
+          sp.textContent = wordLower;
+          sp.classList.add('pending');
+        });
+      });
+      document.getElementById('check2').disabled=true; document.getElementById('retry2').disabled=false;
+      hardDisableButton('#check2');
+    }else{
+      document.getElementById('res2').innerHTML = `Nach 2. Versuch: korrigiert +${(newly*0.5*20/totalTargets).toFixed(1)} Punkte → <span class="ok">${pts.toFixed(1)} Punkte</span>`;
+      document.getElementById('check2').disabled=true; document.getElementById('retry2').disabled=true;
+      hardDisableButton('#check2'); hardDisableButton('#retry2');
+      a2.data.forEach((s, si)=>{
+        s.targets.forEach(t=>{
+          const sp = document.querySelector(`#task2 .smallcaps[data-si="${si}"][data-ti="${t.i}"]`);
+          const ok = (sp?.dataset.choice === t.should);
+          if(!ok && sp){
+            const base = deLower(sp.textContent);
+            if(t.should==='upper'){ sp.textContent = capFirst(base); } else { sp.textContent = base; }
+            sp.style.fontWeight = '700';
+            sp.classList.remove('pending');
+            sp.style.background = '#fff7f7';
+            sp.style.borderBottomColor = '#ef9a9a';
+            sp.style.color = '#c62828';
+          }
+        });
+      });
+    }
+    state.scores[1] = pts; state.attempts[1] = isRetry?2:1; updateScoreBar();
+  }
+  document.getElementById('check2').addEventListener('click', ()=>checkTask2(false));
+  document.getElementById('retry2').addEventListener('click', ()=>checkTask2(true));
+
+  // Aufgabe 3
+  function storyToTokens(correctText){
+    const raw = tokenize(correctText);
+    return raw.map(tok=>{
+      if(isWord(tok)){
+        const should = /^[A-ZÄÖÜ]/.test(tok);
+        return {text: tok, isWord:true, shouldCap: should};
+      }else{
+        return {text: tok, isWord:false, shouldCap:false};
+      }
+    });
+  }
+
+  let a3 = { idx:0, tokens:[], userCap:[], firstCorrect:[], clicked:[], firstUserCap:[], scoreUnitsFirst:0, maxUnits:0 };
+  function initTask3(){
+    const idx = rnd(storiesDB.length);
+    const story = storiesDB[idx].correct;
+    const toks = storyToTokens(story);
+    a3 = { idx, tokens: toks, userCap: toks.map(t=>false), firstCorrect: toks.map(()=>false), clicked: toks.map(()=>false), firstUserCap: toks.map(()=>false), scoreUnitsFirst:0, maxUnits: toks.filter(t=>t.isWord && t.shouldCap).length };
+    const host = document.getElementById('story3'); host.innerHTML='';
+    toks.forEach((t, i)=>{
+      const span = document.createElement('span');
+      span.className = 'tok';
+      span.dataset.i = i;
+      if(t.isWord){
+        span.textContent = deLower(t.text);
+        span.addEventListener('click', ()=>{
+          if(span.classList.contains('locked')) return;
+          a3.userCap[i] = !a3.userCap[i];
+          a3.clicked[i] = true;
+          span.classList.toggle('cap', a3.userCap[i]);
+          const base = deLower(t.text);
+          span.textContent = a3.userCap[i] ? capFirst(base) : base;
+        });
+      }else{
+        span.textContent = t.text;
+        span.classList.add('locked');
+      }
+      host.appendChild(span);
+      if(t.isWord) host.append(' ');
+    });
+    document.getElementById('res3').textContent='';
+    document.getElementById('check3').disabled=false; document.getElementById('retry3').disabled=true;
+  }
+  initTask3();
+
+  function checkTask3(isRetry=false){
+    const words = a3.tokens.map((t,i)=>({t,i})).filter(x=>x.t.isWord);
+    const mustCap = words.filter(x=>x.t.shouldCap).map(x=>x.i);
+    let scoreUnits = 0;
+    let newlyFixedMustCap = 0;
+    words.forEach(({t,i})=>{
+      const isCap = !!a3.userCap[i];
+      if(t.shouldCap && isCap) scoreUnits += 1;
+      if(!t.shouldCap && isCap) scoreUnits -= 1;
+      if(isRetry){ if(t.shouldCap && isCap && !a3.firstUserCap[i]) newlyFixedMustCap++; }
+      else { a3.firstUserCap[i] = isCap; }
+      const span = document.querySelector(`#story3 .tok[data-i="${i}"]`);
+      span.classList.remove('correct');
+      if(!isRetry){
+        if(t.shouldCap && isCap){ span.classList.add('correct'); span.classList.add('locked'); }
+        else {
+          const base = deLower(t.text);
+          a3.userCap[i] = false;
+          span.textContent = base;
+          span.classList.remove('cap');
+        }
+      }
+    });
+    const maxUnits = mustCap.length;
+    const scoreUnitsFirst = isRetry ? (a3.scoreUnitsFirst ?? 0) : (a3.scoreUnitsFirst = scoreUnits);
+    const scoreUnitsFinal = isRetry ? scoreUnitsFirst + 0.5*newlyFixedMustCap : scoreUnits;
+    const norm = Math.max(0, Math.min(maxUnits, scoreUnitsFinal));
+    const pts = Math.round((norm / Math.max(1, maxUnits)) * 30);
+    if(!isRetry){
+      const additionally = Math.max(0, mustCap.length - mustCap.filter(i=>a3.userCap[i]).length);
+      document.getElementById('res3').innerHTML = `Bewertung im 1. Versuch: ${norm}/${maxUnits} → <span class="ok">${pts} Punkte</span> <span class="warn">(zusätzlich groß zu schreiben: ${additionally})</span>`;
+      document.getElementById('check3').disabled=true; document.getElementById('retry3').disabled=false;
+    }else{
+      words.forEach(({t,i})=>{
+        const span = document.querySelector(`#story3 .tok[data-i="${i}"]`);
+        const should = t.shouldCap;
+        const base = deLower(t.text);
+        const isCap = !!a3.userCap[i];
+        span.textContent = should ? capFirst(base) : base;
+        span.classList.remove('correct','cap');
+        span.classList.add('locked');
+        if(isCap !== should){
+          span.style.background = '#fff7f7';
+          span.style.boxShadow = 'inset 0 0 0 2px #ef9a9a';
+        }
+      });
+      document.getElementById('res3').innerHTML = `Nach 2. Versuch: aktualisiert → <span class="ok">${pts} Punkte</span>`;
+      document.getElementById('check3').disabled=true; document.getElementById('retry3').disabled=true;
+      hardDisableButton('#check3'); hardDisableButton('#retry3');
+    }
+    state.scores[2] = pts; state.attempts[2] = isRetry?2:1; updateScoreBar();
+  }
+  document.getElementById('check3').addEventListener('click', ()=>checkTask3(false));
+  document.getElementById('retry3').addEventListener('click', ()=>checkTask3(true));
+
+  // Aufgabe 4
+  let a4 = { idx:0, tokens:[], lowerSrc:'' };
+  function initTask4(){
+    const options = storiesDB.map((_,i)=>i).filter(i=>i!==a3.idx);
+    const idx = options[rnd(options.length)];
+    const story = storiesDB[idx].correct;
+    const toks = storyToTokens(story);
+    a4 = { idx, tokens: toks, lowerSrc: story.toLocaleLowerCase('de-DE') };
+    document.getElementById('story4src').textContent = a4.lowerSrc;
+    document.getElementById('story4txt').value = '';
+    document.getElementById('story4feedback').innerHTML='';
+    document.getElementById('res4').textContent='';
+    document.getElementById('check4').disabled=true; document.getElementById('retry4').disabled=true;
+    document.getElementById('c4').textContent='';
+  }
+  initTask4();
+  ['copy','cut','contextmenu','selectstart','dragstart'].forEach(evt=>{
+    document.getElementById('story4src').addEventListener(evt, e=>{ e.preventDefault(); return false; });
+  });
+
+  function analyzeUserVsStory(userText, storyTokens){
+    const userTokens = storyToTokens(userText);
+    const storyWords = storyTokens.filter(t=>t.isWord);
+    const total = storyWords.length;
+    const result = [];
+    let correctFirst=0, typos=0;
+    let wi = 0;
+    for(const tok of userTokens){
+      if(tok.isWord){
+        let capOK=false, spellOK=false;
+        if(wi < storyWords.length){
+          const exp = storyWords[wi];
+          const expShouldCap = exp.shouldCap;
+          const gotIsCap = /^[A-ZÄÖÜ]/.test(tok.text);
+          const baseExp = deLower(exp.text);
+          const baseGot = deLower(tok.text);
+          capOK = (expShouldCap === gotIsCap);
+          spellOK = (baseExp === baseGot);
+          if(capOK) correctFirst++;
+          if(!spellOK) typos++;
+        }
+        result.push({type:'word', text: tok.text, capOK, spellOK});
+        wi++;
+      } else if(/[.,;:!?]/.test(tok.text)){
+        result.push({type:'punct', text: tok.text});
+      }
+    }
+    const missing = Math.max(0, storyWords.length - wi);
+    if(missing>0){
+      for(let k=wi; k<storyWords.length; k++){ result.push({type:'missing', expected: deLower(storyWords[k].text)}); }
+    }
+    const pts = (correctFirst/Math.max(1,total))*30;
+    return { items: result, total, correctCount: correctFirst, typos, missing, points: Math.round(Math.max(0, Math.min(30, pts))) };
+  }
+
+  let a4first = null;
+  function renderFeedback(items, showCap=true){
+    const style = 'padding:2px 4px; border-radius:6px; margin-right:4px; display:inline-block';
+    const out = [];
+    for(const x of items){
+      if(x.type==='punct'){
+        const last = out.length ? out.pop() : '';
+        const merged = (last || '') + `${x.text}`;
+        out.push(merged);
+        continue;
+      }
+      if(x.type==='missing'){
+        out.push(`<span class="mark-typo" style="${style}">[${x.expected}]</span>`);
+        continue;
+      }
+      let cls = x.capOK ? 'correct' : 'mark-cap';
+      if(!showCap){ cls = x.spellOK ? '' : 'mark-typo'; }
+      else { if(!x.spellOK) cls = 'mark-typo'; }
+      const token = cls ? `<span class="${cls}" style="${style}">${x.text}</span>` : `${x.text}`;
+      out.push(token);
+    }
+    return out.join(' ');
+  }
+
+  function checkTask4(isRetry=false){
+    const text = document.getElementById('story4txt').value;
+    const analysis = analyzeUserVsStory(text, a4.tokens);
+    if(!isRetry){
+      a4first = analysis.items.filter(x=>x.type==='word').map(x=>x.capOK);
+      document.getElementById('story4feedback').innerHTML = renderFeedback(analysis.items, false);
+      const wordItems = analysis.items.filter(x=>x.type==='word');
+      let wrongAsUpper=0, wrongAsLower=0;
+      for(let i=0;i<wordItems.length;i++){
+        const shouldCap = a4.tokens.filter(t=>t.isWord)[i]?.shouldCap;
+        const gotIsCap = /^[A-ZÄÖÜ]/.test(wordItems[i].text);
+        if(shouldCap && !gotIsCap) wrongAsLower++;
+        if(!shouldCap && gotIsCap) wrongAsUpper++;
+      }
+      document.getElementById('res4').innerHTML = `Richtig (Groß/Klein) im 1. Versuch: ${analysis.correctCount}/${analysis.total} → <span class="ok">${Math.round(analysis.points)} Punkte</span> <span class="warn">(Schreibfehler: ${analysis.typos}, fehlende Wörter: ${analysis.missing})</span><br/><span class="hint">Zu groß geschrieben: ${wrongAsUpper} · Zu klein geschrieben: ${wrongAsLower}</span>`;
+      state.scores[3] = analysis.points;
+      document.getElementById('check4').disabled=true; document.getElementById('retry4').disabled=false;
+      state.attempts[3] = 1;
+      hardDisableButton('#check4');
+    }else{
+      const now = analysis.items.filter(x=>x.type==='word').map(x=>x.capOK);
+      let newly=0;
+      for(let i=0;i<now.length;i++){ if(now[i] && a4first && !a4first[i]) newly++; }
+      const pts = computeTwoAttemptPoints(analysis.total, (a4first||[]).filter(Boolean).length, newly, 30);
+      document.getElementById('story4feedback').innerHTML = renderFeedback(analysis.items, true);
+      document.getElementById('res4').innerHTML = `Nach 2. Versuch: +${Math.round(newly*0.5*30/analysis.total)} Punkte → <span class="ok">${Math.round(pts)} Punkte</span> <span class="warn">(Schreibfehler: ${analysis.typos}, fehlende Wörter: ${analysis.missing})</span>`;
+      hardDisableButton('#check4'); hardDisableButton('#retry4');
+      state.scores[3] = pts;
+      document.getElementById('check4').disabled=true; document.getElementById('retry4').disabled=true;
+      state.attempts[3] = 2;
+    }
+    updateScoreBar();
+  }
+  document.getElementById('check4').addEventListener('click', ()=>checkTask4(false));
+  document.getElementById('retry4').addEventListener('click', ()=>checkTask4(true));
+  document.getElementById('story4txt').addEventListener('input', ()=>{
+    const v = document.getElementById('story4txt').value;
+    const w = v.trim().split(/\\s+/).filter(Boolean).length;
+    document.getElementById('c4').textContent = `Wörter: ${w}`;
+    if(state.attempts[3] === 0){
+      document.getElementById('check4').disabled = !(v.trim().length>0 && /\\s/.test(v));
+    } else { document.getElementById('check4').disabled = true; }
+  });
+
+  updateScoreBar();
+})();
+</script>
+</body>
+</html>

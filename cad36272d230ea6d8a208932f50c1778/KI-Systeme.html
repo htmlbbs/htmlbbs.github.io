@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Systeme verstehen und souverän anwenden</title>
+    <!-- Lade Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Verhindert Scrollen */
+            background-color: #f7f7f7;
+            cursor: pointer;
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        .slide-content {
+            max-width: 90%;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Präsentations-Container -->
+    <div id="presentation-container">
+
+        <!-- SLIDE 1: Titel -->
+        <div class="slide" data-title="Titel">
+            <h1 class="text-6xl font-extrabold text-blue-800 mb-4">
+                KI-Systeme verstehen und souverän anwenden
+            </h1>
+            <p class="text-3xl font-light text-gray-700 mt-4">
+                Ihr schneller Einstieg in die KI-Kompetenz
+            </p>
+            <div class="absolute bottom-10 right-10 text-lg text-gray-500">
+                <span class="font-semibold">Ziel:</span> Souveräner & reflektierter Umgang mit KI im Schulalltag.
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Kernprogramm -->
+        <div class="slide" data-title="Kernprogramm">
+            <div class="slide-content bg-white p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-blue-500">
+                <h2 class="text-5xl font-bold text-blue-700 mb-8">
+                    1. Das Kernprogramm: NLQ Selbstlernkurs
+                </h2>
+                <p class="text-2xl text-gray-600 mb-6">
+                    **Starten Sie hier:** Der Moodle-Kurs des NLQ Niedersachsen bildet die rechtliche Grundlage.
+                </p>
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                    <p class="text-3xl font-semibold text-blue-900 mb-3">
+                        Kurs: "KI-Systeme verstehen und souverän anwenden"
+                    </p>
+                    <p class="text-xl text-blue-600 truncate">
+                        **Link:** <a href="https://elec.moodle-nds.de/course/view.php?id=1285" target="_blank" class="text-blue-700 underline hover:text-blue-900 transition">elec.moodle-nds.de/course/view.php?id=1285</a>
+                    </p>
+                </div>
+                <p class="text-xl mt-6 text-gray-500">
+                    **Ablauf:** Selbstgesteuert – sofortiger Start nach dieser Einführung.
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Tipp Radiobeitrag -->
+        <div class="slide" data-title="Tipp">
+            <div class="slide-content bg-yellow-50 p-12 rounded-2xl shadow-2xl w-full max-w-3xl border-l-8 border-yellow-500">
+                <h2 class="text-5xl font-bold text-yellow-700 mb-6 flex items-center justify-center">
+                    <span class="text-6xl mr-4">💡</span> Besonderer Tipp: Der Radiobeitrag
+                </h2>
+                <p class="text-3xl font-semibold text-gray-800 mb-4">
+                    Der Kurs enthält einen intergrierten optionalen Podcast der ARD-Mediathek.
+                </p>
+                <p class="text-4xl text-yellow-900 bg-yellow-200 p-4 rounded-lg inline-block">
+                    Thema: Diskriminierung durch KI – Welche Vorurteile hat Künstliche Intelligenz?
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Nach dem Kurs (Übersicht) -->
+        <div class="slide" data-title="Vertiefung">
+            <h2 class="text-5xl font-bold text-gray-700 mb-12">
+                2. Nach dem Kurs: Vertiefung und Anwendung
+            </h2>
+            <p class="text-2xl text-gray-500 mb-10">
+                Nach erfolgreichem Abschluss des NLQ-Kurses stehen zwei Wege zur Vertiefung offen:
+            </p>
+            <div class="flex space-x-12 w-full max-w-5xl">
+                <div class="flex-1 bg-green-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border-b-4 border-green-500">
+                    <h3 class="text-4xl font-extrabold text-green-700 mb-3">Option A: Digital Sparks</h3>
+                    <p class="text-xl text-gray-600">
+                        *(Fokus: Schüler\*innen-Zentrierung & Tools)*
+                    </p>
+                </div>
+                <div class="flex-1 bg-purple-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border-b-4 border-purple-500">
+                    <h3 class="text-4xl font-extrabold text-purple-700 mb-3">Option B: Fobizz</h3>
+                    <p class="text-xl text-gray-600">
+                        *(Fokus: DSGVO-konforme Klassenräume & eigene Assistenten)*
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Option A Details -->
+        <div class="slide" data-title="Option A Digital Sparks">
+            <h2 class="text-5xl font-bold text-green-700 mb-8">
+                Option A: Lernreise Tools auf tomorrow
+            </h2>
+            <p class="text-2xl text-gray-600 mb-6">
+                (Digital Sparks – Modulares Lernsystem für Schüler\*innen)
+            </p>
+            <div class="bg-green-100 p-6 rounded-xl border border-green-300 w-full max-w-xl">
+                <p class="text-xl text-green-800">
+                    **Link:** <a href="https://app.digital-sparks.org/tss" target="_blank" class="text-green-700 underline hover:text-green-900 transition">app.digital-sparks.org/tss</a>
+                </p>
+            </div>
+            <p class="text-lg mt-6 text-gray-500">
+                *(Nächste Folie: Wichtige Hinweise!)*
+            </p>
+        </div>
+
+        <!-- SLIDE 6: Option A Wichtige Hinweise -->
+        <div class="slide" data-title="Option A Wichtige Hinweise">
+            <div class="slide-content bg-red-50 p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-red-500">
+                <h2 class="text-5xl font-bold text-red-700 mb-8 flex items-center justify-center">
+                    <span class="text-6xl mr-4">⚠️</span> WICHTIGE HINWEISE
+                </h2>
+                <ul class="text-left space-y-4 text-2xl text-gray-800">
+                    <li class="p-3 bg-red-100 rounded-lg">
+                        <span class="font-bold text-red-800">1. Personenbezogene Daten:</span> Bei sensiblen Daten **ausschließlich Fobizz** nutzen.
+                    </li>
+                    <li class="p-3 bg-red-100 rounded-lg">
+                        <span class="font-bold text-red-800">2. Arbeitsergebnisse:</span> **KEINE** Uploads in Digital Sparks!
+                    </li>
+                    <li class="p-3 bg-red-100 rounded-lg">
+                        <span class="font-bold text-red-800">3. Alternative Ablage (Lehrkräfte):</span> Ergebnisse sicher speichern (z.B. **Nextcloud** BBS Ritterplan / **Edumaps**).
+                    </li>
+                    <li class="p-3 bg-red-100 rounded-lg">
+                        <span class="font-bold text-red-800">4. YouTube-Sperre:</span> Eingebettete Videos im Lernpfad sind im Unterrichtsnetzwerk **NICHT abspielbar**.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Option B Details -->
+        <div class="slide" data-title="Option B Fobizz">
+            <div class="slide-content bg-purple-50 p-12 rounded-2xl shadow-2xl w-full max-w-4xl border-t-8 border-purple-500">
+                <h2 class="text-5xl font-bold text-purple-700 mb-8">
+                    Option B: Eigene KI-Anwendung in Fobizz üben
+                </h2>
+                <p class="text-2xl font-semibold text-gray-700 mb-8">
+                    **Fokus:** Datenschutzkonforme Übung und Kontrolle
+                </p>
+                <ul class="text-left space-y-4 text-2xl text-gray-800">
+                    <li class="p-3 bg-purple-100 rounded-lg">
+                        <span class="font-bold text-purple-800">Klassenräume erstellen:</span> Einrichten von DSGVO-konformen digitalen Klassenräumen.
+                    </li>
+                    <li class="p-3 bg-purple-100 rounded-lg">
+                        <span class="font-bold text-purple-800">Eigene KI-Assistenten:</span> Konfigurieren Sie spezialisierte Assistenten für Ihren Unterricht (Steuerung und Personalisierung).
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Nächster Schritt -->
+        <div class="slide" data-title="Nächster Schritt">
+            <h2 class="text-6xl font-extrabold text-blue-900 mb-8">
+                Ihr Nächster Schritt
+            </h2>
+            <div class="bg-blue-600 p-8 rounded-2xl shadow-2xl transform scale-105 hover:scale-110 transition duration-500">
+                <p class="text-5xl font-bold text-white">
+                    **Jetzt starten:**
+                </p>
+                <p class="text-4xl text-blue-200 mt-2">
+                    Beginnen Sie nun mit dem **NLQ Moodle-Kurs**!
+                </p>
+            </div>
+            <p class="text-3xl text-gray-600 mt-12">
+                Viel Erfolg und spannende Erkenntnisse!
+            </p>
+        </div>
+
+    </div>
+
+    <!-- JavaScript für die Slide-Navigation -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        // Funktion zum Anzeigen der aktuellen Folie
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            currentSlide = index;
+        }
+
+        // Funktion zum Vorwärts- oder Rückwärtsgehen
+        function changeSlide(direction) {
+            let newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < slides.length) {
+                showSlide(newIndex);
+            }
+        }
+
+        // Event-Listener für Klicks (nächste Folie)
+        document.body.addEventListener('click', () => changeSlide(1));
+
+        // Event-Listener für Tastatureingaben (Pfeiltasten)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                changeSlide(1); // Rechte Pfeiltaste oder Leertaste
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1); // Linke Pfeiltaste
+            }
+        });
+
+        // Beim Laden die erste Folie anzeigen
+        showSlide(0);
+    </script>
+
+</body>
+</html>

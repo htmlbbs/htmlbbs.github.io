@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relativsätze – Übung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #f8bbd9);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1976d2;
+            margin-bottom: 6px;
+            font-size: 2em;
+        }
+        .subtitle{
+            text-align:center;
+            color:#555;
+            margin-bottom:30px;
+        }
+        .task {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #e1f5fe;
+            border-radius: 10px;
+            background: #f8fdff;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        .question {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 1.05em;
+            border-left: 4px solid #ff9800;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+        select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            min-width: 140px;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        .feedback.correct {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        .progress {
+            background: #e3f2fd;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .hint {
+            background: #fff9c4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+            font-style: italic;
+        }
+        button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .reset-btn {
+            background: #ff9800;
+            margin-left: 10px;
+        }
+        .reset-btn:hover {
+            background: #f57c00;
+        }
+        .drag-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 2px dashed #bdbdbd;
+        }
+        .draggable {
+            background: #2196f3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: grab;
+            user-select: none;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .draggable:hover {
+            background: #1976d2;
+            transform: scale(1.05);
+        }
+        .dropzone {
+            min-height: 60px;
+            background: #f8f8f8;
+            border: 3px dashed #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .dropzone.drag-over {
+            background: #e8f5e8;
+            border-color: #2e7d32;
+        }
+        .legend {
+            background:#f1f8e9;
+            border:1px dashed #8bc34a;
+            padding:10px 12px;
+            border-radius:8px;
+            margin-top:10px;
+            color:#2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Relativsätze</h1>
+        <div class="subtitle">Übe Relativpronomen und Wortstellung in Relativsätzen (der, die, das, den, dem, deren, dessen, denen ...)</div>
+
+        <!-- Aufgabe 1 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 1: Verbinde die Sätze zu einem Relativsatz</div>
+            <div class="progress">Satz <span id="t1-cur">1</span> von 10</div>
+            <div class="question" id="t1-q">Das ist der Mann. Er wohnt nebenan.</div>
+            <input type="text" id="t1-input" placeholder="Schreibe hier den Relativsatz ...">
+            <button onclick="t1Check()">Überprüfen</button>
+            <button id="t1-next" onclick="t1Next()" style="display:none;">Weiter</button>
+            <div class="feedback" id="t1-fb"></div>
+            <div class="hint" id="t1-hint" style="display:none;">Tipp: Im Relativsatz steht das Verb am Ende. Beispiel: „der <strong>nebenan wohnt</strong>“.</div>
+            <div class="legend">Akzeptiert werden mehrere korrekte Varianten (z.&nbsp;B. Groß-/Kleinschreibung, Satzzeichen). Wichtig sind richtiges Relativpronomen und Verb-Endstellung.</div>
+        </div>
+
+        <!-- Aufgabe 2 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 2: Wähle das richtige Relativpronomen</div>
+            <div class="progress">Satz <span id="t2-cur">1</span> von 10</div>
+            <div class="question" id="t2-q">Das ist die Frau, ___ ich gestern geholfen habe.</div>
+            <div>
+                <select id="t2-select">
+                    <option value="">— Wähle —</option>
+                    <option>der</option>
+                    <option>die</option>
+                    <option>das</option>
+                    <option>den</option>
+                    <option>dem</option>
+                    <option>deren</option>
+                    <option>dessen</option>
+                    <option>denen</option>
+                    <option>welche</option>
+                    <option>welcher</option>
+                    <option>welches</option>
+                    <option>welchen</option>
+                    <option>welchem</option>
+                </select>
+            </div>
+            <button onclick="t2Check()">Überprüfen</button>
+            <button id="t2-next" onclick="t2Next()" style="display:none;">Weiter</button>
+            <div class="feedback" id="t2-fb"></div>
+            <div class="hint" id="t2-hint" style="display:none;">Tipp: Bestimme zuerst Genus und Fall. „helfen“ regiert Dativ.</div>
+        </div>
+
+        <!-- Aufgabe 3 -->
+        <div class="task">
+            <div class="task-title">Aufgabe 3: Bringe die Wörter in die richtige Reihenfolge</div>
+            <div class="progress">Satz <span id="t3-cur">1</span> von 10</div>
+            <div class="question">Ziehe die Wörter in die Box unten, um einen korrekten Relativsatz zu bilden:</div>
+            <div class="drag-container" id="dragWords"></div>
+            <div>Deine Antwort:</div>
+            <div class="dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)">Ziehe die Wörter hierher...</div>
+            <button onclick="t3Check()">Überprüfen</button>
+            <button class="reset-btn" onclick="t3Reset()">Zurücksetzen</button>
+            <button id="t3-next" onclick="t3Next()" style="display:none;">Weiter</button>
+            <div class="feedback" id="t3-fb"></div>
+            <div class="hint" id="t3-hint" style="display:none;">Tipp: Im Relativsatz steht das Verb am Ende: „..., die <strong>im Park spielt</strong>.“</div>
+        </div>
+    </div>
+
+    <script>
+        // -------- Hilfsfunktionen --------
+        function normalize(str){
+            return str
+                .toLowerCase()
+                .replace(/\s+/g,' ')
+                .replace(/\s*,\s*/g,', ')
+                .replace(/\s*\.\s*$/,'')
+                .trim();
+        }
+        function arraysEqual(a,b){
+            if(a.length!==b.length) return false;
+            for(let i=0;i<a.length;i++){ if(a[i]!==b[i]) return false; }
+            return true;
+        }
+
+        // -------- Aufgabe 1: Sätze verbinden --------
+        const t1Items = [
+            {
+                base: "Das ist der Mann. Er wohnt nebenan.",
+                accepts: [
+                    "das ist der mann, der nebenan wohnt.",
+                    "der mann, der nebenan wohnt, ist das." // alternative Struktur
+                ]
+            },
+            {
+                base: "Hier ist das Buch. Es liegt auf dem Tisch.",
+                accepts: [
+                    "hier ist das buch, das auf dem tisch liegt.",
+                    "das buch, das auf dem tisch liegt, ist hier."
+                ]
+            },
+            {
+                base: "Die Frau ist Lehrerin. Ihr Mann ist Arzt.",
+                accepts: [
+                    "die frau, deren mann arzt ist, ist lehrerin."
+                ]
+            },
+            {
+                base: "Ich kenne den Jungen. Du hast ihm geholfen.",
+                accepts: [
+                    "ich kenne den jungen, dem du geholfen hast."
+                ]
+            },
+            {
+                base: "Das ist die Stadt. Ich bin dort geboren.",
+                accepts: [
+                    "das ist die stadt, in der ich geboren bin.",
+                    "das ist die stadt, wo ich geboren bin."
+                ]
+            },
+            {
+                base: "Das ist der Film. Wir haben ihn gestern gesehen.",
+                accepts: [
+                    "das ist der film, den wir gestern gesehen haben."
+                ]
+            },
+            {
+                base: "Ich suche die Frau. Du hast über sie gesprochen.",
+                accepts: [
+                    "ich suche die frau, über die du gesprochen hast."
+                ]
+            },
+            {
+                base: "Kennst du den Mann? Sein Auto wurde gestohlen.",
+                accepts: [
+                    "kennst du den mann, dessen auto gestohlen wurde."
+                ]
+            },
+            {
+                base: "Das ist das Kind. Die Lehrerin lobt es oft.",
+                accepts: [
+                    "das ist das kind, das die lehrerin oft lobt.",
+                    "das ist das kind, welches die lehrerin oft lobt."
+                ]
+            },
+            {
+                base: "Ich mag Leute. Sie lachen viel.",
+                accepts: [
+                    "ich mag leute, die viel lachen."
+                ]
+            }
+        ];
+        let t1Index = 0;
+        function t1Render(){
+            document.getElementById('t1-q').textContent = t1Items[t1Index].base;
+            document.getElementById('t1-cur').textContent = t1Index+1;
+            document.getElementById('t1-input').value='';
+            document.getElementById('t1-fb').textContent='';
+            document.getElementById('t1-fb').className='feedback';
+            document.getElementById('t1-hint').style.display='none';
+            document.getElementById('t1-next').style.display='none';
+        }
+        function t1Check(){
+            const val = normalize(document.getElementById('t1-input').value);
+            const accepts = t1Items[t1Index].accepts.map(normalize);
+            const fb = document.getElementById('t1-fb');
+            const hint = document.getElementById('t1-hint');
+            const next = document.getElementById('t1-next');
+            if(val && accepts.includes(val)){
+                fb.textContent = '✓ Richtig!';
+                fb.className = 'feedback correct';
+                hint.style.display='none';
+                next.style.display='inline-block';
+            } else if(val){
+                fb.textContent = '✗ Noch nicht ganz richtig. Achte auf Relativpronomen und Verb-Endstellung.';
+                fb.className = 'feedback incorrect';
+                hint.style.display='block';
+                next.style.display='none';
+            } else {
+                fb.textContent = '';
+                fb.className = 'feedback';
+            }
+        }
+        function t1Next(){
+            t1Index++;
+            if(t1Index < t1Items.length){
+                t1Render();
+            } else {
+                const fb = document.getElementById('t1-fb');
+                fb.textContent = '🎉 Aufgabe 1 abgeschlossen!';
+                fb.className = 'feedback correct';
+                document.getElementById('t1-next').style.display='none';
+            }
+        }
+
+        // -------- Aufgabe 2: Pronomen wählen --------
+        const t2Items = [
+            { q: "Das ist die Frau, ___ ich gestern geholfen habe.", answers: ["der"] },
+            { q: "Kennst du den Mann, ___ wir im Park getroffen haben?", answers: ["den"] },
+            { q: "Das ist das Haus, in ___ meine Großeltern wohnen.", answers: ["dem"] },
+            { q: "Die Kinder, ___ Fahrräder neu sind, spielen draußen.", answers: ["deren"] },
+            { q: "Der Autor, ___ Buch ich lese, kommt aus Wien.", answers: ["dessen"] },
+            { q: "Ich suche die Leute, mit ___ du gesprochen hast.", answers: ["denen"] },
+            { q: "Das ist die Frage, auf ___ ich keine Antwort habe.", answers: ["die","welche"] },
+            { q: "Das ist das Spiel, ___ gestern so spannend war.", answers: ["das","welches"] },
+            { q: "Die Frau, bei ___ ich wohne, ist sehr nett.", answers: ["der"] },
+            { q: "Der Zug, ___ pünktlich ankommt, fährt von Gleis 7.", answers: ["der","welcher"] }
+        ];
+        let t2Index = 0;
+        function t2Render(){
+            document.getElementById('t2-q').textContent = t2Items[t2Index].q;
+            document.getElementById('t2-cur').textContent = t2Index+1;
+            document.getElementById('t2-select').value='';
+            document.getElementById('t2-fb').textContent='';
+            document.getElementById('t2-fb').className='feedback';
+            document.getElementById('t2-hint').style.display='none';
+            document.getElementById('t2-next').style.display='none';
+        }
+        function t2Check(){
+            const sel = (document.getElementById('t2-select').value || '').toLowerCase();
+            const ok = t2Items[t2Index].answers.map(a=>a.toLowerCase());
+            const fb = document.getElementById('t2-fb');
+            const hint = document.getElementById('t2-hint');
+            const next = document.getElementById('t2-next');
+            if(sel && ok.includes(sel)){
+                fb.textContent = '✓ Perfekt!';
+                fb.className = 'feedback correct';
+                hint.style.display='none';
+                next.style.display='inline-block';
+            } else if(sel){
+                fb.textContent = '✗ Das passt hier nicht. Überprüfe Kasus/Präposition.';
+                fb.className = 'feedback incorrect';
+                hint.style.display='block';
+                next.style.display='none';
+            } else {
+                fb.textContent = '';
+                fb.className = 'feedback';
+            }
+        }
+        function t2Next(){
+            t2Index++;
+            if(t2Index < t2Items.length){
+                t2Render();
+            } else {
+                const fb = document.getElementById('t2-fb');
+                fb.textContent = '🎉 Aufgabe 2 abgeschlossen!';
+                fb.className = 'feedback correct';
+                document.getElementById('t2-next').style.display='none';
+            }
+        }
+
+        // -------- Aufgabe 3: Drag & Drop --------
+        const t3Items = [
+            { words: ['Das','ist','der','Mann',',','der','nebenan','wohnt','.'], correct: ['Das','ist','der','Mann',',','der','nebenan','wohnt','.'] },
+            { words: ['Ich','kenne','die','Frau',',','der','ich','geholfen','habe','.'], correct: ['Ich','kenne','die','Frau',',','der','ich','geholfen','habe','.'] },
+            { words: ['Das','ist','das','Buch',',','das','ich','gestern','gekauft','habe','.'], correct: ['Das','ist','das','Buch',',','das','ich','gestern','gekauft','habe','.'] },
+            { words: ['Die','Kinder',',','deren','Lehrerin','krank','ist',',','bleiben','zu','Hause','.'], correct: ['Die','Kinder',',','deren','Lehrerin','krank','ist',',','bleiben','zu','Hause','.'] },
+            { words: ['Das','ist','die','Stadt',',','in','der','ich','geboren','bin','.'], correct: ['Das','ist','die','Stadt',',','in','der','ich','geboren','bin','.'] },
+            { words: ['Der','Mann',',','dessen','Auto','kaputt','ist',',','kommt','zu','Fuß','.'], correct: ['Der','Mann',',','dessen','Auto','kaputt','ist',',','kommt','zu','Fuß','.'] },
+            { words: ['Die','Freunde',',','mit','denen','wir','reisen',',','wohnen','in','Köln','.'], correct: ['Die','Freunde',',','mit','denen','wir','reisen',',','wohnen','in','Köln','.'] },
+            { words: ['Kennst','du','das','Mädchen',',','das','im','Park','spielt','?'], correct: ['Kennst','du','das','Mädchen',',','das','im','Park','spielt','?'] },
+            { words: ['Ich','suche','jemanden',',','der','mir','helfen','kann','.'], correct: ['Ich','suche','jemanden',',','der','mir','helfen','kann','.'] },
+            { words: ['Das','ist','das','Thema',',','über','das','wir','sprechen','wollten','.'], correct: ['Das','ist','das','Thema',',','über','das','wir','sprechen','wollten','.'] }
+        ];
+        let t3Index = 0;
+        function shuffle(array){
+            const a = array.slice();
+            for(let i=a.length-1;i>0;i--){
+                const j = Math.floor(Math.random()*(i+1));
+                [a[i],a[j]]=[a[j],a[i]];
+            }
+            return a;
+        }
+        function createDraggables(){
+            const drag = document.getElementById('dragWords');
+            drag.innerHTML = '';
+            const words = shuffle(t3Items[t3Index].words);
+            words.forEach((w,idx)=>{
+                const span = document.createElement('span');
+                span.textContent = w;
+                span.className = 'draggable';
+                span.draggable = true;
+                span.id = 'w-'+idx;
+                span.addEventListener('dragstart', dragStart);
+                drag.appendChild(span);
+            });
+        }
+        function dragStart(e){ e.dataTransfer.setData('text/plain', e.target.id); }
+        function allowDrop(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function drop(e){
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const id = e.dataTransfer.getData('text/plain');
+            const el = document.getElementById(id);
+            if(el){ e.currentTarget.appendChild(el); }
+        }
+        document.getElementById('dragWords').addEventListener('dragover', function(e){ e.preventDefault(); });
+        document.getElementById('dragWords').addEventListener('drop', function(e){
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const el = document.getElementById(id);
+            if(el){ e.currentTarget.appendChild(el); }
+        });
+        document.getElementById('dropZone').addEventListener('dragleave', function(e){
+            e.currentTarget.classList.remove('drag-over');
+        });
+        function t3Render(){
+            document.getElementById('t3-cur').textContent = t3Index+1;
+            document.getElementById('t3-fb').textContent='';
+            document.getElementById('t3-fb').className='feedback';
+            document.getElementById('t3-hint').style.display='none';
+            document.getElementById('t3-next').style.display='none';
+            document.getElementById('dropZone').innerHTML = 'Ziehe die Wörter hierher...';
+            createDraggables();
+        }
+        function t3Check(){
+            const dz = document.getElementById('dropZone');
+            const ans = Array.from(dz.children).map(ch=>ch.textContent);
+            const fb = document.getElementById('t3-fb');
+            const hint = document.getElementById('t3-hint');
+            const next = document.getElementById('t3-next');
+            if(ans.length===0){
+                fb.textContent = 'Bitte ziehe zuerst die Wörter in die Box.';
+                fb.className='feedback';
+                return;
+            }
+            if(arraysEqual(ans, t3Items[t3Index].correct)){
+                fb.textContent = '✓ Ausgezeichnet!';
+                fb.className='feedback correct';
+                hint.style.display='none';
+                next.style.display='inline-block';
+            } else {
+                fb.textContent = '✗ Die Reihenfolge ist noch nicht richtig.';
+                fb.className='feedback incorrect';
+                hint.style.display='block';
+                next.style.display='none';
+            }
+        }
+        function t3Next(){
+            t3Index++;
+            if(t3Index < t3Items.length){
+                t3Render();
+            } else {
+                const fb = document.getElementById('t3-fb');
+                fb.textContent = '🎉 Aufgabe 3 abgeschlossen!';
+                fb.className='feedback correct';
+                document.getElementById('t3-next').style.display='none';
+                document.getElementById('dragWords').innerHTML='';
+                document.getElementById('dropZone').innerHTML='';
+            }
+        }
+        function t3Reset(){
+            const dz = document.getElementById('dropZone');
+            const drag = document.getElementById('dragWords');
+            const words = Array.from(dz.children);
+            words.forEach(w=>drag.appendChild(w));
+            if(dz.children.length===0){ dz.innerHTML='Ziehe die Wörter hierher...'; }
+            document.getElementById('t3-fb').textContent='';
+            document.getElementById('t3-fb').className='feedback';
+            document.getElementById('t3-hint').style.display='none';
+            document.getElementById('t3-next').style.display='none';
+            createDraggables();
+        }
+
+        // -------- Init --------
+        window.onload = function(){
+            t1Render();
+            t2Render();
+            t3Render();
+        };
+    </script>
+</body>
+</html>

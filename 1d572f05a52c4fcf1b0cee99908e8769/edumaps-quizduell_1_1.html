@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edumaps – Quiz im Quizduell‑Stil</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#111827;        /* gray-900  */
+      --muted:#9ca3af;       /* gray-400 */
+      --text:#f8fafc;        /* slate-50 */
+      --accent:#10b981;      /* emerald-500 */
+      --accent-2:#3b82f6;    /* blue-500 */
+      --danger:#ef4444;      /* red-500 */
+      --warning:#f59e0b;     /* amber-500 */
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 80% -10%, #1e293b 0%, #0b1222 40%, var(--bg) 70%);
+      color:var(--text);
+      min-height:100svh; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .app{width:min(920px, 100%);} 
+    .card{background:linear-gradient(180deg,#0b1222 0%, #0c1428 35%, #0b1326 100%);
+      border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+      display:flex; flex-direction:column; max-height:100svh;}
+    header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06); position:sticky; top:0; background:linear-gradient(180deg,#0b1222 0%, #0c1428 35%, #0b1326 100%); z-index:10;}  
+    header .title{display:flex; gap:12px; align-items:center}
+    .badge{font-weight:600; font-size:12px; letter-spacing:.6px; text-transform:uppercase; padding:6px 10px; border-radius:999px; background:rgba(16,185,129,.12); color:#a7f3d0; border:1px solid rgba(16,185,129,.35)}
+    .main{padding:20px; flex:1; overflow:auto; -webkit-overflow-scrolling:touch;}
+    .hidden{display:none}
+    .center{display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center}
+
+    .h1{font-size:clamp(20px,4.8vw,28px); line-height:1.2; font-weight:800;}
+    .h2{font-size:clamp(14px,3.5vw,18px); color:var(--muted)}
+
+    .btn{appearance:none; border:0; cursor:pointer; padding:14px 18px; border-radius:14px; font-weight:700; transition:.15s transform ease, .25s box-shadow ease, .25s background ease;}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:linear-gradient(180deg, #10b981, #059669); color:white; box-shadow: 0 8px 22px rgba(16,185,129,.25)}
+    .btn-muted{background:rgba(255,255,255,.06); color:var(--text);}
+
+    .grid{display:grid; gap:14px}
+    .answers{grid-template-columns: 1fr 1fr}
+    @media (max-width:900px){ .answers{grid-template-columns:1fr} body{padding:12px} .btn{padding:16px 18px} .answer{padding:18px 16px; min-height:60px} }
+
+    /* Antworten: explizit helle Schrift setzen (Buttons haben sonst teils dunkle Default-Farbe) */
+    .answer{position:relative; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); border-radius:16px; padding:16px 16px; font-weight:700; display:flex; gap:12px; align-items:center; justify-content:flex-start; cursor:pointer; transition:.2s background ease, .2s border-color ease, .2s transform ease; color: var(--text);} 
+    .answer span{color:inherit}
+    .answer .pill{ color:#e5e7eb; border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.08); }
+    .answer:hover{background:rgba(255,255,255,.06)}
+    .answer.correct{background:linear-gradient(180deg, rgba(16,185,129,.25), rgba(5,150,105,.18)); border-color: rgba(16,185,129,.6); color:var(--text)}
+    .answer.wrong{background:linear-gradient(180deg, rgba(239,68,68,.28), rgba(127,29,29,.2)); border-color: rgba(239,68,68,.6); color:var(--text)}
+
+    .meta{display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:18px}
+    .progress-wrap{flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:999px; height:14px; overflow:hidden}
+    .progress{height:100%; background:linear-gradient(90deg, var(--accent-2), var(--accent)); width:0%}
+
+    .timer{display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); font-weight:800}
+
+    .score{font-weight:800; letter-spacing:.5px}
+
+    .explain{margin-top:14px; color:var(--muted); background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); padding:14px; border-radius:12px}
+
+    footer{display:flex; align-items:center; justify-content:space-between; padding:12px 16px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid rgba(255,255,255,.06); position:sticky; bottom:0; background:linear-gradient(180deg,#0b1222 0%, #0c1428 35%, #0b1326 100%); z-index:10;} 
+
+    .toast{position:fixed; inset:auto 20px 20px auto; background:rgba(0,0,0,.65); color:white; padding:10px 14px; border-radius:10px; font-size:14px; box-shadow:var(--shadow); opacity:0; transform:translateY(10px); transition:.2s}
+    .toast.show{opacity:1; transform:translateY(0)}
+
+    .pill{padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); font-size:12px; color:var(--muted);}
+
+    .review{display:grid; gap:10px; margin-top:14px}
+    .review-item{border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); border-radius:12px; padding:12px}
+    .review-item.correct{border-color: rgba(16,185,129,.6); background:rgba(16,185,129,.08)}
+    .review-item.wrong{border-color: rgba(239,68,68,.6); background:rgba(239,68,68,.08)}
+    button, .answer{ -webkit-tap-highlight-color: transparent; }
+    .answer{min-height:56px}
+  </style>
+</head>
+<body>
+  <div class="app card" role="application" aria-label="Edumaps Quiz">
+    <header>
+      <div class="title">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" stroke="white" stroke-opacity=".9" stroke-width="1.5"/>
+          <path d="M12 7l7 4" stroke="white" stroke-opacity=".5"/>
+          <circle cx="12" cy="12" r="2" fill="white" fill-opacity=".85"/>
+        </svg>
+        <div>
+          <div style="font-weight:900; letter-spacing:.3px">Edumaps: Quizduell‑Style</div>
+          <div class="pill">Singleplayer · 12 Fragen · Zeitbonus</div>
+        </div>
+      </div>
+      <div class="badge" aria-live="polite" id="streak">Streak ×1</div>
+    </header>
+
+    <div class="main">
+      <!-- Start Screen -->
+      <section id="screen-start" class="center">
+        <div class="h1">Bist du bereit für das Edumaps‑Duell?</div>
+        <div class="h2">Beantworte 12 Multiple‑Choice‑Fragen. Punkte gibt’s für richtige Antworten und Extra‑Punkte für Geschwindigkeit.</div>
+        <div class="grid" style="gap:10px">
+          <button class="btn btn-primary" id="btn-start">Jetzt starten</button>
+          <button class="btn btn-muted" id="btn-how">Wie wird gewertet?</button>
+        </div>
+      </section>
+
+      <!-- Quiz Screen -->
+      <section id="screen-quiz" class="hidden" aria-live="polite">
+        <div class="meta">
+          <div class="progress-wrap" aria-label="Fortschritt">
+            <div id="progress" class="progress"></div>
+          </div>
+          <div class="timer" aria-label="Timer"><span>⏱</span><span id="time">15</span>s</div>
+          <div class="score" id="score">0 Punkte</div>
+        </div>
+        <div id="qcat" class="pill" style="margin-bottom:10px">Kategorie</div>
+        <div id="question" class="h1" style="margin-bottom:12px">Frage…</div>
+        <div class="grid answers" id="answers" role="list"></div>
+        <div id="explain" class="explain hidden"></div>
+      </section>
+
+      <!-- Result Screen -->
+      <section id="screen-result" class="hidden center" aria-hidden="true">
+        <div class="h1" id="result-title"></div>
+        <div class="h2" id="result-sub"></div>
+        <div class="grid" style="gap:10px; width:100%; max-width:520px">
+          <button class="btn btn-primary" id="btn-restart">Nochmal spielen</button>
+          <button class="btn btn-muted" id="btn-review">Antworten ansehen</button>
+        </div>
+        <div id="review" class="review hidden" aria-label="Antwortübersicht"></div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="pill">Im Stil von Quizduell: Zeitbonus & Streak‑Multiplikator</div>
+      <div class="pill" id="footer-meta">Frage 1/12</div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Zeitbonus!</div>
+
+  <script>
+    // --- Quizdaten: Edumaps-Fakten (frei zugänglich, nutzungsbezogen) ---
+    const QUESTIONS = [
+      {
+        q: "Was ist Edumaps am ehesten?",
+        cat: "Grundlagen",
+        options: [
+          "Ein Tool zum Erstellen digitaler Maps (Pinnwände, Zeitstrahlen, Stickerwände)",
+          "Ein Videoschnittprogramm",
+          "Ein E‑Mail‑Client",
+          "Ein Tabellenkalkulations‑Add‑on"
+        ],
+        correct: 0,
+        explain: "Edumaps dient zum Gestalten und Teilen digitaler Maps wie Pinnwand, Timeline oder Stickerwand."
+      },
+      {
+        q: "Welche Map‑Formate gibt es in Edumaps?",
+        cat: "Funktionen",
+        options: [
+          "Pinboard, Timeline, Stickerwand",
+          "Mindmap, Datenbank, Kalender",
+          "Präsentation, Whiteboard, Diagramm",
+          "Spreadsheet, Kanban, Gantt"
+        ],
+        correct: 0,
+        explain: "Zu den Formaten zählen u. a. Pinboard, Timeline und Stickerwand."
+      },
+      {
+        q: "Kann das Map‑Format nach dem Erstellen geändert werden?",
+        cat: "Funktionen",
+        options: ["Ja, nachträglich anpassbar","Nur innerhalb der ersten 10 Minuten","Nur mit Admin‑Rechten","Nein, nie"],
+        correct: 0,
+        explain: "Das Map‑Format lässt sich in den Einstellungen nachträglich ändern."
+      },
+      {
+        q: "Wie können Edumaps genutzt werden?",
+        cat: "Zusammenarbeit",
+        options: [
+          "Mehrere Personen arbeiten kollaborativ in Echtzeit",
+          "Nur Einzelarbeit, kein Teilen möglich",
+          "Nur als statisches PDF",
+          "Nur per E‑Mail versendbar"
+        ],
+        correct: 0,
+        explain: "Edumaps unterstützt kollaborative Arbeit in Echtzeit."
+      },
+      {
+        q: "Was lässt sich direkt in einer Map‑Box aufnehmen oder hinzufügen?",
+        cat: "Medien",
+        options: [
+          "Medien via Mikrofon/Webcam sowie Datei‑Uploads",
+          "Nur Text, keine Medien",
+          "Nur externe YouTube‑Links",
+          "Nur ZIP‑Archive"
+        ],
+        correct: 0,
+        explain: "Man kann Medien direkt aufnehmen (Mikrofon/Webcam) oder Dateien hochladen."
+      },
+      {
+        q: "Wie können Maps geteilt werden?",
+        cat: "Teilen",
+        options: [
+          "Mit Gruppen/Einzelnutzern oder der ganzen Schule",
+          "Ausschließlich öffentlich im Web",
+          "Nur per QR‑Code zwingend",
+          "Über soziale Netzwerke, nicht innerhalb der App"
+        ],
+        correct: 0,
+        explain: "Teilen ist fein granular: an Gruppen, einzelne Nutzer oder schulweit."
+      },
+      {
+        q: "Welche Rechte lassen sich beim Teilen steuern?",
+        cat: "Rechte",
+        options: [
+          "Bearbeiten/Ansehen, Rechte vergeben oder entziehen",
+          "Nur Kommentieren",
+          "Nur Eigentumsübertrag",
+          "Es gibt keine Rechteverwaltung"
+        ],
+        correct: 0,
+        explain: "Zugriffsrechte können vergeben/entzogen werden (z. B. bearbeiten vs. nur ansehen)."
+      },
+      {
+        q: "Welche Schutz‑/Einstellungen gibt es?",
+        cat: "Sicherheit",
+        options: [
+          "Passwortschutz, Kopierbeschränkung, Download‑Buttons begrenzen",
+          "Nur Wasserzeichen",
+          "Nur IP‑Whitelist",
+          "Keine besonderen Einstellungen"
+        ],
+        correct: 0,
+        explain: "Edumaps bietet u. a. Passwortschutz sowie Einschränkungen beim Kopieren/Download."
+      },
+      {
+        q: "Wofür ist Edumaps im Schulkontext gedacht?",
+        cat: "Schule",
+        options: [
+          "Lehrende können Klassen/Gruppen anlegen und Maps gezielt verteilen",
+          "Nur für außerschulische Vereine",
+          "Nur für IT‑Administratoren",
+          "Ausschließlich für Hochschulforschung"
+        ],
+        correct: 0,
+        explain: "Lehrkräfte verwalten Klassen/Gruppen und teilen Maps gezielt."
+      },
+      {
+        q: "Welche Aussage zur DSGVO trifft zu?",
+        cat: "Datenschutz",
+        options: [
+          "Edumaps ist datenschutzkonform (DSGVO)",
+          "Nicht DSGVO‑konform",
+          "Nur mit US‑Privacy‑Shield",
+          "Datenschutz ist nicht relevant"
+        ],
+        correct: 0,
+        explain: "Das Tool ist auf Datenschutz/DSGVO‑Konformität ausgelegt."
+      },
+      {
+        q: "Was lässt sich aus Edumaps exportieren?",
+        cat: "Export",
+        options: [
+          "Strukturen z. B. für Moodle",
+          "Nur CSV der Kommentare",
+          "Nur Bilder als GIF",
+          "Es gibt keine Exportfunktion"
+        ],
+        correct: 0,
+        explain: "Maps/Strukturen können u. a. als Moodle‑Kursstruktur exportiert werden."
+      },
+      {
+        q: "Welche Dinge lassen sich in einer Map konfigurieren?",
+        cat: "Gestaltung",
+        options: [
+          "Hintergrund, Schriftarten, Titel, Tags",
+          "Nur die Titelfarbe",
+          "Nur die Box‑Größe",
+          "Keine Anpassungen"
+        ],
+        correct: 0,
+        explain: "Es gibt vielfältige Einstellungen wie Hintergrund, Fonts, Titel und Tags."
+      }
+    ];
+
+    // --- Spielparameter ---
+    const TOTAL = QUESTIONS.length;
+    const TIME_PER_Q = 15;           // Sekunden pro Frage
+    const BASE_POINTS = 800;          // Punkte für richtige Antwort
+    const SPEED_BONUS_PER_SEC = 40;   // Bonus pro Restsekunde
+    const STREAK_STEP = 0.15;         // 15% mehr pro richtiger Streak
+
+    // --- State ---
+    let idx=0, score=0, correctCount=0, timer=null, remaining=TIME_PER_Q, streak=0, answersGiven=[];
+
+    // --- Elements ---
+    const $ = (s) => document.querySelector(s);
+    const startScreen = $('#screen-start');
+    const quizScreen  = $('#screen-quiz');
+    const resultScreen= $('#screen-result');
+    const qEl = $('#question');
+    const aWrap = $('#answers');
+    const explainEl = $('#explain');
+    const progressEl = $('#progress');
+    const timeEl = $('#time');
+    const scoreEl = $('#score');
+    const toastEl = $('#toast');
+    const streakEl = $('#streak');
+    const qcatEl = $('#qcat');
+    const footerMeta = $('#footer-meta');
+
+    // --- Utils ---
+    function showToast(msg){
+      toastEl.textContent = msg; toastEl.classList.add('show');
+      setTimeout(()=>toastEl.classList.remove('show'), 1200);
+    }
+
+    function formatPoints(n){ return new Intl.NumberFormat('de-DE').format(n) + ' Punkte'; }
+
+    function setProgress(){ progressEl.style.width = ((idx)/TOTAL*100).toFixed(1)+'%'; }
+
+    function updateStreakBadge(){
+      const mult = 1 + (streak * STREAK_STEP);
+      streakEl.textContent = `Streak ×${mult.toFixed(2).replace('.',',')}`;
+    }
+
+    function startTimer(){
+      remaining = TIME_PER_Q; timeEl.textContent = remaining;
+      timer = setInterval(()=>{
+        remaining--; timeEl.textContent = remaining;
+        if(remaining <= 0){ clearInterval(timer); lockAnswers(); reveal(false, true); }
+      }, 1000);
+    }
+
+    function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+    function renderQuestion(){
+      const item = QUESTIONS[idx];
+      qEl.textContent = item.q;
+      qcatEl.textContent = item.cat;
+      explainEl.classList.add('hidden');
+      aWrap.innerHTML = '';
+      item.options.forEach((opt, i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'answer';
+        btn.setAttribute('role','listitem');
+        btn.innerHTML = `<span class="pill">${String.fromCharCode(65+i)}</span> <span>${opt}</span>`;
+        btn.addEventListener('click', ()=> selectAnswer(i));
+        aWrap.appendChild(btn);
+      });
+      footerMeta.textContent = `Frage ${idx+1}/${TOTAL}`;
+      setProgress();
+      startTimer();
+    }
+
+    function lockAnswers(){ [...aWrap.children].forEach(b=> b.disabled = true); }
+
+    function selectAnswer(i){
+      stopTimer();
+      lockAnswers();
+      const item = QUESTIONS[idx];
+      const correct = (i === item.correct);
+
+      [...aWrap.children].forEach((b, bi)=>{
+        if(bi === item.correct) b.classList.add('correct');
+        if(bi === i && !correct) b.classList.add('wrong');
+      });
+
+      let gained = 0;
+      if(correct){
+        correctCount++;
+        streak++;
+        const mult = 1 + (streak * STREAK_STEP);
+        gained = Math.round((BASE_POINTS + (remaining * SPEED_BONUS_PER_SEC)) * mult);
+        score += gained;
+        showToast(`Richtig! +${gained} (${Math.round(mult*100)}% mit Streak)`);
+      } else {
+        streak = 0; // Streak bricht ab
+        showToast('Leider falsch.');
+      }
+      updateStreakBadge();
+      scoreEl.textContent = formatPoints(score);
+
+      explainEl.textContent = item.explain;
+      explainEl.classList.remove('hidden');
+
+      answersGiven.push({
+        q: item.q,
+        chosen: item.options[i] ?? '—',
+        correct: item.options[item.correct],
+        ok: correct,
+        explain: item.explain,
+        cat: item.cat,
+        gained
+      });
+
+      setTimeout(nextQuestion, 900);
+    }
+
+    function reveal(correct, timeout=false){
+      const item = QUESTIONS[idx];
+      [...aWrap.children].forEach((b, bi)=>{
+        if(bi === item.correct) b.classList.add('correct');
+      });
+      if(timeout){ showToast('Zeit abgelaufen!'); streak = 0; updateStreakBadge(); }
+      explainEl.textContent = item.explain;
+      explainEl.classList.remove('hidden');
+      answersGiven.push({ q:item.q, chosen: '— (Zeit)', correct: item.options[item.correct], ok:false, explain:item.explain, cat:item.cat, gained:0 });
+      setTimeout(nextQuestion, 900);
+    }
+
+    function nextQuestion(){
+      idx++;
+      if(idx >= TOTAL){ return finish(); }
+      renderQuestion();
+    }
+
+    function finish(){
+      startScreen.classList.add('hidden');
+      quizScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+      resultScreen.removeAttribute('aria-hidden');
+      const title = document.querySelector('#result-title');
+      const sub = document.querySelector('#result-sub');
+      const pct = Math.round((correctCount / TOTAL) * 100);
+      title.textContent = pct >= 75 ? 'Glänzend!' : pct >= 50 ? 'Gut gemacht!' : 'Geschafft!';
+      sub.textContent = `Du hast ${correctCount}/${TOTAL} Fragen korrekt beantwortet · ${formatPoints(score)}`;
+      footerMeta.textContent = 'Fertig';
+    }
+
+    function restart(){
+      idx=0; score=0; correctCount=0; streak=0; answersGiven=[]; updateStreakBadge(); scoreEl.textContent = '0 Punkte';
+      startScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      resultScreen.setAttribute('aria-hidden','true');
+      quizScreen.classList.remove('hidden');
+      setProgress();
+      renderQuestion();
+    }
+
+    function showHow(){
+      alert('Wertung:\n\n• +'+BASE_POINTS+' Punkte pro richtiger Antwort.\n• Zeitbonus: +'+SPEED_BONUS_PER_SEC+' pro Restsekunde.\n• Streak‑Multiplikator: +'+(STREAK_STEP*100)+'% pro aufeinanderfolgender richtiger Antwort.');
+    }
+
+    function showReview(){
+      const list = document.querySelector('#review');
+      list.innerHTML = '';
+      answersGiven.forEach((a, i)=>{
+        const item = document.createElement('div');
+        item.className = 'review-item ' + (a.ok ? 'correct' : 'wrong');
+        item.innerHTML = `<div style="font-weight:800">${i+1}. ${a.q}</div>
+          <div style="margin:6px 0"><span class="pill">Deine Antwort:</span> ${a.chosen}</div>
+          <div><span class="pill">Richtig:</span> ${a.correct}</div>
+          <div class="explain" style="margin:10px 0 0">${a.explain}</div>`;
+        list.appendChild(item);
+      });
+      list.classList.remove('hidden');
+    }
+
+    // --- Events ---
+    document.querySelector('#btn-start').addEventListener('click', ()=>{
+      startScreen.classList.add('hidden');
+      quizScreen.classList.remove('hidden');
+      renderQuestion();
+    });
+    document.querySelector('#btn-how').addEventListener('click', showHow);
+    document.querySelector('#btn-restart').addEventListener('click', restart);
+    document.querySelector('#btn-review').addEventListener('click', showReview);
+
+    // Tastatur‑Support (A/B/C/D, Enter)
+    window.addEventListener('keydown', (e)=>{
+      if(quizScreen.classList.contains('hidden')) return;
+      const map = {a:0, b:1, c:2, d:3, A:0, B:1, C:2, D:3};
+      if(map[e.key] !== undefined){
+        const btn = aWrap.children[map[e.key]]; if(btn && !btn.disabled) btn.click();
+      }
+      if(e.key === 'Enter'){
+        const enabled = [...aWrap.children].find(b=>!b.disabled);
+        if(enabled) enabled.click();
+      }
+    });
+  </script>
+</body>
+</html>

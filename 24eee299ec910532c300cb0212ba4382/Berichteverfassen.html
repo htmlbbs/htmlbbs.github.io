@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bericht: Aufbau, Merkmale & Schreibstil (Einfache Sprache)</title>
+  <style>
+    :root{--bg:#f7fafc;--card:#fff;--accent:#0b6cf6;--muted:#6b7280}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;line-height:1.5;margin:0;background:var(--bg);color:#0f172a;padding:24px}
+    header{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+    h1{font-size:1.5rem;margin:0}
+    p.lead{margin:6px 0;color:var(--muted)}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(12,20,40,0.06);margin-bottom:14px}
+    .cols{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+    label{font-weight:600}
+    .hint{font-size:0.9rem;color:var(--muted)}
+    button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+    input[type=text]{padding:8px;border-radius:8px;border:1px solid #e6e9ef;width:100%}
+    ul.simple{padding-left:20px}
+    .exercise{margin-top:10px}
+    .reorder-list{list-style:none;padding:0}
+    .reorder-item{background:#f1f5f9;padding:8px;margin:6px 0;border-radius:8px;cursor:grab}
+    .correct{background:#ecfdf5;border:1px solid #10b981}
+    .wrong{background:#fff1f2;border:1px solid #ef4444}
+    footer{font-size:0.85rem;color:var(--muted);margin-top:18px}
+    textarea{width:100%;min-height:120px;padding:10px;border-radius:8px;border:1px solid #e6e9ef}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><rect rx='8' width='48' height='48' fill='%230b6cf6'/><text x='50%' y='55%' font-size='22' font-family='Arial' fill='white' text-anchor='middle'>g</text></svg>" alt="Logo" width="48" height="48"/>
+    <div>
+      <h1>Bericht schreiben in einfacher Sprache</h1>
+      <p class="lead">Aufbau, Merkmale, und Schreibstil — mit aktiven Übungen für Hauswirtschaft, Gastronomie und Friseurhandwerk.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="what">
+      <h2 id="what">Kurz: Was ist ein Bericht?</h2>
+      <p class="hint">Ein Bericht sagt, was passiert ist. Er ist klar, sachlich und in der richtigen Reihenfolge.</p>
+      <ul class="simple">
+        <li><strong>Aufbau:</strong> Überschrift, Einleitung, Hauptteil, Schluss.</li>
+        <li><strong>Merkmale:</strong> Fakten, Daten, Zeitangaben, keine Wertung.</li>
+        <li><strong>Schreibstil:</strong> kurze Sätze, einfache Wörter, aktive Formulierung.</li>
+      </ul>
+    </section>
+
+    <section class="cols">
+      <div>
+        <div class="card">
+          <h3>Beispiele aus den Branchen</h3>
+          <p><strong>Hauswirtschaft:</strong> Am 04.06.2025 um 08:30 Uhr verschüttete eine Auszubildende Putzmittel im Flur. Der Bereich wurde sofort gereinigt. Niemand wurde verletzt.</p>
+          <p><strong>Gastronomie:</strong> Am 05.06.2025 um 12:15 Uhr fiel in der Küche ein Glas herunter. Ein Mitarbeiter entsorgte die Scherben und reinigte den Boden.</p>
+          <p><strong>Friseurhandwerk:</strong> Am 06.06.2025 um 15:00 Uhr fiel ein Föhn vom Arbeitstisch. Das Gerät wurde geprüft und ausgetauscht.</p>
+        </div>
+
+        <div class="card">
+          <h3>Übungen</h3>
+
+          <div class="exercise" id="ex1">
+            <label>1) Multiple Choice — Welche Aussage gehört in die Einleitung?</label>
+            <div>
+              <div><input type="radio" name="q1" id="q1a" value="a"> <label for="q1a">Meine Meinung über den Vorfall.</label></div>
+              <div><input type="radio" name="q1" id="q1b" value="b"> <label for="q1b">Zeit und Ort des Vorfalls.</label></div>
+              <div><input type="radio" name="q1" id="q1c" value="c"> <label for="q1c">Detaillierte Maßnahmen nach dem Vorfall.</label></div>
+            </div>
+            <div style="margin-top:8px" class="controls">
+              <button onclick="checkMC1()">Antwort prüfen</button>
+              <button onclick="showAnswer('mc1')">Antwort anzeigen</button>
+            </div>
+            <p id="mc1result" class="small" aria-live="polite"></p>
+          </div>
+
+          <div class="exercise" id="ex2">
+            <label>2) Lückentext — Ergänze die Wörter (Ort, Zeit, Fakten)</label>
+            <p class="small">Am <input id="fill-date" type="text" placeholder="Datum" aria-label="Datum" /> um <input id="fill-time" type="text" placeholder="Uhrzeit" aria-label="Uhrzeit" /> Uhr gab es einen Vorfall im <input id="fill-place" type="text" placeholder="Ort (z. B. Küche, Salon, Flur)" aria-label="Ort" />. Wir beschreiben nur <input id="fill-facts" type="text" placeholder="Fakten" aria-label="Fakten" />.</p>
+            <div class="controls">
+              <button onclick="checkFill()">Prüfen</button>
+              <button onclick="showAnswer('fill')">Muster anzeigen</button>
+            </div>
+            <p id="fillresult" class="small" aria-live="polite"></p>
+          </div>
+
+          <div class="exercise" id="ex3">
+            <h4>3) Branchen-spezifische Multiple Choice</h4>
+            <p class="small">Welche Formulierung ist sachlich und passt in einen Bericht?</p>
+            <div>
+              <div><input type="radio" name="q3" id="q3a" value="a"> <label for="q3a">„Der Gast war sehr unhöflich, das war schlimm.“ (Gastronomie)</label></div>
+              <div><input type="radio" name="q3" id="q3b" value="b"> <label for="q3b">„Am 10.06.2025 um 18:00 Uhr reklamierte ein Gast das Essen.“ (Gastronomie)</label></div>
+              <div><input type="radio" name="q3" id="q3c" value="c"> <label for="q3c">„Die Mitarbeiterin putzte sehr fleißig.“ (Hauswirtschaft)</label></div>
+            </div>
+            <div class="controls">
+              <button onclick="checkMC3()">Antwort prüfen</button>
+              <button onclick="showAnswer('mc3')">Antwort anzeigen</button>
+            </div>
+            <p id="mc3result" class="small" aria-live="polite"></p>
+          </div>
+
+          <div class="exercise" id="ex4">
+            <h4>4) Lückentext für Friseurhandwerk</h4>
+            <p class="small">Im Salon fiel am <input id="hf-date" type="text" placeholder="Datum" /> um <input id="hf-time" type="text" placeholder="Uhrzeit" /> ein <input id="hf-object" type="text" placeholder="Gerät (z. B. Föhn)" /> herunter. Es wurde <input id="hf-action" type="text" placeholder="Maßnahme (z. B. geprüft, ausgetauscht)" />.</p>
+            <div class="controls">
+              <button onclick="checkHF()">Prüfen</button>
+              <button onclick="showAnswer('hf')">Muster anzeigen</button>
+            </div>
+            <p id="hfresult" class="small" aria-live="polite"></p>
+          </div>
+
+        </div>
+
+        <div class="card">
+          <div class="exercise" id="ex5">
+            <h4>5) Reihenfolge ordnen</h4>
+            <p class="small">Ziehen Sie die Teile in die richtige Reihenfolge: Überschrift → Einleitung → Hauptteil → Schluss</p>
+            <ul id="reorder" class="reorder-list" aria-label="Reihenfolge der Berichtsteile">
+              <li class="reorder-item" draggable="true">Schluss</li>
+              <li class="reorder-item" draggable="true">Einleitung</li>
+              <li class="reorder-item" draggable="true">Hauptteil</li>
+              <li class="reorder-item" draggable="true">Überschrift</li>
+            </ul>
+            <div class="controls"><button onclick="checkReorder()">Reihenfolge prüfen</button> <button onclick="resetReorder()">Zurücksetzen</button></div>
+            <p id="reorderResult" class="small" aria-live="polite"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3>Tipps (einfach)</h3>
+          <ul class="simple">
+            <li>Schreibe kurze Sätze (1 Sache pro Satz).</li>
+            <li>Verwende aktive Verben: "Der Mitarbeiter reinigte den Boden."</li>
+            <li>Keine Bewertungen: keine Worte wie "schrecklich" oder "glücklich".</li>
+            <li>Nutze Zeitangaben: Datum und Uhrzeit.</li>
+            <li>Beschreibe nur Fakten — wichtig in Küche, Hauswirtschaft und Salon.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Feedback</h3>
+          <p class="small">Die Übungen prüfen Grundlagen. Für Hauswirtschaft, Gastronomie und Friseurhandwerk können Sie diese Vorlage mit eigenen Beispielen ergänzen.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card">
+      <h3>6) Schreibaufgabe mit Scaffold</h3>
+      <p class="small">Schreibe einen kurzen Bericht (3–6 Sätze). Nutze die Hilfen unten.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+        <input type="text" id="sc_title" placeholder="Überschrift" aria-label="Überschrift" />
+        <input type="text" id="sc_date" placeholder="Datum (z. B. 05.06.2025)" aria-label="Datum" />
+        <input type="text" id="sc_time" placeholder="Uhrzeit" aria-label="Uhrzeit" />
+      </div>
+      <textarea id="sc_text" placeholder="Hier den Bericht schreiben..."></textarea>
+      <div class="controls" style="margin-top:8px">
+        <button onclick="checkReport()">Bericht prüfen</button>
+        <button onclick="showModelReport()">Musterbericht</button>
+        <button onclick="downloadReport()">Als Datei speichern</button>
+      </div>
+      <p id="reportResult" class="small" aria-live="polite"></p>
+    </section>
+
+    <footer>
+      <p class="small">Diese Vorlage ist für Auszubildende in Hauswirtschaft, Gastronomie und Friseurhandwerk. Sie können die Übungen leicht anpassen.</p>
+    </footer>
+  </main>
+
+  <script>
+    // Multiple Choice 1
+    function checkMC1(){
+      const ans = document.querySelector('input[name="q1"]:checked');
+      const out = document.getElementById('mc1result');
+      if(!ans){ out.textContent = 'Bitte eine Antwort wählen.'; return; }
+      if(ans.value==='b'){ out.textContent = 'Richtig! Zeit und Ort gehören in die Einleitung.'; out.className='small correct'; }
+      else{ out.textContent = 'Nicht ganz. Das gehört nicht in die Einleitung.'; out.className='small wrong'; }
+    }
+
+    // Branchen-MC
+    function checkMC3(){
+      const ans = document.querySelector('input[name="q3"]:checked');
+      const out = document.getElementById('mc3result');
+      if(!ans){ out.textContent = 'Bitte eine Antwort wählen.'; return; }
+      if(ans.value==='b'){ out.textContent = 'Richtig! Sachlich, mit Zeit und Ort.'; out.className='small correct'; }
+      else{ out.textContent = 'Nicht korrekt. Achte auf sachliche Formulierungen ohne Bewertung.'; out.className='small wrong'; }
+    }
+
+    function showAnswer(id){
+      if(id==='mc1') document.getElementById('mc1result').textContent='Antwort: Zeit und Ort (b).';
+      if(id==='fill') document.getElementById('fillresult').textContent='Beispiel: 05.06.2025, 10:15, Küche/Salon/Flur, Fakten';
+      if(id==='mc3') document.getElementById('mc3result').textContent='Antwort: „Am 10.06.2025 um 18:00 Uhr reklamierte ein Gast das Essen.“';
+      if(id==='hf') document.getElementById('hfresult').textContent='Beispiel: 06.06.2025, 15:00, Föhn, geprüft.';
+    }
+
+    // Fill-in
+    function checkFill(){
+      const d=document.getElementById('fill-date').value.trim();
+      const t=document.getElementById('fill-time').value.trim();
+      const p=document.getElementById('fill-place').value.trim();
+      const f=document.getElementById('fill-facts').value.trim();
+      const out=document.getElementById('fillresult');
+      if(!d||!t||!p||!f){ out.textContent='Bitte alle Felder ausfüllen.'; out.className='small wrong'; return; }
+      out.textContent='Gut. Du hast Ort, Zeit und Fakten angegeben.'; out.className='small correct';
+    }
+
+    // Fill-in Friseur
+    function checkHF(){
+      const d=document.getElementById('hf-date').value.trim();
+      const t=document.getElementById('hf-time').value.trim();
+      const o=document.getElementById('hf-object').value.trim();
+      const a=document.getElementById('hf-action').value.trim();
+      const out=document.getElementById('hfresult');
+      if(!d||!t||!o||!a){ out.textContent='Bitte alle Felder ausfüllen.'; out.className='small wrong'; return; }
+      out.textContent='Gut. Du hast Datum, Uhrzeit, Gerät und Maßnahme ergänzt.'; out.className='small correct';
+    }
+
+    // Reorder (drag & drop simple)
+    const list = document.getElementById('reorder');
+    let dragEl = null;
+    document.querySelectorAll('.reorder-item').forEach(item=>{
+      item.addEventListener('dragstart',e=>{ dragEl = item; item.style.opacity='0.5'; });
+      item.addEventListener('dragend',e=>{ dragEl = null; item.style.opacity='1'; });
+      item.addEventListener('dragover',e=>{ e.preventDefault(); });
+      item.addEventListener('drop',e=>{ e.preventDefault(); if(dragEl && dragEl!==item){
+        const nodes = Array.from(list.children);
+        const dragIndex = nodes.indexOf(dragEl);
+        const dropIndex = nodes.indexOf(item);
+        if(dragIndex < dropIndex) item.after(dragEl); else item.before(dragEl);
+      }});
+    });
+    function checkReorder(){
+      const correct = ['Überschrift','Einleitung','Hauptteil','Schluss'];
+      const got = Array.from(list.children).map(x=>x.text

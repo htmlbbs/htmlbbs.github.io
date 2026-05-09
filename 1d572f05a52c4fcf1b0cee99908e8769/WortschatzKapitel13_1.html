@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wortschatzübungen</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; }
+        .container { text-align: center; width: 50%; margin-top: 20px; }
+        .exercise { margin-bottom: 20px; }
+        input { margin-left: 10px; }
+        .feedback { margin-top: 10px; font-weight: bold; }
+        #scoreboard { margin-top: 20px; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wortschatzübungen</h1>
+        <div id="exercises"></div>
+        <div id="scoreboard">Gesamtpunktzahl: <span id="score">0</span></div>
+    </div>
+
+    <script>
+        const words = [
+            { question: "Wo kann man Geld sicher aufbewahren? (z.B. 'Sparkasse') (Substantiv)", answer: "die Bank" },
+            { question: "Wie nennt man eine Firma die zum Beispiel bei Unfällen Geld bezahlt? (Substantiv)", answer: "die Versicherung" },
+            { question: "Was macht man, wenn man Geld auf ein Konto bringt? (Verb)", answer: "einzahlen" },
+            { question: "Was macht man, wenn man Geld von einem Konto nimmt? (Verb)", answer: "abheben" },
+            { question: "Wie nennt man das Senden von Geld an eine andere Person? (Verb)", answer: "überweisen" },
+            { question: "Wo spricht man in der Bank mit einem Mitarbeiter? (Substantiv)", answer: "der Schalter" },
+            { question: "Wie nennt man ein Konto für <u>private</u> Zwecke? (Substantiv)", answer: "das Privatkonto" },
+            { question: "Wie heißt ein Konto für eine Firma? (Substantiv)", answer: "das Geschäftskonto" },
+            { question: "Wie nennt man eine Gebühr für ein Konto? (Substantiv)", answer: "die Kontogebühr" },
+            { question: "Was bekommt man von der Bank, wenn Geld auf dem Konto ist? (das Geld wird mehr) (Substantiv)", answer: "die Zinsen" },
+            { question: "Wie nennt man eine automatische monatliche Zahlung? (Substantiv)", answer: "der Dauerauftrag" },
+            { question: "Welche Karte benutzt man zum Bezahlen? (Substantiv)", answer: "die EC-Karte" },
+            { question: "Wie nennt man die geheime Nummer für eine Bankkarte? (Substantiv)", answer: "die Geheimnummer" },
+            { question: "Welche Versicherung zahlt bei einem Autounfall? (Substantiv)", answer: "Kfz-Versicherung" },
+            { question: "Welche Versicherung hilft bei rechtlichen Problemen? (Substantiv)", answer: "die Rechtsschutzversicherung" },
+            { question: "Wie nennt man eine Versicherung für Möbel und Dinge im Haus? (Substantiv)", answer: "die Hausratversicherung" },
+            { question: "Welche Versicherung bezahlt den Arzt? (Substantiv)", answer: "die Krankenversicherung" },
+            { question: "Wie nennt man ein Auto, das nicht neu ist? (Substantiv)", answer: "der Gebrauchtwagen" },
+            { question: "Wie ist eine Zahlung ohne Bargeld? (Adjektiv)", answer: "bargeldlos" },
+            { question: "Wie nennt man eine Zahlung über das Internet? (Substantiv)", answer: "die Online-Überweisung" },
+            { question: "Wie nennt man es, wenn Geld von einem Konto auf ein anderes kommt? (Substantiv)", answer: "die Überweisung" },
+            { question: "Wie heißt eine Person, die in der Bank berät? (Substantiv)", answer: "der Bankberater" },
+            { question: "Wie nennt man ein Konto für den Alltag? (Substantiv)", answer: "das Girokonto" },
+            { question: "Wie nennt man es, wenn man durch eine Versicherung geschützt ist? (Substantiv)", answer: "der Schutz" },
+            { question: "Welche Versicherung zahlt, wenn man einen Schaden verursacht? (Substantiv)", answer: "die Haftpflichtversicherung" },
+            { question: "Von welcher Versicherung bekommt man im Alter Geld? (Substantiv)", answer: "die Rentenversicherung" },
+            { question: "Was hat man, wenn man etwas neues kauft? (falls es kaputt ist)  (Substantiv)", answer: "die Garantie" },
+            { question: "Welches Papier, bekomme ich, wenn ich etwas bezahlt habe? (Substantiv)", answer: "die Quittung" },
+            { question: "Wie nennt man eine Beschwerde über ein kaputtes Produkt? (Substantiv)", answer: "die Reklamation" }
+        ];
+
+        let attempts = {};
+        let totalScore = 0;
+        let scored = {};
+
+        function createExercises() {
+            const container = document.getElementById("exercises");
+            words.forEach((word, index) => {
+                attempts[index] = 0;
+                scored[index] = false;
+                const div = document.createElement("div");
+                div.className = "exercise";
+                div.innerHTML = `
+                    <p>${index + 1}. ${word.question}</p>
+                    <input type="text" id="q${index}" data-index="${index}" autocomplete="off">
+                    <button onclick="checkAnswer(${index})">Überprüfen</button>
+                    <span class="feedback" id="fb${index}"></span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkAnswer(index) {
+            if (scored[index]) return;
+            
+            const input = document.getElementById(`q${index}`);
+            const feedback = document.getElementById(`fb${index}`);
+            const correctAnswer = words[index].answer;
+            
+            if (input.value.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+                let points = attempts[index] === 0 ? 3 : attempts[index] === 1 ? 2 : attempts[index] === 2 ? 1 : 0;
+                totalScore += points;
+                feedback.textContent = `Richtig! (+${points} Punkte)`;
+                feedback.style.color = "green";
+                document.getElementById("score").textContent = totalScore;
+                scored[index] = true;
+            } else {
+                attempts[index]++;
+                feedback.textContent = attempts[index] >= 3 ? `Falsch. Die richtige Antwort ist: ${correctAnswer} (0 Punkte)` : `Falsch. Versuch es noch einmal.`;
+                feedback.style.color = "red";
+            }
+        }
+
+        createExercises();
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sprachliche Mittel – Lernseite (Jg. 11 · dynamisch · AO & Wissensfundus · Transfer konkret)</title>
+  <meta name="description" content="Lernseite zu rhetorischen Mitteln mit Advance Organizer, Wissensfundus, dynamischen Übungen und einer transparenten Transferaufgabe mit Erwartungshorizont am Text." />
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#f8fafc;
+      --ink:#111827;
+      --muted:#6b7280;
+      --accent:#0f766e;
+      --ok:#059669;
+      --warn:#ca8a04;
+      --err:#dc2626;
+      --kbd:#f3f4f6;
+      --border:#e5e7eb;
+      --highlight:#fff7ed;
+    }
+    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;line-height:1.55}
+    a{color:var(--accent)}
+    header,main,footer{max-width:1100px;margin:auto;padding:1.25rem}
+    header{position:sticky;top:0;background:var(--bg);z-index:10}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:1rem;padding:1rem}
+    .badge{display:inline-block;font-size:.8rem;padding:.15rem .5rem;border-radius:.5rem;background:#ecfeff;border:1px solid var(--border);color:var(--muted)}
+    .task{display:grid;gap:.8rem}
+    .flex{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+    select,textarea,input{width:100%;max-width:820px;background:#fff;border:1px solid var(--border);color:var(--ink);border-radius:.55rem;padding:.6rem}
+    textarea{min-height:7rem}
+    button{background:var(--accent);border:1px solid var(--accent);color:#fff;padding:.6rem .9rem;border-radius:.6rem;font-weight:600;cursor:pointer}
+    .btn-secondary{background:#f9fafb;color:var(--muted);border:1px solid var(--border)}
+    .muted{color:var(--muted)}
+    .feedback{border-left:.35rem solid var(--border);padding:.5rem .75rem;border-radius:.25rem;background:#fff}
+    .feedback.ok{border-color:var(--ok);color:var(--ok)}
+    .feedback.warn{border-color:var(--warn);color:var(--warn)}
+    .feedback.err{border-color:var(--err);color:var(--err)}
+    .grid{display:grid;gap:1rem}
+    @media (min-width:900px){.grid-2{grid-template-columns:1fr 1fr}}
+    details{background:#fff;border:1px solid var(--border);border-radius:.8rem;padding:.75rem}
+    details[open]{background:#f9fafb}
+    details > summary{cursor:pointer;font-weight:600}
+    blockquote{margin:0;background:#fff;border:1px solid var(--border);border-radius:.6rem;padding:.9rem}
+    .pill{display:inline-block;padding:.25rem .55rem;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+    mark{background:var(--highlight);padding:0 .15rem;border-radius:.2rem}
+    @media print{button,details>summary{display:none} .card{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Sprachliche Mittel – interaktive Lernseite <span class="badge">Deutsch · Jg. 11</span></h1>
+  <p class="muted">Mit Advance Organizer, Wissensfundus, dynamischen Übungen und einer transparenten Transferaufgabe.</p>
+</header>
+
+<main>
+  <!-- Advance Organizer -->
+  <section id="ao" class="card">
+    <h2>🔎 Advance Organizer</h2>
+    <div class="grid grid-2">
+      <div>
+        <p><strong>Leitfrage:</strong> Welche sprachlichen Mittel werden im Text eingesetzt und <strong>welche Wirkung</strong> erzeugen sie im Zusammenhang der Aussage?</p>
+        <ul>
+          <li><strong>Erkennen</strong> (markieren) → <strong>Benennen</strong> (Fachbegriff) → <strong>Deuten</strong> (Wirkung mit Beleg).</li>
+          <li>Nutze die Dreierschritt-Formel: <em>Beleg</em> + <em>Begriff</em> + <em>Wirkung</em>.</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Mini-Text zum Einstieg</strong></p>
+        <blockquote>
+          Die Stadt atmet ruhig. Ein Meer von Lichtern fließt durch die Straßen, 
+          und irgendwo lacht die Nacht – leise, lange, laut.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wissensfundus -->
+  <section id="wissen" class="card">
+    <h2>📚 Wissensfundus – häufige sprachliche/rhetorische Mittel</h2>
+    <p class="muted">Kurzdefinition + Beispiel (Auswahl). Nutze diese Liste als Nachschlagehilfe für die Übungen.</p>
+    <div class="grid grid-2">
+      <div>
+        <ul>
+          <li><strong>Alliteration</strong> – gleiche Anfänge: <em>Milch macht müde Männer munter.</em></li>
+          <li><strong>Anapher</strong> – Wiederholung am Satzanfang: <em>Schön ist das Glück, schön die Liebe.</em></li>
+          <li><strong>Antithese</strong> – Gegensatzpaar: <em>jung und alt</em>.</li>
+          <li><strong>Chiasmus</strong> – Überkreuzstellung: <em>Ich singe am Morgen, am Abend schweige ich.</em></li>
+          <li><strong>Ellipse</strong> – Auslassung: <em>Er rannte. Blieb stehen.</em></li>
+          <li><strong>Euphemismus</strong> – Beschönigung: <em>preisgünstig</em> statt <em>billig</em>.</li>
+          <li><strong>Hyperbel</strong> – Übertreibung: <em>ein Meer von Tränen</em>.</li>
+          <li><strong>Ironie</strong> – Gegenteil gemeint: <em>Das hast du ja toll gemacht…</em></li>
+          <li><strong>Klimax</strong> – Steigerung: <em>ich kam, sah, siegte</em>.</li>
+          <li><strong>Litotes</strong> – Verneinung des Gegenteils: <em>nicht schlecht</em>.</li>
+          <li><strong>Metapher</strong> – Bedeutungsübertragung: <em>Die Sonne lacht.</em></li>
+          <li><strong>Metonymie</strong> – verwandter Ausdruck: <em>Brüssel</em> für EU.</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><strong>Neologismus</strong> – Wortneuschöpfung: <em>Wutbürger, unkaputtbar</em>.</li>
+          <li><strong>Onomatopoesie</strong> – Lautmalerei: <em>zisch, knister</em>.</li>
+          <li><strong>Oxymoron</strong> – innerer Widerspruch: <em>bittersüß</em>.</li>
+          <li><strong>Paradoxon</strong> – scheinbarer Widerspruch: <em>Weniger ist mehr</em>.</li>
+          <li><strong>Parallelismus</strong> – gleiche Struktur: <em>Reden ist Silber…</em></li>
+          <li><strong>Personifikation</strong> – Vermenschlichung: <em>Mutter Natur</em>.</li>
+          <li><strong>Pleonasmus</strong> – Redundanz: <em>weißer Schimmel</em>.</li>
+          <li><strong>Rhetorische Frage</strong> – Antwort ist implizit: <em>Wer würde das bestreiten?</em></li>
+          <li><strong>Symbol</strong> – Sinnbild: <em>Taube = Frieden</em>.</li>
+          <li><strong>Vergleich</strong> – mit <em>wie/als</em>: <em>stark wie ein Löwe</em>.</li>
+          <li><strong>Hypotaxe/Parataxe</strong> – Satzgefüge vs. Reihung von Hauptsätzen.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dynamische Übungen (kurz) -->
+  <section id="mc" class="card">
+    <h2>Übung 1 – MC-Quiz</h2>
+    <form id="mc-form" class="task"></form>
+    <div class="flex">
+      <button type="button" onclick="checkMC()">Auswerten</button>
+      <button type="button" class="btn-secondary" onclick="renderMC()">Neue Aufgaben</button>
+      <span id="score-mc" class="muted"></span>
+    </div>
+  </section>
+
+  <section id="luecke" class="card">
+    <h2>Übung 2 – Lückentext</h2>
+    <form id="gap-form" class="task"></form>
+    <div class="flex">
+      <button type="button" onclick="checkGaps()">Auswerten</button>
+      <button type="button" class="btn-secondary" onclick="renderGaps()">Neue Lücken</button>
+      <span id="score-gap" class="muted"></span>
+    </div>
+    <details><summary>Musterlösung</summary><ul id="gap-sol"></ul></details>
+  </section>
+
+  <section id="zuordnung" class="card">
+    <h2>Übung 3 – Zuordnung</h2>
+    <form id="pair-form" class="task"></form>
+    <div class="flex">
+      <button type="button" onclick="checkPairs()">Auswerten</button>
+      <button type="button" class="btn-secondary" onclick="renderPairs()">Neue Zuordnungen</button>
+      <span id="score-pair" class="muted"></span>
+    </div>
+  </section>
+
+  <!-- KONKRETE TRANSFERAUFGABE -->
+  <section id="transfer" class="card">
+    <h2>Transferaufgabe – konkreter Text & transparentes Erwartungsbild</h2>
+    <p><strong>Auftrag:</strong> Lies den Textauszug. <u>Benenne mindestens fünf</u> sprachliche Mittel mit Beleg (kurzes Zitat) und erkläre jeweils die Wirkung im Kontext (1–2 Sätze).</p>
+
+    <article class="card" aria-label="Textauszug">
+      <p id="t1">Die Straßen schlafen noch, doch die <mark data-key="pers1">Stadt atmet</mark> leise.</p>
+      <p id="t2">Ein <mark data-key="met1">Meer aus Fahrrädern</mark> schwemmt über die Brücke, dann versickert der <mark data-key="met2">Strom</mark>.</p>
+      <p id="t3"><mark data-key="kl1">Heute, morgen, übermorgen – jetzt</mark> beginnt es.</p>
+      <p id="t4">„<mark data-key="rf1">Wirklich bereit?</mark>“, frage ich – <mark data-key="ir1">na klar</mark>, denke ich, „<mark data-key="rep1">na klar</mark>.“</p>
+      <p id="t5">Die <mark data-key="pers2">Ampel zwinkert</mark> geduldig; der <mark data-key="pers3">Morgen nippt am ersten Licht</mark>.</p>
+      <p id="t6">Ich gehe, ich laufe, ich <mark data-key="kl2">renne</mark>.</p>
+      <p id="t7">Und plötzlich: still – ein <mark data-key="met3">Herzschlag</mark> Pause – dann rauscht die Stadt wieder los.</p>
+    </article>
+
+    <form class="task" id="transfer-form">
+      <label for="transfer-text">Antwort (max. 12 Sätze)</label>
+      <textarea id="transfer-text" placeholder="Beleg + Begriff + Wirkung …"></textarea>
+      <div class="flex">
+        <button type="button" onclick="selfAssessTransfer()">Selbst-Check</button>
+        <button type="button" class="btn-secondary" onclick="resetTransfer()">Zurücksetzen</button>
+      </div>
+    </form>
+
+    <details>
+      <summary>💡 Erwartungshorizont (am Textauszug)</summary>
+      <ul>
+        <li><strong>Personifikation</strong> – „<em>Stadt atmet</em>“ (T1), „<em>Ampel zwinkert</em>“ (T5), „<em>Morgen nippt am ersten Licht</em>“ (T5) → Stadt/Objekte handeln wie Lebewesen; schafft Atmosphäre und Lebendigkeit.</li>
+        <li><strong>Metapher</strong> – „<em>Meer aus Fahrrädern</em>“ (T2), „<em>Strom</em>“ (T2), „<em>Herzschlag</em> Pause“ (T7) → Bildhafte Verdichtung; Masse/Bewegung/kurze Stille anschaulich.</li>
+        <li><strong>Klimax</strong> – „<em>Heute, morgen, übermorgen – jetzt</em>“ (T3) und „<em>Ich gehe, ich laufe, ich renne</em>“ (T6) → Steigerung von Zeit/Tempo; Eröffnung/Dringlichkeit/Dynamik.</li>
+        <li><strong>Rhetorische Frage</strong> – „<em>Wirklich bereit?</em>“ (T4) → Selbstadressierte Frage zur Spannung/Reflexion; Leserbindung.</li>
+        <li><strong>Repetitio</strong> (Wiederholung) – „<em>na klar … na klar</em>“ (T4) → Bestärkung/Innerer Monolog, betont Entschlossenheit.</li>
+        <li><strong>Alliteration</strong> (optional) – „<em>still – … – dann</em>“ im Klangfeld (T7) → leichte Klangbindung; unterstützt die Pause/Wiederanlauf (kann genannt, aber muss begründet werden).</li>
+        <li><strong>Parataxe</strong> – kurze Hauptsätze (v. a. T6/T7) → Tempo/Unmittelbarkeit.</li>
+      </ul>
+      <p class="muted">Bewertung: mind. 5 korrekt identifizierte Mittel mit <em>Textbeleg</em> und <em>funktionaler Wirkungsdeutung</em>; Sprache präzise, Fachbegriffe korrekt.</p>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <p class="muted">© 2025 – Dynamische Lernseite (Transfertext & Erwartungshorizont integriert)</p>
+</footer>
+
+<script>
+/* ==== Kleine dynamische Übungs-Pools (wie zuvor, kompakt) ==== */
+const rnd = (n)=>Math.floor(Math.random()*n);
+const shuffle = (a)=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
+
+const mcPool=[
+  {q:"„Milch macht müde Männer munter.“",ans:"Alliteration",opts:["Alliteration","Anapher","Metapher"]},
+  {q:"„Ich weiß, dass ich nichts weiß.“",ans:"Paradoxon",opts:["Ellipse","Paradoxon","Personifikation"]},
+  {q:"„Die Sonne lacht über der Stadt.“",ans:"Personifikation",opts:["Metapher","Vergleich","Personifikation"]},
+  {q:"„Er rannte. Blieb stehen.“",ans:"Ellipse",opts:["Ellipse","Parallelismus","Litotes"]}
+];
+function renderMC(){
+  const f=document.getElementById('mc-form'); f.innerHTML='';
+  shuffle(mcPool).slice(0,3).forEach(item=>{
+    const fs=document.createElement('fieldset');
+    const lg=document.createElement('legend'); lg.textContent=item.q; fs.appendChild(lg);
+    const sel=document.createElement('select'); sel.setAttribute('data-answer',item.ans);
+    const o0=document.createElement('option'); o0.value=""; o0.textContent="– wählen –"; sel.appendChild(o0);
+    shuffle(item.opts).forEach(o=>{const op=document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op);});
+    fs.appendChild(sel); f.appendChild(fs);
+  });
+  document.getElementById('score-mc').textContent='';
+}
+function checkMC(){
+  const sels=document.querySelectorAll('#mc-form select'); let c=0; sels.forEach(s=>{if(s.value===s.dataset.answer)c++;});
+  document.getElementById('score-mc').textContent=`${c}/${sels.length} korrekt`;
+}
+
+const gapPool=[
+  [["„Meer von Tränen“ ist eine ", "Metapher"],["„nicht schlecht“ nennt man ", "Litotes"],["„kam, sah, siegte“ ist eine ", "Klimax"]],
+  [["„Brüssel verhandelt …“ ist eine ", "Metonymie"],["„Er rannte. Blieb stehen.“ ist eine ", "Ellipse"],["„Die Sonne lacht“ ist eine ", "Personifikation"]]
+];
+function renderGaps(){
+  const f=document.getElementById('gap-form'); f.innerHTML='';
+  const sol=document.getElementById('gap-sol'); sol.innerHTML='';
+  const set=gapPool[rnd(gapPool.length)];
+  set.forEach(pair=>{
+    const lab=document.createElement('label');
+    lab.innerHTML=pair[0]+'<input data-answer="'+pair[1]+'" />.';
+    f.appendChild(lab);
+    const li=document.createElement('li'); li.textContent=pair[1]; sol.appendChild(li);
+  });
+  document.getElementById('score-gap').textContent='';
+}
+function checkGaps(){
+  const inputs=document.querySelectorAll('#gap-form input'); let c=0;
+  inputs.forEach(i=>{if((i.value||'').trim().toLowerCase()===(i.dataset.answer||'').toLowerCase())c++;});
+  document.getElementById('score-gap').textContent=`${c}/${inputs.length} korrekt`;
+}
+
+const pairPool=[
+  {ex:"„himmelhoch jauchzend, zu Tode betrübt“",ans:"Antithese",opts:["Antithese","Oxymoron","Paradoxon"]},
+  {ex:"„So heiß seine Liebe, so kalt ihre Abfuhr“",ans:"Parallelismus",opts:["Parallelismus","Inversion","Ellipse"]},
+  {ex:"„unkaputtbar“",ans:"Neologismus",opts:["Neologismus","Ironie","Hyperbel"]},
+  {ex:"„Frisch, frei, fröhlich, fromm!“",ans:"Alliteration",opts:["Alliteration","Klimax","Metapher"]}
+];
+function renderPairs(){
+  const f=document.getElementById('pair-form'); f.innerHTML='';
+  shuffle(pairPool).slice(0,3).forEach(p=>{
+    const wrap=document.createElement('div'); wrap.className='card';
+    wrap.innerHTML='<strong>'+p.ex+'</strong>';
+    const sel=document.createElement('select'); sel.setAttribute('data-answer',p.ans);
+    const o0=document.createElement('option'); o0.textContent="– wählen –"; o0.value=""; sel.appendChild(o0);
+    shuffle(p.opts).forEach(o=>{const op=document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op);});
+    wrap.appendChild(sel); f.appendChild(wrap);
+  });
+  document.getElementById('score-pair').textContent='';
+}
+function checkPairs(){
+  const sels=document.querySelectorAll('#pair-form select'); let c=0;
+  sels.forEach(s=>{if(s.value===s.dataset.answer)c++;});
+  document.getElementById('score-pair').textContent=`${c}/${sels.length} korrekt`;
+}
+
+/* ===== Transfer: einfacher Selbstcheck (prüft nur Anzahl genannter Fachwörter) ===== */
+function selfAssessTransfer(){
+  const txt=(document.getElementById('transfer-text').value||'').toLowerCase();
+  const keys=['metapher','personifikation','klimax','alliteration','antithese','parallelismus','litotes','ellipse','metonymie','rhetorische frage','vergleich','symbol','oxymoron','paradoxon','neologismus'];
+  let found=0; keys.forEach(k=>{if(txt.includes(k))found++;});
+  alert(`Gefundene Fachwörter (Heuristik): ${found}. Ziel: mind. 5 mit Beleg und Wirkung.`);
+}
+function resetTransfer(){ document.getElementById('transfer-text').value=''; }
+function init(){renderMC();renderGaps();renderPairs();}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Divisionsrechner</title>
+  <style>
+    :root{
+      --paper:#f9fdff;
+      --grid:#c4ddff;
+      --ink:#0050a9;
+      --accent-red:#e11d48;
+      --accent-green:#16a34a;
+      --border-strong:#60a5fa;
+      --panel:#e0f2fe;
+      --text:#0c4a6e;
+      --muted:#0369a1;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, #e0f2fe 0, #f0f9ff 60%, #dbeafe 100%);
+      color:var(--text);
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+    header{
+      padding:22px 16px;
+      text-align:center;
+      position:sticky;
+      top:0;
+      z-index:5;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(224,242,254,.95), rgba(240,249,255,.8));
+      border-bottom:1px solid #bfdbfe;
+    }
+    h1{font-size:clamp(20px,2.6vw,34px); margin:0 0 6px}
+    .sub{color:var(--muted); font-size:14px}
+    main{ width:min(1200px, 94vw); margin:24px auto; flex:1; }
+
+    .card{
+      background:linear-gradient(180deg,#e0f2fe,#f0f9ff);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:0 10px 30px rgba(15,23,42,.18);
+      border:1px solid #bfdbfe;
+    }
+
+    .input-row{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .task-input{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:28px;
+      padding:14px 20px;
+      border-radius:12px;
+      border:2px solid #bfdbfe;
+      text-align:center;
+      width:360px;
+      background:white;
+      color:var(--text);
+      font-weight:700;
+    }
+    .task-input:focus{outline:none;border-color:var(--border-strong);box-shadow:0 0 0 3px rgba(96,165,250,.35);}
+    .btn{
+      border-radius:12px;
+      border:1px solid #bfdbfe;
+      padding:10px 18px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:15px;
+      background:#dbeafe;
+      color:var(--text);
+      margin:4px;
+      transition:transform .07s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .btn.primary{background:linear-gradient(180deg,#e7f6ed,#eafaf0);border-color:#16a34a66;color:#166534;}
+    .btn:hover{transform:translateY(-1px);border-color:var(--border-strong);}
+
+    .touch-keyboard{
+      display:none;
+      position:relative;
+      margin:10px auto 0;
+      width:280px;
+      max-width:100%;
+    }
+    .touch-keyboard.active{display:block;}
+    .keyboard-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      width:280px;
+      margin:0 auto;
+    }
+    .touch-key{
+      background:#dbeafe;
+      border-radius:10px;
+      border:1px solid #bfdbfe;
+      padding:14px;
+      font-size:20px;
+      font-weight:700;
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition:transform .07s ease, border-color .15s ease, background .15s ease;
+    }
+    .touch-key:hover{transform:translateY(-1px);background:#eff6ff;}
+    .touch-key.delete{
+      background:linear-gradient(180deg,#fee2e2,#fee2e2);
+      border-color:#fecaca;
+      color:#b91c1c;
+      position:absolute;
+      right:-60px;
+      bottom:0;
+      width:50px;
+      padding:12px 14px;
+      border-radius:12px;
+    }
+
+    .note{font-size:12px;color:var(--muted);text-align:center;margin-top:6px;}
+
+    dialog#workModal{
+      border:none;
+      border-radius:18px;
+      padding:0;
+      width:min(96vw, 1000px);
+      max-width:1000px;
+      background:#e0f2fe;
+      color:var(--text);
+      box-shadow:0 30px 60px rgba(15,23,42,.45);
+    }
+    .modal-header{
+      padding:8px 12px;
+      border-bottom:1px solid #bfdbfe;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      position:sticky;
+      top:0;
+      background:#e0f2fe;
+      z-index:10;
+    }
+    .modal-body{padding:14px 14px 20px;}
+
+    .gridpaper{
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size:32px 32px;
+      background-color:var(--paper);
+      border-radius:12px;
+      padding:32px;
+      overflow-x:auto;
+      box-shadow:inset 0 0 0 1px #bfdbfe;
+    }
+
+    .box-table{
+      border-collapse:collapse;
+      font-family:"Courier New", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      color:var(--ink);
+      font-size:22px;
+      margin:0;
+    }
+    .box-table td{
+      width:32px;
+      height:32px;
+      line-height:32px;
+      text-align:center;
+      vertical-align:middle;
+      border:none;
+      padding:0;
+    }
+
+    .blue{color:#0b4fa3;}
+    .red{color:#e11d48;font-weight:900;}
+    .green-circle{
+      color:#16a34a;
+      border:2px solid #16a34a;
+      border-radius:999px;
+      line-height:1;
+      padding:0 6px;
+      font-size:18px;
+      display:inline-block;
+      transform:translateY(1px);
+    }
+    .underline-mid{
+      border-bottom:2px solid #3b82f6 !important;
+    }
+    .muted-small{font-size:12px;color:var(--muted);margin-top:8px;}
+    @media (max-width:600px){
+      .task-input{width:280px;font-size:24px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Divisionsrechner – schriftliche Division</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="input-row">
+        <input type="text" id="taskInput" class="task-input"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      </div>
+
+      <div class="touch-keyboard" id="touchKeyboard">
+        <div class="keyboard-grid">
+          <button class="touch-key" data-key="1">1</button>
+          <button class="touch-key" data-key="2">2</button>
+          <button class="touch-key" data-key="3">3</button>
+          <button class="touch-key" data-key="4">4</button>
+          <button class="touch-key" data-key="5">5</button>
+          <button class="touch-key" data-key="6">6</button>
+          <button class="touch-key" data-key="7">7</button>
+          <button class="touch-key" data-key="8">8</button>
+          <button class="touch-key" data-key="9">9</button>
+          <button class="touch-key" data-key=":">:</button>
+          <button class="touch-key" data-key="0">0</button>
+          <button class="touch-key" data-key=",">,</button>
+        </div>
+        <button class="touch-key delete" data-key="backspace">⌫</button>
+      </div>
+      
+      <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:6px; margin-top:12px;">
+        <button class="btn primary" id="showWorkBtn">Lösung anzeigen</button>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="workModal">
+    <div class="modal-header">
+      <button class="btn" id="closeWork">Schließen</button>
+    </div>
+    <div class="modal-body">
+      <div id="workContainer"></div>
+    </div>
+  </dialog>
+
+<script>
+function sanitizeInput(v){
+  return v.replace(/[^0-9: ,]/g,'');
+}
+
+function parseTask(taskString){
+  const parts = taskString.split(':').map(p=>p.trim());
+  if(parts.length!==2) return null;
+  const aRaw = parts[0];
+  const bRaw = parts[1];
+  if(!aRaw || !bRaw) return null;
+  const aNum = parseFloat(aRaw.replace(',','.'));
+  const bNum = parseFloat(bRaw.replace(',','.'));
+  if(!isFinite(aNum) || !isFinite(bNum) || bNum===0) return null;
+
+  // Nur Divisor bestimmt die Kommaverschiebung
+  const decB = bRaw.includes(',') ? bRaw.split(',')[1].length : 0;
+  const divisorShift = decB;
+  
+  // Dividend: Verschiebe Komma um divisorShift nach rechts
+  let dividendShifted = aRaw;
+  let dividendCommaPos = -1; // Position des Kommas im verschobenen Dividenden (als Ziffer-Index)
+  
+  if(aRaw.includes(',')){
+    const aParts = aRaw.split(',');
+    const aInteger = aParts[0];
+    const aDecimals = aParts[1];
+    
+    if(divisorShift === 0){
+      // Kein Shift: Komma bleibt
+      dividendShifted = aRaw.replace(',', '');
+      dividendCommaPos = aInteger.length;
+    } else if(divisorShift >= aDecimals.length){
+      // Shift >= Dezimalstellen: Komma verschwindet, füge Nullen hinzu
+      const zerosNeeded = divisorShift - aDecimals.length;
+      dividendShifted = aInteger + aDecimals + '0'.repeat(zerosNeeded);
+      dividendCommaPos = -1;
+    } else {
+      // Shift < Dezimalstellen: Komma bleibt zwischen den Ziffern
+      const newInteger = aInteger + aDecimals.substring(0, divisorShift);
+      const newDecimals = aDecimals.substring(divisorShift);
+      dividendShifted = newInteger + newDecimals;
+      dividendCommaPos = newInteger.length;
+    }
+  } else {
+    // Kein Komma im Dividenden
+    if(divisorShift > 0){
+      dividendShifted = aRaw + '0'.repeat(divisorShift);
+    } else {
+      dividendShifted = aRaw;
+    }
+    dividendCommaPos = -1;
+  }
+  
+  // Divisor: Verschiebe Komma komplett weg
+  const divisorScale = Math.pow(10, divisorShift);
+  const Bint = Math.round(bNum * divisorScale);
+  
+  return {
+    originalDividendStr: aRaw,
+    originalDivisorStr: bRaw,
+    dividendStr: dividendShifted,
+    dividendCommaPos: dividendCommaPos, // -1 wenn kein Komma
+    divisorInt: Bint,
+    divisorShift: divisorShift
+  };
+}
+
+// Schritte mit Spaltenposition relativ zum Dividend-Anfang
+function longDivisionStepsWithCols(dividend, divisor, dividendCommaPos, maxDigits=3){
+  const steps=[];
+  const digits = String(dividend).split('');
+  let idx=0;
+  let current=0;
+  let usedDigitCount=0;
+  let commaInserted = false;
+  let firstStepDone = false;
+  
+  while(idx<digits.length){
+    current = current*10 + parseInt(digits[idx],10);
+    usedDigitCount++;
+    
+    // Prüfe, ob wir das Komma gerade überschritten haben
+    const crossedComma = dividendCommaPos >= 0 && usedDigitCount === dividendCommaPos + 1 && !commaInserted;
+    
+    if(current < divisor){
+      idx++;
+      // Wenn erste Ziffer(n) zu klein sind, erstelle einen 0-Schritt
+      if(!firstStepDone && idx === digits.length){
+        // Letztes Zeichen und noch kein Schritt: 0-Schritt einfügen
+        const insertComma = crossedComma;
+        if(insertComma) commaInserted = true;
+        steps.push({partDividend:current,qDigit:0,product:0,remainder:current,lastColLocal:usedDigitCount-1,decimal:false,insertComma,isZeroStep:true});
+        firstStepDone = true;
+      } else if(firstStepDone){
+        // Nach dem ersten echten Schritt: 0-Schritte für übersprungene Ziffern
+        const insertComma = crossedComma;
+        if(insertComma) commaInserted = true;
+        steps.push({partDividend:current,qDigit:0,product:0,remainder:current,lastColLocal:usedDigitCount-1,decimal:false,insertComma,isZeroStep:true});
+      }
+      continue;
+    }
+    const lastColLocal = usedDigitCount-1;
+    const qDigit = Math.floor(current/divisor);
+    const product = qDigit*divisor;
+    const remainder = current-product;
+    const insertComma = crossedComma;
+    if(insertComma) commaInserted = true;
+    
+    steps.push({partDividend:current,qDigit,product,remainder,lastColLocal,decimal:false,insertComma});
+    firstStepDone = true;
+    current = remainder;
+    idx++;
+  }
+  
+  // Wenn wir noch kein Komma hatten, aber der Dividend eines hatte und wir alle Ziffern durch sind
+  // dann kommt jetzt das Komma vor den Dezimalstellen
+  if(dividendCommaPos >= 0 && !commaInserted && steps.length > 0){
+    steps[steps.length - 1].insertCommaAfter = true;
+  }
+  
+  let decimalSteps=0;
+  while(current!==0 && decimalSteps<maxDigits){
+    current *=10;
+    usedDigitCount++;
+    const lastColLocal = usedDigitCount-1;
+    const qDigit = Math.floor(current/divisor);
+    const product = qDigit*divisor;
+    const remainder = current-product;
+    steps.push({partDividend:current,qDigit,product,remainder,lastColLocal,decimal:true,insertComma:false});
+    current = remainder;
+    decimalSteps++;
+  }
+  return steps;
+}
+
+function buildBoxLayout(data, steps){
+  const wrapper=document.createElement('div');
+  
+  const dividendStrDigits = data.dividendStr;
+  const divisorStr = String(data.divisorInt);
+  
+  // Prüfe, ob Kommaverschiebung notwendig war
+  const hasCommaShift = data.divisorShift > 0;
+  
+  // Wenn Kommaverschiebung stattgefunden hat, zeige Erklärung
+  if(hasCommaShift){
+    const shiftBox = document.createElement('div');
+    shiftBox.style.marginBottom = '24px';
+    shiftBox.style.padding = '16px';
+    shiftBox.style.background = '#f0f9ff';
+    shiftBox.style.borderRadius = '8px';
+    shiftBox.style.border = '2px solid #bfdbfe';
+    shiftBox.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas';
+    shiftBox.style.fontSize = '18px';
+    
+    const title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '12px';
+    title.style.color = '#0c4a6e';
+    title.textContent = 'Kommaverschiebung:';
+    shiftBox.appendChild(title);
+    
+    const explanation = document.createElement('div');
+    explanation.style.lineHeight = '1.8';
+    
+    const multiplier = Math.pow(10, data.divisorShift);
+    const shiftText = data.divisorShift === 1 ? '1 Stelle' : data.divisorShift + ' Stellen';
+    
+    // Formatiere Divisor mit roten Nachkommastellen
+    let divisorDisplay = data.originalDivisorStr;
+    if(data.originalDivisorStr.includes(',')){
+      const parts = data.originalDivisorStr.split(',');
+      divisorDisplay = parts[0] + '<span style="color:#e11d48;font-weight:900;">,</span><span style="color:#e11d48;font-weight:900;">' + parts[1] + '</span>';
+    }
+    
+    // Formatiere verschobenen Dividenden (mit Komma wenn vorhanden)
+    let dividendShiftedDisplay = dividendStrDigits;
+    if(data.dividendCommaPos >= 0){
+      dividendShiftedDisplay = dividendStrDigits.substring(0, data.dividendCommaPos) + ',' + dividendStrDigits.substring(data.dividendCommaPos);
+    }
+    
+    explanation.innerHTML = 
+      '<div style="color:#64748b;">Ursprüngliche Aufgabe:</div>' +
+      '<div style="color:#0b4fa3;font-size:20px;margin-bottom:12px;"><strong>' + data.originalDividendStr + ' : ' + divisorDisplay + '</strong></div>' +
+      '<div style="color:#64748b;">Um das Komma im Divisor zu entfernen, verschieben wir das Komma</div>' +
+      '<div style="color:#64748b;">im Divisor um <strong style="color:#e11d48;">' + shiftText + ' nach rechts</strong> (× ' + multiplier + ').</div>' +
+      '<div style="color:#64748b;">Im Dividenden verschieben wir das Komma ebenfalls um ' + shiftText + ' nach rechts:</div>' +
+      '<div style="margin-top:12px;padding-top:12px;border-top:2px solid #bfdbfe;color:#16a34a;font-weight:bold;font-size:20px;">Neue Aufgabe: ' + dividendShiftedDisplay + ' : ' + divisorStr + '</div>';
+    shiftBox.appendChild(explanation);
+    
+    wrapper.appendChild(shiftBox);
+  }
+  
+  const container=document.createElement('div');
+  container.className='gridpaper';
+
+  let qDigits=[];
+  let commaPosition = -1; // Position des Kommas im Ergebnis
+  
+  // Sammle alle Ziffern und finde Kommaposition
+  let integerStepCount = 0;
+  steps.forEach((s, idx)=>{ 
+    if(!s.decimal){
+      integerStepCount++;
+    }
+    if(s.insertComma){
+      commaPosition = qDigits.length; // Komma kommt vor dieser Ziffer
+    }
+    qDigits.push(s.qDigit);
+    if(s.insertCommaAfter){
+      commaPosition = qDigits.length; // Komma kommt nach dieser Ziffer
+    }
+  });
+  
+  // Wenn kein explizites Komma gesetzt wurde, aber Dezimalstellen existieren, setze Komma nach Ganzzahl-Schritten
+  if(commaPosition === -1 && integerStepCount < qDigits.length){
+    commaPosition = integerStepCount;
+  }
+  
+  // Nur die ersten 3 Dezimalziffern nehmen (nach dem Komma)
+  let integerDigitCount = commaPosition >= 0 ? commaPosition : qDigits.length;
+  let decimalDigitCount = qDigits.length - integerDigitCount;
+  
+  if(decimalDigitCount > 3){
+    qDigits = qDigits.slice(0, integerDigitCount + 3);
+    decimalDigitCount = 3;
+  }
+  
+  let quotientStr = qDigits.join('');
+  
+  // Komma einfügen, wenn Position gefunden wurde
+  if(commaPosition >= 0 && commaPosition < qDigits.length){
+    quotientStr = quotientStr.slice(0, commaPosition) + ',' + quotientStr.slice(commaPosition);
+  }
+  
+  // Nur die ersten 3 Dezimalschritte im Rechenweg anzeigen
+  let displaySteps = steps;
+  const decimalStepCount = steps.filter(s => s.decimal).length;
+  if(decimalStepCount > 3){
+    // Entferne die letzten Dezimalschritte, sodass nur 3 übrig bleiben
+    const stepsToRemove = decimalStepCount - 3;
+    displaySteps = steps.slice(0, steps.length - stepsToRemove);
+  }
+  
+  // Entferne führende Nullen, aber nicht wenn Ergebnis < 1 ist (also mit Komma beginnt)
+  quotientStr = quotientStr.replace(/^0+(?=\d)/,'');
+  
+  // Wenn Ergebnis mit Komma beginnt (< 1), füge führende 0 hinzu
+  if(quotientStr.startsWith(',')){
+    quotientStr = '0' + quotientStr;
+  }
+  
+  // Rundungsberechnung für 3 Nachkommastellen
+  let roundedStr = '';
+  let hasRounding = false;
+  
+  // Zähle die Nachkommastellen (alle Ziffern nach dem Komma)
+  const decimalDigitsCount = commaPosition >= 0 ? (qDigits.length - commaPosition) : 0;
+  
+  if(quotientStr.includes(',') && decimalDigitsCount >= 3){
+    const parts = quotientStr.split(',');
+    const decimals = parts[1] || '';
+    
+    if(decimals.length >= 3){
+      const thirdDigit = parseInt(decimals[2]);
+      if(thirdDigit >= 5){
+        // Aufrunden
+        let secondDigit = parseInt(decimals[1]);
+        secondDigit++;
+        if(secondDigit === 10){
+          // Übertrag zur ersten Dezimalstelle
+          let firstDigit = parseInt(decimals[0]);
+          firstDigit++;
+          if(firstDigit === 10){
+            // Übertrag zur Ganzzahl
+            const intPart = parseInt(parts[0]) + 1;
+            roundedStr = intPart + ',00';
+          }else{
+            roundedStr = parts[0] + ',' + firstDigit + '0';
+          }
+        }else{
+          roundedStr = parts[0] + ',' + decimals[0] + secondDigit;
+        }
+      }else{
+        // Abrunden (einfach dritte Stelle weglassen)
+        roundedStr = parts[0] + ',' + decimals.substring(0, 2);
+      }
+      hasRounding = true;
+    }
+  }
+
+  const startDividendCol = 2;
+
+  let maxCol = startDividendCol + dividendStrDigits.length - 1;
+  displaySteps.forEach(s=>{
+    const gridLastCol = startDividendCol + s.lastColLocal;
+    if(gridLastCol > maxCol) maxCol = gridLastCol;
+  });
+
+  const headerExtra = 6 + divisorStr.length + quotientStr.length + 5; // +5 extra Spalten für Sicherheit
+  const width = Math.max(maxCol + 4, startDividendCol + dividendStrDigits.length + headerExtra);
+
+  const table=document.createElement('table');
+  table.className='box-table';
+
+  function emptyRow(){
+    const tr=document.createElement('tr');
+    for(let i=0;i<width;i++){
+      const td=document.createElement('td');
+      td.innerHTML='&nbsp;';
+      tr.appendChild(td);
+    }
+    return tr;
+  }
+
+  function putDigits(tr, str, startCol){
+    for(let i=0;i<str.length;i++){
+      const ch = str[i];
+      const col = startCol + i;
+      if(col<0 || col>=width) continue;
+      const td = tr.children[col];
+      td.textContent = ch;
+      if(ch === ','){
+        td.classList.add('red');
+      }else{
+        td.classList.add('blue');
+      }
+    }
+  }
+
+  function putRightAligned(tr, str, lastCol, opts){
+    const chars=str.split('');
+    for(let i=0;i<chars.length;i++){
+      const ch = chars[chars.length-1-i];
+      const col = lastCol - i;
+      if(col<0 || col>=width) continue;
+      const td = tr.children[col];
+      td.textContent = ch;
+      // Wenn es eine künstlich erzeugte Null ist (bei Dezimalschritten): rot
+      if(opts && opts.artificialZero && ch==='0' && i===0){
+        td.classList.add('red');
+      }else{
+        // Standardmäßig blau
+        td.classList.add('blue');
+      }
+      if(opts && opts.underline) td.classList.add('underline-mid');
+    }
+  }
+
+  // Kopfzeile
+  const headRow=emptyRow();
+  
+  // Dividenden mit Komma einfügen (falls vorhanden)
+  if(data.dividendCommaPos >= 0){
+    const beforeComma = dividendStrDigits.substring(0, data.dividendCommaPos);
+    const afterComma = dividendStrDigits.substring(data.dividendCommaPos);
+    
+    // Alle Ziffern vor dem Komma
+    for(let i = 0; i < beforeComma.length - 1; i++){
+      const td = headRow.children[startDividendCol + i];
+      td.textContent = beforeComma[i];
+      td.classList.add('blue');
+    }
+    
+    // Letzte Ziffer vor dem Komma zusammen mit Komma im selben Kästchen
+    const lastBeforeCommaCol = startDividendCol + beforeComma.length - 1;
+    const td = headRow.children[lastBeforeCommaCol];
+    td.innerHTML = '<span class="blue">' + beforeComma[beforeComma.length - 1] + '</span><span class="red">,</span>';
+    
+    // Ziffern nach dem Komma
+    for(let i = 0; i < afterComma.length; i++){
+      const tdAfter = headRow.children[lastBeforeCommaCol + 1 + i];
+      tdAfter.textContent = afterComma[i];
+      tdAfter.classList.add('blue');
+    }
+  } else {
+    putDigits(headRow, dividendStrDigits, startDividendCol);
+  }
+  
+  let colAfterDividend = startDividendCol + dividendStrDigits.length;
+  // Kein +1 für Komma mehr, da es im selben Kästchen steht
+  
+  headRow.children[colAfterDividend+1].textContent=':';
+  headRow.children[colAfterDividend+1].classList.add('blue');
+  putDigits(headRow, divisorStr, colAfterDividend+3);
+  const eqCol = colAfterDividend + 5 + divisorStr.length;
+  headRow.children[eqCol].textContent='=';
+  headRow.children[eqCol].classList.add('blue');
+  // Zeige immer das ungerundete Ergebnis mit 3 Nachkommastellen
+  putDigits(headRow, quotientStr, eqCol+2);
+  table.appendChild(headRow);
+  
+  // Rechenweg: 1. Schritt ohne Teildividende, ab 2. Schritt mit
+  let firstDecimalStepDone = false;
+  displaySteps.forEach((s, idx)=>{
+    const gridLastCol = startDividendCol + s.lastColLocal;
+
+    if(idx === 0){
+      // Nur Produkt (unterstrichen)
+      const prodRow=emptyRow();
+      putRightAligned(prodRow, String(s.product), gridLastCol, {underline:true});
+      table.appendChild(prodRow);
+
+      // Rest mit heruntergezogener Ziffer (nächste Teildividende) in derselben Zeile
+      const remRow=emptyRow();
+      
+      // Wenn es einen nächsten Schritt gibt, kombiniere Rest und nächste herunterholende Ziffer
+      if(idx < displaySteps.length - 1){
+        const nextStep = displaySteps[idx + 1];
+        const nextGridLastCol = startDividendCol + nextStep.lastColLocal;
+        const nextPdStr = String(nextStep.partDividend);
+        
+        // Bei Dezimalschritten die letzte Ziffer rot markieren
+        if(nextStep.decimal){
+          for(let i=0;i<nextPdStr.length;i++){
+            const ch = nextPdStr[nextPdStr.length-1-i];
+            const col = nextGridLastCol - i;
+            if(col<0 || col>=width) continue;
+            const td = remRow.children[col];
+            td.textContent = ch;
+            // Letzte Ziffer (die angehängte 0) rot markieren
+            if(i===0){
+              td.classList.add('red');
+            }else{
+              td.classList.add('blue');
+            }
+          }
+          
+          // Hinweis nur bei künstlichen Nullen (nicht bei Kommaüberschreitung)
+          if(!firstDecimalStepDone && !nextStep.insertComma){
+            firstDecimalStepDone = true;
+            const hintCol = nextGridLastCol + 3;
+            if(hintCol < width){
+              const hintText = "←Komma";
+              for(let h=0; h<hintText.length && (hintCol+h)<width; h++){
+                const td = remRow.children[hintCol+h];
+                td.textContent = hintText[h];
+                td.style.fontSize = '12px';
+                td.style.color = '#e11d48';
+              }
+            }
+          }
+        }else if(nextStep.insertComma){
+          // Komma wurde überschritten: Hinweis anzeigen
+          putRightAligned(remRow, nextPdStr, nextGridLastCol, {});
+          if(!firstDecimalStepDone){
+            firstDecimalStepDone = true;
+            const hintCol = nextGridLastCol + 3;
+            if(hintCol < width){
+              const hintText = "←Komma";
+              for(let h=0; h<hintText.length && (hintCol+h)<width; h++){
+                const td = remRow.children[hintCol+h];
+                td.textContent = hintText[h];
+                td.style.fontSize = '12px';
+                td.style.color = '#e11d48';
+              }
+            }
+          }
+        }else{
+          putRightAligned(remRow, nextPdStr, nextGridLastCol, {});
+        }
+      }else{
+        // Letzter Schritt: nur Rest anzeigen
+        putRightAligned(remRow, String(s.remainder), gridLastCol, {});
+      }
+      table.appendChild(remRow);
+    }else{
+      // Ab dem zweiten Schritt: Produkt (unterstrichen)
+      const prodRow=emptyRow();
+      putRightAligned(prodRow, String(s.product), gridLastCol, {underline:true});
+      table.appendChild(prodRow);
+
+      // Rest mit heruntergezogener Ziffer (nächste Teildividende) in derselben Zeile
+      const remRow=emptyRow();
+      
+      // Wenn es einen nächsten Schritt gibt, kombiniere Rest und nächste herunterholende Ziffer
+      if(idx < displaySteps.length - 1){
+        const nextStep = displaySteps[idx + 1];
+        const nextGridLastCol = startDividendCol + nextStep.lastColLocal;
+        const nextPdStr = String(nextStep.partDividend);
+        
+        // Bei Dezimalschritten die letzte Ziffer rot markieren
+        if(nextStep.decimal){
+          for(let i=0;i<nextPdStr.length;i++){
+            const ch = nextPdStr[nextPdStr.length-1-i];
+            const col = nextGridLastCol - i;
+            if(col<0 || col>=width) continue;
+            const td = remRow.children[col];
+            td.textContent = ch;
+            // Letzte Ziffer (die angehängte 0) rot markieren
+            if(i===0){
+              td.classList.add('red');
+            }else{
+              td.classList.add('blue');
+            }
+          }
+          
+          // Hinweis nur bei künstlichen Nullen (nicht bei Kommaüberschreitung)
+          if(!firstDecimalStepDone && !nextStep.insertComma){
+            firstDecimalStepDone = true;
+            const hintCol = nextGridLastCol + 3;
+            if(hintCol < width){
+              const hintText = "←Komma";
+              for(let h=0; h<hintText.length && (hintCol+h)<width; h++){
+                const td = remRow.children[hintCol+h];
+                td.textContent = hintText[h];
+                td.style.fontSize = '12px';
+                td.style.color = '#e11d48';
+              }
+            }
+          }
+        }else if(nextStep.insertComma){
+          // Komma wurde überschritten: Hinweis anzeigen
+          putRightAligned(remRow, nextPdStr, nextGridLastCol, {});
+          if(!firstDecimalStepDone){
+            firstDecimalStepDone = true;
+            const hintCol = nextGridLastCol + 3;
+            if(hintCol < width){
+              const hintText = "←Komma";
+              for(let h=0; h<hintText.length && (hintCol+h)<width; h++){
+                const td = remRow.children[hintCol+h];
+                td.textContent = hintText[h];
+                td.style.fontSize = '12px';
+                td.style.color = '#e11d48';
+              }
+            }
+          }
+        }else{
+          putRightAligned(remRow, nextPdStr, nextGridLastCol, {});
+        }
+      }else{
+        // Letzter Schritt: nur Rest anzeigen
+        if(s.remainder===0){
+          if(gridLastCol>=0 && gridLastCol<width){
+            const td = remRow.children[gridLastCol];
+            td.innerHTML = '<span class="green-circle">0</span>';
+          }
+        }else{
+          putRightAligned(remRow, String(s.remainder), gridLastCol, {});
+        }
+      }
+      table.appendChild(remRow);
+    }
+  });
+
+  container.appendChild(table);
+  
+  wrapper.appendChild(container);
+  
+  // Ergebnisbox immer anzeigen
+  const resultDiv = document.createElement('div');
+  resultDiv.style.marginTop = '24px';
+  resultDiv.style.padding = '16px';
+  resultDiv.style.background = '#f0f9ff';
+  resultDiv.style.borderRadius = '8px';
+  resultDiv.style.border = '2px solid #bfdbfe';
+  resultDiv.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas';
+  resultDiv.style.fontSize = '18px';
+  
+  // Rundungsvisualisierung hinzufügen (wenn nötig)
+  if(hasRounding){
+    const title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '12px';
+    title.style.color = '#0c4a6e';
+    title.textContent = 'Rundung auf 2 Nachkommastellen:';
+    resultDiv.appendChild(title);
+    
+    const parts = quotientStr.split(',');
+    const decimals = parts[1];
+    const thirdDigit = parseInt(decimals[2]);
+    
+    const explanation = document.createElement('div');
+    explanation.style.lineHeight = '1.8';
+    explanation.innerHTML = 
+      '<div style="color:#64748b;">Ergebnis der Division:</div>' +
+      '<div style="color:#0b4fa3;font-size:20px;margin-bottom:12px;"><strong>' + quotientStr + '</strong></div>' +
+      '<div style="color:#64748b;">Die dritte Nachkommastelle ist <strong style="color:#e11d48;font-size:20px;">' + thirdDigit + '</strong></div>' +
+      '<div style="color:#64748b;">' + (thirdDigit >= 5 ? '→ Da ' + thirdDigit + ' ≥ 5 ist, wird <strong>aufgerundet</strong>' : '→ Da ' + thirdDigit + ' < 5 ist, wird <strong>abgerundet</strong>') + '</div>' +
+      '<div style="margin-top:12px;padding-top:12px;border-top:2px solid #bfdbfe;color:#16a34a;font-weight:bold;font-size:22px;">Gerundet auf 2 Nachkommastellen: ' + roundedStr + '</div>';
+    resultDiv.appendChild(explanation);
+  } else {
+    // Nur Ergebnis anzeigen (ohne Rundung)
+    const title = document.createElement('div');
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '12px';
+    title.style.color = '#0c4a6e';
+    title.textContent = 'Ergebnis:';
+    resultDiv.appendChild(title);
+    
+    const resultText = document.createElement('div');
+    resultText.style.color = '#16a34a';
+    resultText.style.fontWeight = 'bold';
+    resultText.style.fontSize = '26px';
+    resultText.textContent = quotientStr;
+    resultDiv.appendChild(resultText);
+  }
+  
+  wrapper.appendChild(resultDiv);
+
+  return {node:wrapper, quotientStr:quotientStr, roundedStr: hasRounding ? roundedStr : quotientStr};
+}
+
+function showWork(){
+  const raw=document.getElementById('taskInput').value.trim();
+  const safe=sanitizeInput(raw);
+  document.getElementById('taskInput').value=safe;
+  const data=parseTask(safe);
+  if(!data){
+    alert('Bitte gib eine gültige Aufgabe ein, z. B. 2566 : 8 oder 3792460 : 35 (Division durch 0 ist nicht erlaubt).');
+    return;
+  }
+  const steps=longDivisionStepsWithCols(data.dividendStr, data.divisorInt, data.dividendCommaPos, 4);
+  const built=buildBoxLayout(data,steps);
+
+  const container=document.getElementById('workContainer');
+  container.innerHTML='';
+  container.appendChild(built.node);
+
+  document.getElementById('workModal').showModal();
+  
+  // Leere das Eingabefeld nach dem Öffnen des Modals
+  document.getElementById('taskInput').value = '';
+}
+
+function setupTouchKeyboard(){
+  const isTouch=('ontouchstart' in window) || (navigator.maxTouchPoints>0);
+  const keyboard=document.getElementById('touchKeyboard');
+  if(isTouch){
+    keyboard.classList.add('active');
+    const input=document.getElementById('taskInput');
+    input.setAttribute('readonly','true');
+    input.setAttribute('inputmode','none');
+  }
+}
+
+document.getElementById('taskInput').addEventListener('input',e=>{
+  e.target.value=sanitizeInput(e.target.value);
+});
+document.getElementById('taskInput').addEventListener('keypress',e=>{
+  const allowed=/[0-9: ,]/;
+  if(!allowed.test(e.key)) e.preventDefault();
+  if(e.key===':' && e.target.value.includes(':')) e.preventDefault();
+  if(e.key===','){
+    const v=e.target.value;
+    const p=v.lastIndexOf(':');
+    if(p===-1 && v.includes(',')) e.preventDefault();
+    if(p!==-1){
+      const after=v.substring(p+1);
+      if(after.includes(',')) e.preventDefault();
+    }
+  }
+  if(e.key==='Enter') showWork();
+});
+document.getElementById('touchKeyboard').addEventListener('click',e=>{
+  if(!e.target.classList.contains('touch-key')) return;
+  const key=e.target.dataset.key;
+  const input=document.getElementById('taskInput');
+  if(key==='backspace'){
+    input.value=input.value.slice(0,-1);
+  }else if(key===':'){
+    if(!input.value.includes(':')) input.value+=' : ';
+  }else if(key===','){
+    const v=input.value;
+    const p=v.lastIndexOf(':');
+    if(p===-1){
+      if(!v.includes(',')) input.value+=',';
+    }else{
+      const after=v.substring(p+1);
+      if(!after.includes(',')) input.value+=',';
+    }
+  }else{
+    input.value+=key;
+  }
+  input.dispatchEvent(new Event('input'));
+});
+
+document.getElementById('showWorkBtn').addEventListener('click',()=>showWork());
+document.getElementById('closeWork').addEventListener('click',()=>document.getElementById('workModal').close());
+window.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const dlg=document.getElementById('workModal');
+    if(dlg && dlg.open) dlg.close();
+  }
+});
+setupTouchKeyboard();
+</script>
+</body>
+</html>

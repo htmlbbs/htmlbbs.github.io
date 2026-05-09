@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modul 5.1 – Organe im Sportverein (BGB & Praxis) — KOMPLETT v2 (mit 12er-Lückentext)</title>
+  <style>
+    :root{
+      --primary:#1976d2;
+      --accent:#4caf50;
+      --bg1:#e3f2fd;
+      --bg2:#f8bbd9;
+      --paper:#ffffff;
+      --warn:#ff9800;
+      --error:#d32f2f;
+      --ok:#2e7d32;
+      --dark:#777777;
+    }
+    html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#222}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .card{background:var(--paper);border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.12);padding:24px;margin:18px 0}
+    h1{margin:0 0 8px;color:var(--primary);font-size:2.1rem;text-align:center}
+    h2{color:var(--primary);margin-top:0.2rem}
+    .subtitle{color:#444;text-align:center;margin-bottom:14px}
+    .pill{display:inline-block;background:#e8f5e9;color:var(--ok);border:1px solid #a5d6a7;padding:6px 10px;border-radius:999px;font-size:.9rem;margin:4px 6px 0 0;text-decoration:none}
+    .pill:hover{filter:brightness(0.95)}
+    .grid{display:grid;gap:14px}
+    @media(min-width:860px){.grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+    .info{background:#e3f2fd;border-left:5px solid var(--primary);padding:14px;border-radius:10px}
+    .warn{background:#fff9c4;border-left:5px solid var(--warn);padding:24px;border-radius:10px;}
+    .ok{background:#e8f5e9;border-left:5px solid var(--accent);padding:14px;border-radius:10px}
+    .muted{color:#555;font-size:.95rem}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:6px;padding:2px 6px}
+    .task h3{margin-top:0;color:#0d47a1}
+    .progress{background:#e3f2fd;color:#0d47a1;padding:6px 10px;border-radius:8px;display:inline-block;margin-bottom:10px;font-weight:bold}
+    .btn{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:bold}
+    .btn:hover{filter:brightness(0.95)}
+    .btn.secondary{background:#90a4ae}
+    .feedback{margin-top:10px;padding:10px;border-radius:8px;font-weight:bold;min-height:20px}
+    .feedback.ok{background:#e8f5e8;border:1px solid #66bb6a;color:#1b5e20}
+    .feedback.bad{background:#ffebee;border:1px solid #ef5350;color:#b71c1c}
+    .drag-shelf{display:flex;gap:8px;flex-wrap:wrap;background:#f5f5f5;border:2px dashed #bdbdbd;border-radius:10px;padding:12px;min-height:64px}
+    .tag{background:#2196f3;color:#fff;border-radius:999px;padding:8px 12px;cursor:grab;user-select:none}
+    .tag:active{cursor:grabbing}
+    .dropzone{min-height:60px;background:#fafafa;border:3px dashed #4caf50;border-radius:10px;padding:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .dropzone.drag-over{background:#e8f5e9}
+    .qa{background:#f5f5f5;border-left:5px solid var(--dark);padding:14px;border-radius:10px}
+    .flex{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .list-clean{margin:0;padding-left:20px}
+    .mcq label{display:block;padding:8px 10px;margin:6px 0;border:1px solid #e0e0e0;border-radius:10px;background:#fff;cursor:pointer}
+    .mcq label:hover{background:#f7fbff}
+    .hr{height:1px;background:#eee;margin:18px 0}
+    .small{font-size:.9rem}
+    .center{text-align:center}
+    .banner{background:#e8f5e9;border:3px solid var(--accent);color:#1b5e20;padding:14px;border-radius:12px;font-weight:800;font-size:1.05rem;margin-top:10px;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+    .banner.warn{background:#fff3e0;border-color:#ff9800;color:#e65100}
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header + Gesetzes-Pills -->
+    <div class="card">
+      <h1>Organe im Sportverein</h1>
+      <div class="subtitle">Berufsfachschule Bewegungspädagogik · Modul 5.1 · Wie funktioniert mein Verein?</div>
+      <div class="center">
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__25.html" target="_blank" rel="noopener">§ 25 BGB – Satzung</a>
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__26.html" target="_blank" rel="noopener">§ 26 BGB – Vorstand & Vertretung</a>
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__27.html" target="_blank" rel="noopener">§ 27 BGB – Bestellung des Vorstands</a>
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__28.html" target="_blank" rel="noopener">§ 28 BGB – Gesamtvertretung</a>
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__32.html" target="_blank" rel="noopener">§ 32 BGB – Mitgliederversammlung</a>
+  <a class="pill" href="https://www.gesetze-im-internet.de/bgb/__33.html" target="_blank" rel="noopener">§§ 33–40 BGB – Satzungsänderung & weitere Regeln</a>
+      </div>
+      <div class="center muted" style="margin-top:12px;font-size:0.8rem">
+        (Links zu: gesetze-im-internet.de - Angebot des Bundesministeriums der Justiz und für Verbraucherschutz)
+      </div>
+    </div>
+
+    <!-- Lernziele -->
+    <div class="card">
+      <h2>Lernziele</h2>
+      <ul class="list-clean">
+        <li>Die Pflichtorgane des eingetragenen Vereins (e.V.) benennen und beschreiben.</li>
+        <li>Vertretungsmacht des Vorstands nach BGB erklären und in der Praxis anwenden.</li>
+        <li>Typische vereinsspezifische Zusatzorgane (z. B. Beirat, Kassenprüfung) einordnen.</li>
+        <li>Beschlussfassung der Mitgliederversammlung (MV) nach § 32 BGB verstehen.</li>
+        <li>Fallbeispiele aus dem Sportvereins-Alltag rechtssicher beurteilen.</li>
+      </ul>
+    </div>
+
+    <!-- Pflichtorgane / Praxis -->
+    <div class="card grid cols-2">
+      <div class="info">
+        <h3>Pflichtorgane (BGB)</h3>
+        <p>Vorstand (§ 26 BGB):<br> vertritt den Verein gerichtlich und außergerichtlich;<br>führt die laufenden Geschäfte.</p>
+        <p>Mitgliederversammlung (§ 32 BGB):<br> oberstes Willensbildungsorgan;<br>fasst Beschlüsse (z. B. Wahlen, Entlastung, Beitragshöhe).</p>
+        <p class="muted small">Hinweis: Der Umfang der Verantwortlichkeit/ Befugnisse und die interne Aufgabenteilung ergeben sich aus der Satzung (§ 25 BGB).<br>
+        Achtung: Entlas<u>t</u>ung ist die (jährliche) Bestätigung korrekten Handelns des Vorstands durch die Mitgliederversammlung (&ne; Entlassung).</p>
+      </div>
+      <div class="ok">
+        <h3>Übliche Praxis im Sportverein</h3>
+        <ul class="list-clean">
+          <li>Ordentliche Mitgliederversammlung (jährlich)<br>
+            fasst wichtige Beschlüsse meist mit qualifizierter Mehrheit<br>
+            benötigter Stimmenanteil laut Satzung häufig 2/3</li><br>
+          <li>Vorstand mit:<br>
+          - 1. Vorsitzende*r/ Vorstandsvorsitzende*r<br>
+          - weitere Vorstände (Schatzmeister*in, ...)</li><br>
+          <li>evtl. Geschäftsführung (nach Größe/ Satzung)</li>
+          <li>Abteilungsleitungen, Jugendwart*in etc.</li>
+          <li>Kassenprüfung (nach Satzung, <em>keine</em> BGB-Pflicht)</li>
+          <li>Beirat, Ausschüsse, Präsidium (je nach Satzung)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vertretung & Geschäftsführung -->
+    <div class="card">
+      <h2>Vertretung & Geschäftsführung</h2>
+      <div class="grid cols-2">
+        <div class="qa">
+          <p><b>Außenverhältnis</b><br>Wer den Verein nach außen vertritt, bestimmt die Satzung. Ohne Besonderheiten gilt: der Vorstand nach § 26 BGB (Einzel- oder Gesamtvertretung; § 28 BGB).</p>
+          <p><b>Innenverhältnis</b><br>Zuständigkeits- und Kompetenzordnung im Verein (z. B. Budgetgrenzen). Verstöße betreffen intern die Haftung/Befugnisse, binden aber den Verein bzw. Dritte häufig dennoch, wenn die Vertretung im Außenverhältnis wirksam war.</p>
+          <p><b>Haftungsprivileg</b><br>Persönliche Haftung seitens Organmitgliedern und besonderen Vertretern nur bei Vorsatz oder grober Fahrlässigkeit (§31a BGB).</p>
+        </div>
+        <div class="warn">
+          <b>Praxis-Tipp</b>
+          <ul class="ulst-clean">
+            <li>In Verträgen hinter dem Vereinsnamen „, vertreten durch … (gemäß §26 BGB)“ angeben.</li><br>
+            <li>Auf <em>Gesamtvertretung</em> achten: wird eine Unterschrift von z.B. zwei Vorstandsmitgliedern benötigt oder reicht eine?</li><br>
+            <li>Kompetenzgrenzen (z. B. Anschaffungen &gt; 5.000 €) klar in der Satzung oder Geschäftsordnung regeln und beachten.</li><br>
+            <li>Generell: Entscheidungen der Organe beachten! Hat der Vorstand sich gegen eine Anschaffung entschieden, dürfen einzelne Vorstandsmitglieder sich nicht darüber hinwegsetzen. Trotzdem wäre der Vertrag im Außenverhätnis gültig!</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="muted small">Rechtsgrundlagen kurz: § 26 (Vertretung des Vereins), § 27 (Bestellung und Abberufung), § 28 (Gesamtvertretung), § 32 (Mitgliederversammlung), §§ 33–34 (Satzungsänderung/Anfechtung), § 31a (Haftung ehrenamtlicher Vorstände – haftungsprivilegiert, soweit einschlägig).</div>
+    </div>
+
+    <!-- AUFGABE 1: Drag & Drop Zuordnung Organe -> Aufgaben -->
+    <div class="card task" id="task1">
+      <h3>Aufgabe 1 – Ordne zu: Welches Organ macht was?</h3>
+      <div class="progress">Versuch <span id="t1-attempt">1</span></div>
+      <p>Ziehe die Aufgaben zum passenden Organ. Du kannst Aufgaben jederzeit wieder in den Pool zurücklegen.</p>
+      <div class="grid cols-2">
+        <div>
+          <h4>Organe</h4>
+          <div class="dropzone" id="t1-vorstand" ondragover="evAllow(event)" ondrop="t1Drop(event,'Vorstand')">
+            Vorstand (gemäß § 26 BGB)
+          </div>
+          <div style="height:8px"></div>
+          <div class="dropzone" id="t1-mv" ondragover="evAllow(event)" ondrop="t1Drop(event,'MV')">
+            Mitgliederversammlung (gemäß § 32 BGB)
+          </div>
+          <div style="height:8px"></div>
+          <div class="dropzone" id="t1-kasse" ondragover="evAllow(event)" ondrop="t1Drop(event,'Kassenpruefung')">
+            Kassenprüfung (gemäß Satzung)
+          </div>
+        </div>
+        <div>
+          <h4>Aufgaben (ziehe rüber)</h4>
+          <div class="drag-shelf dropzone" id="t1-pool" ondragover="evAllow(event)" ondrop="t1Drop(event,'pool')"></div>
+          <div class="small muted">Hinweis: Mehrere Aufgaben können zu einem Organ gehören.</div>
+        </div>
+      </div>
+      <div class="flex">
+        <button class="btn" onclick="t1Check()">Überprüfen</button>
+        <button class="btn secondary" onclick="t1Reset()">Zurücksetzen</button>
+      </div>
+      <div id="t1-feedback" class="feedback"></div>
+    </div>
+
+    <!-- AUFGABE 2: Multiple Choice 10 Fragen -->
+    <div class="card task" id="task2">
+      <h3>Aufgabe 2 – BGB-Basics (Multiple Choice, 10 Fragen)</h3>
+      <form class="mcq" id="t2-form">
+        <div class="hr"></div>
+        <label><input type="radio" name="q1" value="a"> Der Vorstand ist ein fakultatives Organ, nur wenn die Satzung es vorsieht.</label>
+        <label><input type="radio" name="q1" value="b"> Der Vorstand ist ein Pflichtorgan nach § 26 BGB.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q2" value="a"> Die Mitgliederversammlung entscheidet nur über Sportregeln, nicht über Vereinsfragen.</label>
+        <label><input type="radio" name="q2" value="b"> Die Mitgliederversammlung ist das oberste Organ und fasst zentrale Beschlüsse.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q3" value="a"> Bei Gesamtvertretung müssen ggf. zwei Vorstandsmitglieder gemeinsam unterschreiben.</label>
+        <label><input type="radio" name="q3" value="b"> Gesamtvertretung heißt, dass alle Mitglieder des Vereins einverstanden sein müssen.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q4" value="a"> Für Satzungsänderungen genügt stets die einfache Mehrheit der Anwesenden.</label>
+        <label><input type="radio" name="q4" value="b"> Satzungsänderungen erfordern meist eine qualifizierte Mehrheit.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q5" value="a"> Im Außenverhältnis vertritt die Geschäftsführung den Verein.</label>
+        <label><input type="radio" name="q5" value="b"> Im Außenverhältnis vertritt den Verein grundsätzlich der Vorstand.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q6" value="a"> Die Kassenprüfung ist ein gesetzlich zwingendes Organ des e.V.</label>
+        <label><input type="radio" name="q6" value="b"> Die Kassenprüfung ist üblich, aber beruht auf der Satzung; gesetzlich nicht zwingend.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q7" value="a"> Vorstandsmitglieder werden ausschließlich durch das Amtsgericht bestellt.</label>
+        <label><input type="radio" name="q7" value="b"> Grundsätzlich bestellt die Mitgliederversammlung den Vorstand, sofern die Satzung nichts anderes regelt.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q8" value="a"> Verstößt ein Vorstandsmitglied gegen interne Budgetgrenzen, ist der Vertrag automatisch unwirksam.</label>
+        <label><input type="radio" name="q8" value="b"> Verstöße gegen interne Kompetenzgrenzen machen einen Vertrag nicht automatisch unwirksam (Außen-/Innenverhältnis trennen).</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q9" value="a"> Nur die Kassenprüfung kann den Vorstand entlasten.</label>
+        <label><input type="radio" name="q9" value="b"> Die Mitgliederversammlung kann über die Entlastung des Vorstands beschließen.</label>
+
+        <div class="hr"></div>
+        <label><input type="radio" name="q10" value="a"> Die Ausgestaltung der Vertretung (Einzel-/Gesamtvertretung) ist gesetzlich starr und kann nicht in der Satzung geändert werden.</label>
+        <label><input type="radio" name="q10" value="b"> Die Satzung kann die Vertretung gestalten (z. B. Vorsitzende*r Einzelvertretung, sonst Gesamtvertretung).</label>
+      </form>
+      <div class="flex">
+        <button class="btn" onclick="t2Check()">Überprüfen</button>
+        <button class="btn secondary" onclick="t2Reset()">Zurücksetzen</button>
+      </div>
+      <div id="t2-feedback" class="feedback"></div>
+    </div>
+
+    <!-- AUFGABE 3: Richtig/Falsch – 10 Aussagen -->
+    <div class="card task" id="task3">
+      <h3>Aufgabe 3 – Richtig oder Falsch? (10 Aussagen)</h3>
+      <div class="qa small">Setze Häkchen bei „Richtig“. (Mehrfachantworten möglich.)</div>
+      <form id="t3-form" class="mcq">
+        <label><input type="checkbox" value="1"> Die Kassenprüfung ist ein <em>gesetzlich</em> vorgeschriebenes Organ.</label>
+        <label><input type="checkbox" value="2"> Ob Einzel- oder Gesamtvertretung gilt, bestimmt in der Regel die Satzung.</label>
+        <label><input type="checkbox" value="3"> Die Mitgliederversammlung kann Vorstände wählen und abberufen.</label>
+        <label><input type="checkbox" value="4"> Der Vorstand darf ohne satzungsmäßige Grundlage Mitgliederbeiträge erhöhen.</label>
+        <label><input type="checkbox" value="5"> Beschlüsse der MV können unter bestimmten Voraussetzungen angefochten werden.</label>
+        <label><input type="checkbox" value="6"> Den Verein vertritt im Außenverhältnis grundsätzlich der Vorstand.</label>
+        <label><input type="checkbox" value="7"> Bei Gesamtvertretung reicht immer eine Unterschrift eines Vorstandsmitglieds.</label>
+        <label><input type="checkbox" value="8"> Für Satzungsänderungen wird häufig eine qualifizierte Mehrheit (z.B. 2/3) benötigt.</label>
+        <label><input type="checkbox" value="9"> Verstößt der Vorstand gegen interne Budgetgrenzen, ist ein Vertrag automatisch unwirksam.</label>
+        <label><input type="checkbox" value="10"> Ehrenamtliche Vorstände sind nach § 31a BGB unter Umständen haftungsprivilegiert.</label>
+      </form>
+      <div class="flex">
+        <button class="btn" onclick="t3Check()">Überprüfen</button>
+        <button class="btn secondary" onclick="t3Reset()">Zurücksetzen</button>
+      </div>
+      <div id="t3-feedback" class="feedback"></div>
+    </div>
+
+    <!-- AUFGABE 4: Mini-Fälle – 5 Fälle -->
+    <div class="card task" id="task4">
+      <h3>Aufgabe 4 – Mini-Fälle aus dem Sportverein (5 Fälle)</h3>
+      <div id="t4-case" class="qa"></div>
+      <div class="mcq" id="t4-answers"></div>
+      <div class="flex">
+        <button class="btn" onclick="t4Check()">Antwort prüfen</button>
+        <button class="btn secondary" onclick="t4Next()">Nächster Fall</button>
+      </div>
+      <div id="t4-progress" class="muted small" style="margin-top:6px"></div>
+<div id="t4-correct" class="muted small" style="margin-top:4px"></div>
+      <div id="t4-feedback" class="feedback"></div>
+      <div id="t4-done-banner" class="banner" style="display:none">✅ Super! Du hast alle 5 Fälle korrekt gelöst.</div>
+    </div>
+
+    <!-- AUFGABE 5: Lückentext – jetzt 12 Lücken -->
+    <div class="card task" id="task5">
+      <h3>Aufgabe 5 – Lückentext (12 Lücken)</h3>
+      <div class="qa">
+        Der <input id="t5-1" class="kbd" placeholder="..." style="width:120px"> nach § 26 BGB vertritt den <input id="t5-2" class="kbd" placeholder="..." style="width:120px"> gerichtlich und außergerichtlich. 
+        Die <input id="t5-3" class="kbd" placeholder="..." style="width:160px"> ist das oberste Organ nach § 32 BGB und fasst <input id="t5-4" class="kbd" placeholder="..." style="width:140px">. 
+        Satzungsänderungen erfordern meist eine <input id="t5-5" class="kbd" placeholder="..." style="width:160px"> Mehrheit (§ 33 BGB). 
+        Im <input id="t5-6" class="kbd" placeholder="..." style="width:160px"> vertritt der Vorstand den Verein, während im <input id="t5-7" class="kbd" placeholder="..." style="width:160px"> interne Zuständigkeiten geregelt sind. 
+        Die <input id="t5-8" class="kbd" placeholder="..." style="width:160px"> prüft die Finanzen und erstellt einen <input id="t5-9" class="kbd" placeholder="..." style="width:160px">. 
+        Ehrenamtliche Vorstände genießen nach § 31a BGB ein <input id="t5-10" class="kbd" placeholder="..." style="width:160px">. 
+        Ob Einzel- oder <input id="t5-11" class="kbd" placeholder="..." style="width:160px"> gilt, ergibt sich aus der <input id="t5-12" class="kbd" placeholder="..." style="width:160px">.
+      </div>
+      <div class="flex" style="margin-top:10px">
+        <button class="btn" onclick="t5Check()">Überprüfen</button>
+        <button class="btn secondary" onclick="t5Reset()">Zurücksetzen</button>
+      </div>
+      <div id="t5-feedback" class="feedback"></div>
+    </div>
+
+    <div class="card center small muted">
+      © 2025 PÄT – SBP Modul 5.1 „Wie funktioniert mein Verein?“.<br>Prüfe stets die Vereinssatzung und aktuelles Recht/ Verbandsvorgaben.
+    </div>
+  
+    <!-- Global: Alle Aufgaben geschafft -->
+    <div id="all-solved" class="card center" style="display:none">
+      <div class="banner">🎉 Großartig! Du hast alle Aufgaben (1–5) vollständig richtig gelöst.</div>
+    </div>
+</div>
+
+  <script>
+    // Helpers
+    // --- Completion flags ---
+    let t1Completed = false;
+    let t2Completed = false;
+    let t3Completed = false;
+    let t4Completed = false;
+    let t5Completed = false;
+
+    function renderAllSolvedBanner(){
+      const box = document.getElementById('all-solved');
+      if(t1Completed && t2Completed && t3Completed && t4Completed && t5Completed){
+        box.style.display = 'block';
+        box.scrollIntoView({behavior:'smooth', block:'center'});
+      }else{
+        box.style.display = 'none';
+      }
+    }
+
+    function markCompleted(taskNo, completed){
+      if(taskNo===1) t1Completed = completed;
+      if(taskNo===2) t2Completed = completed;
+      if(taskNo===3) t3Completed = completed;
+      if(taskNo===4) t4Completed = completed;
+      if(taskNo===5) t5Completed = completed;
+      renderAllSolvedBanner();
+    }
+
+    function evAllow(ev){ ev.preventDefault(); ev.currentTarget.classList.add('drag-over'); }
+    function evLeave(ev){ ev.currentTarget.classList.remove('drag-over'); }
+    function shuffle(array){ for(let i=array.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [array[i],array[j]]=[array[j],array[i]]; } return array; }
+
+    // Aufgabe 1 (Drag & Drop) – aus v2
+    const t1Tasks = [
+      {text:'Vertritt den Verein gerichtlich und außergerichtlich', organ:'Vorstand'},
+      {text:'Fasst Beschlüsse (z. B. Beitrag, Wahlen, Entlastung)', organ:'MV'},
+      {text:'Prüft die ordnungsgemäße Kassen- und Finanzführung', organ:'Kassenpruefung'},
+      {text:'Führt die laufenden Geschäfte', organ:'Vorstand'},
+      {text:'Beschließt Satzungsänderungen (sofern Quorum erfüllt)', organ:'MV'},
+      {text:'Erstellt Prüfbericht und empfiehlt Entlastung', organ:'Kassenpruefung'}
+    ];
+    const t1State = { attempt:1, placements: {Vorstand:[], MV:[], Kassenpruefung:[]} };
+    function clearTagsFromZone(zoneId){ const zone = document.getElementById(zoneId); Array.from(zone.querySelectorAll('.tag')).forEach(el=> el.remove()); }
+    function buildPool(){
+      ['t1-vorstand','t1-mv','t1-kasse','t1-pool'].forEach(clearTagsFromZone);
+      const pool = document.getElementById('t1-pool'); pool.innerHTML = '';
+      const indices = shuffle([...Array(t1Tasks.length).keys()]);
+      indices.forEach((i)=>{ const task = t1Tasks[i]; const tag = document.createElement('span'); tag.className='tag'; tag.textContent = task.text; tag.draggable = true; tag.id = 't1-'+i; tag.addEventListener('dragstart', e=> e.dataTransfer.setData('text/plain', tag.id)); pool.appendChild(tag); });
+      ['t1-vorstand','t1-mv','t1-kasse','t1-pool'].forEach(id=>{ document.getElementById(id).addEventListener('dragleave', evLeave); });
+    }
+    function t1Init(){ buildPool(); document.getElementById('t1-attempt').textContent = t1State.attempt; const fb = document.getElementById('t1-feedback'); fb.className='feedback'; fb.textContent=''; }
+    function t1Drop(ev,target){ ev.preventDefault(); ev.currentTarget.classList.remove('drag-over'); const id = ev.dataTransfer.getData('text/plain'); const el = document.getElementById(id); if(!el) return; ev.currentTarget.appendChild(el); const idx = parseInt(id.split('-')[1]); for(const k of Object.keys(t1State.placements)){ t1State.placements[k] = t1State.placements[k].filter(n=>n!==idx); } if(target==='Vorstand' || target==='MV' || target==='Kassenpruefung'){ t1State.placements[target].push(idx); } }
+    function t1Check(){ let correct=0,total=t1Tasks.length; const mapping = {Vorstand:[], MV:[], Kassenpruefung:[]}; t1Tasks.forEach((t,i)=>{ mapping[t.organ].push(i); }); for(const key of Object.keys(mapping)){ const should = mapping[key].slice().sort().join(','); const has = (t1State.placements[key]||[]).slice().sort().join(','); if(should===has) correct += mapping[key].length; else { const set = new Set(t1State.placements[key]); mapping[key].forEach(ix=>{ if(set.has(ix)) correct++; }); } } const fb = document.getElementById('t1-feedback'); if(correct===total){ fb.className='feedback ok'; fb.textContent='✓ Perfekt! Alle Aufgaben sind richtig zugeordnet.'; markCompleted(1, true); }else{ markCompleted(1, false); fb.className='feedback bad'; fb.textContent=`✗ ${correct} von ${total} richtig.`; } t1State.attempt++; document.getElementById('t1-attempt').textContent = t1State.attempt; }
+    function t1Reset(){ buildPool(); t1State.placements = {Vorstand:[], MV:[], Kassenpruefung:[]}; const fb = document.getElementById('t1-feedback'); fb.className='feedback'; fb.textContent=''; markCompleted(1,false); }
+
+    // Aufgabe 2 (10 Fragen) – aus v2
+    const t2Correct = { q1:'b', q2:'b', q3:'a', q4:'b', q5:'b', q6:'b', q7:'b', q8:'b', q9:'b', q10:'b' };
+    function t2Check(){
+      const f = document.getElementById('t2-form'); const fd = new FormData(f);
+      let ok = 0, total = 10, unanswered = [];
+      for(let i=1;i<=10;i++){ const key='q'+i; const ans=fd.get(key); if(ans===null){ unanswered.push(i); continue; } if(ans===t2Correct[key]) ok++; }
+      const fb=document.getElementById('t2-feedback');
+      if(unanswered.length){ fb.className='feedback bad'; fb.textContent='Bitte alle Fragen beantworten: ' + unanswered.join(', ') + '.'; return; }
+      if(ok===total){ fb.className='feedback ok'; fb.textContent='✓ Volltreffer! Alle 10 Antworten korrekt.'; markCompleted(2,true); }
+      else { fb.className='feedback bad'; fb.textContent=`${ok}/10 korrekt. Tipp: Vorstand (§ 26), MV (§ 32), Satzungsänderungen (§ 33), Bestellung (§ 27).`; markCompleted(2,false); }
+    }
+    function t2Reset(){ document.getElementById('t2-form').reset(); const fb=document.getElementById('t2-feedback'); fb.className='feedback'; fb.textContent=''; markCompleted(2,false); }
+
+    // Aufgabe 3 (10 Aussagen) – aus v2
+    const t3Correct = new Set(['2','3','5','6','8','10']);
+    function t3Check(){
+      const form = document.getElementById('t3-form');
+      const boxes = Array.from(form.querySelectorAll('input[type=checkbox]'));
+      const picked = new Set(boxes.filter(b=>b.checked).map(b=>b.value));
+      const all = Array.from({length:10}, (_,i)=>String(i+1));
+      let ok=0;
+      all.forEach(v=>{ if(t3Correct.has(v)===picked.has(v)) ok++; });
+      const fb = document.getElementById('t3-feedback');
+      if(ok===all.length){
+        fb.className='feedback ok';
+        fb.textContent='✓ Richtig! Gute Einordnung der Aussagen.';
+        markCompleted(3,true);
+      }else{
+        fb.className='feedback bad';
+        fb.textContent='✗ Nicht ganz. Tipp: § 26 (Vorstand), § 32 (MV), § 33 (Satzungsänderung), § 31a (Haftung Ehrenamt).';
+        markCompleted(3,false);
+      }
+    }
+    function t3Reset(){ document.getElementById('t3-form').reset(); const fb=document.getElementById('t3-feedback'); fb.className='feedback'; fb.textContent=''; markCompleted(3,false); }
+
+    // Aufgabe 4 (5 Fälle) – aus v2
+    const t4Cases = [
+      {
+        text:'Der 1. Vorsitzende schließt allein einen Sponsoringvertrag über 3.000 €. Die Satzung sieht Einzelvertretung des/der Vorsitzenden vor. Intern gibt es eine Budgetgrenze von 2.000 €. Ist der Vertrag wirksam zustande gekommen?',
+        answers:[
+          'Ja, gegenüber dem Sponsor wirksam (Außenvertretung), intern evtl. Pflichtverletzung.',
+          'Nein, wegen interner Budgetgrenze ist der Vertrag unwirksam.',
+          'Nur wirksam, wenn die MV nachträglich zustimmt.'
+        ],
+        correct:0
+      },
+      {
+        text:'Die Satzung bestimmt Gesamtvertretung durch zwei Vorstandsmitglieder. Der 2. Vorsitzende unterschreibt allein den Kauf eines Geräts.',
+        answers:[
+          'Wirksam, denn ein Vorstandsmitglied genügt immer.',
+          'Nicht wirksam vertreten, weil Gesamtvertretung verlangt ist.',
+          'Wirksam, wenn der/die Schatzmeister*in später den Vertrag gegenzeichnet.'
+        ],
+        correct:1
+      },
+      {
+        text:'Die MV beschließt eine Beitragserhöhung. Ein Mitglied hält den Beschluss für formfehlerhaft.',
+        answers:[
+          'Beschluss kann ggf. angefochten werden (Fristen/Form beachten).',
+          'Beschluss ist immer nichtig, sobald jemand dagegen ist.',
+          'Der Vorstand kann den MV-Beschluss ohne MV rückgängig machen.'
+        ],
+        correct:0
+      },
+      {
+        text:'Die MV beschließt eine Satzungsänderung mit 51 % der abgegebenen Stimmen; die Satzung verlangt eine 2/3-Mehrheit.',
+        answers:[
+          'Wirksam, einfache Mehrheit reicht.',
+          'Nicht wirksam, qualifizierte Mehrheit erforderlich.',
+          'Wirksam, wenn der Vorstand zusätzlich zustimmt.'
+        ],
+        correct:1
+      },
+      {
+        text:'Die Kassenprüfung fordert eigenmächtig den Stopp einer geplanten Anschaffung und ändert den Haushaltsplan.',
+        answers:[
+          'Kassenprüfung hat Prüf-/Berichtsfunktion; keine Leitungs- oder Weisungskompetenz.',
+          'Kassenprüfung darf den Vorstand jederzeit anweisen.',
+          'Kassenprüfung vertritt den Verein im Außenverhältnis.'
+        ],
+        correct:0
+      }
+    ];
+    let t4Index=0;
+    function t4Render(){
+      const c = t4Cases[t4Index];
+      document.getElementById('t4-case').textContent = c.text;
+      const box = document.getElementById('t4-answers'); box.innerHTML='';
+      c.answers.forEach((a,i)=>{ const label=document.createElement('label'); label.innerHTML=`<input type="radio" name="t4" value="${i}"> ${a}`; box.appendChild(label); });
+      document.getElementById('t4-progress').textContent=`Fall ${t4Index+1} von ${t4Cases.length}`;
+      const fb = document.getElementById('t4-feedback'); fb.className='feedback'; fb.textContent='';
+    }
+    function t4Check(){
+      const sel = document.querySelector('input[name="t4"]:checked');
+      const fb = document.getElementById('t4-feedback');
+      if(!sel){ fb.className='feedback bad'; fb.textContent='Bitte eine Antwort auswählen.'; return; }
+      const pick = parseInt(sel.value);
+      if(pick===t4Cases[t4Index].correct){
+        if(!t4Cases[t4Index].solved){ t4CorrectCount++; t4Cases[t4Index].solved=true; updateT4Counter(); }
+        fb.className='feedback ok';
+        fb.textContent='✓ Korrekt. Denke an Außen-/Innenverhältnis, Satzung und Zuständigkeiten.';
+      }else{
+        fb.className='feedback bad';
+        fb.textContent='✗ Nicht ganz. Prüfe Vertretungsart, Mehrheiten und Kompetenzen der Organe.';
+      }
+    }
+    function t4Next(){ t4Index = (t4Index+1) % t4Cases.length; t4Render(); }
+
+    
+    let t4CorrectCount = 0;
+    function updateT4Counter(){
+      document.getElementById('t4-correct').textContent = `Bisher richtig gelöst: ${t4CorrectCount} von ${t4Cases.length}`;
+      const done = (t4CorrectCount===t4Cases.length);
+      const banner = document.getElementById('t4-done-banner');
+      if(done){ banner.style.display='block'; markCompleted(4,true); }
+      else { banner.style.display='none'; markCompleted(4,false); }
+    }
+
+    // Aufgabe 5 (12 Lücken) – NEU in v2
+    function t5Check(){
+      const solutions = {
+        "t5-1":"vorstand",
+        "t5-2":"verein",
+        "t5-3":"mitgliederversammlung",
+        "t5-4":"beschlüsse",
+        "t5-5":"qualifizierte",
+        "t5-6":"außenverhältnis",
+        "t5-7":"innenverhältnis",
+        "t5-8":"kassenprüfung",
+        "t5-9":"prüfbericht",
+        "t5-10":"haftungsprivileg",
+        "t5-11":"gesamtvertretung",
+        "t5-12":"satzung"
+      };
+      let ok=0, total=12;
+      for(const id in solutions){
+        const val = (document.getElementById(id).value||'').trim().toLowerCase();
+        if(val.includes(solutions[id])) ok++;
+      }
+      const fb=document.getElementById('t5-feedback');
+      if(ok===total){
+        fb.className='feedback ok'; fb.textContent='✓ Sehr gut! Alle 12 Lücken korrekt gefüllt.';
+        markCompleted(5,true);
+      } else {
+        fb.className='feedback bad'; fb.textContent=`✗ ${ok} von ${total} korrekt. Tipp: prüfe Vorstand, MV, Beschlüsse, Quoren, Außen-/Innenverhältnis, Kassenprüfung, Haftung, Vertretung, Satzung.`;
+        markCompleted(5,false);
+      }
+    }
+    function t5Reset(){
+      for(let i=1;i<=12;i++){ document.getElementById('t5-'+i).value=''; }
+      const fb=document.getElementById('t5-feedback'); fb.className='feedback'; fb.textContent='';
+      markCompleted(5,false);
+    }
+
+    // Init
+    window.addEventListener('load', ()=>{ t1Init(); t4Cases.forEach(c=>c.solved=false); t4CorrectCount=0; updateT4Counter(); t4Render(); markCompleted(1,false); markCompleted(2,false); markCompleted(3,false); markCompleted(4,false); markCompleted(5,false); });
+  </script>
+</body>
+</html>

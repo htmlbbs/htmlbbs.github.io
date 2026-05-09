@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Didaktische Prinzipien der Bewegungserziehung – Unterstufe BFS Sozialassistenz</title>
+  <style>
+    :root{
+      --bg:#0b1020;         /* tiefes Blau */
+      --card:#121936;
+      --ink:#e8ebff;
+      --muted:#b6c1ffcc;
+      --accent:#7aa2ff;
+      --accent-2:#92ffcf;
+      --error:#ff98a2;
+      --ok:#9dffb0;
+      --shadow: 0 8px 24px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;color:var(--ink);background:linear-gradient(180deg,#0a0f1f 0%, #0b1020 40%, #0b1020 100%);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    a{color:var(--accent)}
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter: blur(8px);
+      background:linear-gradient(180deg, rgba(12,17,40,.9), rgba(12,17,40,.65));
+      border-bottom:1px solid #2a335a;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    .title{display:flex;align-items:center;gap:14px}
+    .title h1{margin:6px 0 0;font-size:clamp(22px,3.5vw,34px)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #2a335a;border-radius:999px;color:var(--muted);font-size:13px}
+    main{padding:28px 0 80px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg,#121936, #0f1530);border:1px solid #2a335a;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .card h3{margin:.2rem 0 .6rem;font-size:1.15rem}
+    .muted{color:var(--muted)}
+    .pill{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #33407a;color:#c9d2ff;margin-right:6px}
+    details{border:1px dashed #33407a;padding:12px;border-radius:12px}
+    details[open]{background:#0e1430}
+    details summary{cursor:pointer;color:#cdd6ff}
+    .quiz-card{background:linear-gradient(180deg,#141a3c, #111737);border:1px solid #2a335a;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .quiz-card h4{margin:0 0 10px}
+    .question{margin:16px 0;padding:16px;border:1px solid #2a335a;border-radius:12px}
+    .question.correct{border-color:#1e8f6e;box-shadow:0 0 0 3px rgba(146,255,207,.15) inset}
+    .question.incorrect{border-color:#9a2d3b;box-shadow:0 0 0 3px rgba(255,152,162,.1) inset}
+    .explain{margin-top:10px;font-size:.95rem}
+    .explain.ok{color:var(--ok)}
+    .explain.err{color:var(--error)}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    button{cursor:pointer;border:1px solid #2a335a;border-radius:12px;background:#18204a;color:var(--ink);padding:10px 14px;font-weight:600}
+    button.primary{background:linear-gradient(180deg,#1b2761,#152050);border-color:#3a4aa0}
+    button.ghost{background:transparent}
+    .score{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:12px;color:var(--muted)}
+    .score b{color:var(--ink)}
+    .footer{margin-top:40px;color:#97a3ff;font-size:14px}
+    .kicker{font-size:13px;color:#aab4ff;margin-top:6px}
+    .legend{font-size:.9rem;color:#c9d2ff}
+    .sticky-actions{position:sticky;bottom:12px;display:flex;justify-content:flex-end;margin-top:24px}
+    @media print{
+      header{position:static;background:none;border:none}
+      .question{break-inside:avoid}
+      .sticky-actions{display:none}
+      a::after{content:" (" attr(href) ")";font-size:10px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="title">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2h3a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" stroke="#8fa8ff" stroke-width="1.5"/><path d="M8 9h4M8 13h8M8 17h6" stroke="#92ffcf" stroke-width="1.5"/></svg>
+        <div>
+          <h1>Didaktische Prinzipien der Bewegungserziehung</h1>
+          <div class="kicker">Berufsfachschule Sozialassistenz (Unterstufe) · 6 Prinzipien · 18 MC-Fragen</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="top">
+    <section class="grid" aria-label="Überblick">
+      <article class="card">
+        <h3>Worum geht's?</h3>
+        <p class="muted">Die sechs etablierten Prinzipien bieten dir eine Orientierung, wie du Bewegungsangebote kindgerecht, motivierend und lernwirksam planst.</p>
+        <p class="legend"><span class="pill">Kindgemäßheit</span><span class="pill">Freiwilligkeit</span><span class="pill">Offenheit</span><span class="pill">Erlebnisorientierung</span><span class="pill">Selbsttätigkeit</span><span class="pill">Entscheidungsmöglichkeiten</span></p>
+      </article>
+      <article class="card">
+        <h3>Lernziele</h3>
+        <ul class="muted">
+          <li>Du <b>benennst</b> die 6 Prinzipien.</li>
+          <li>Du <b>erkennst</b> passende Praxisbeispiele.</li>
+          <li>Du <b>wendest</b> die Prinzipien in Situationen an.</li>
+        </ul>
+        <details>
+          <summary>Warum sind die Prinzipien wichtig?</summary>
+          <p>Sie stützen gute Entscheidungen im Alltag: Angebote anpassen (Kindgemäßheit), Spielräume lassen (Offenheit), Freude sichern (Erlebnis), Aktivität ermöglichen (Selbsttätigkeit), Wahl zulassen (Entscheidung), Zwang vermeiden (Freiwilligkeit).</p>
+        </details>
+      </article>
+    </section>
+
+    <section class="quiz-card" id="quiz" aria-label="Quiz mit 18 MC-Fragen">
+      <h2 style="margin-top:0">Quiz: 18 Multiple-Choice-Fragen</h2>
+      <p class="muted">Es gibt zu jedem Prinzip <b>drei Fragen</b>. Wähle jeweils eine Antwort und klicke unten auf <b>Auswerten</b>.</p>
+
+      <!-- ===== Kindgemäßheit (1–3) ===== -->
+      <h3>Prinzip: Kindgemäßheit</h3>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Das Balancieren auf niedrigen Elementen passt sich dem Entwicklungsstand an." data-explain-err="Hinweis: Kindgemäß heißt an Alter und Fähigkeiten angepasst – niedrig & überschaubar statt riskant & komplex.">
+        <h4>1) Was passt <em>am ehesten</em> zur Kindgemäßheit in einer Kita-Gruppe (3–5 Jahre)?</h4>
+        <label><input type="radio" name="q1" value="a"> Ein komplexes Handballturnier mit strengen Regeln</label><br>
+        <label><input type="radio" name="q1" value="b"> Ein Balancier-Parcours mit niedrigen Elementen</label><br>
+        <label><input type="radio" name="q1" value="c"> 20-Minuten-Theorie zum Muskelaufbau</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="c" data-explain-ok="Genau: Verschiedene Ballgrößen bedienen unterschiedliche Entwicklungsstände." data-explain-err="Achte darauf, Materialien und Anforderungen an individuelle Fähigkeiten anzupassen.">
+        <h4>2) Ein Angebot ist kindgemäß, wenn …</h4>
+        <label><input type="radio" name="q2" value="a"> alle Kinder exakt die gleiche Aufgabe in gleicher Zeit lösen.</label><br>
+        <label><input type="radio" name="q2" value="b"> die anspruchsvollste Variante gewählt wird – zur maximalen Förderung.</label><br>
+        <label><input type="radio" name="q2" value="c"> Materialien in verschiedenen Größen/Schwierigkeiten bereitliegen (z. B. Bälle).</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Richtig: Überschaubare Regeln und kurze Runden sind kindgemäß." data-explain-err="Kindgemäßheit vermeidet Überforderung – zu viele Regeln oder zu lange Runden sind kritisch.">
+        <h4>3) Welche Regelgestaltung ist für Vorschulkinder <em>kindgemäß</em>?</h4>
+        <label><input type="radio" name="q3" value="a"> Wenige, klar sichtbare Regeln & kurze Spielrunden</label><br>
+        <label><input type="radio" name="q3" value="b"> Viele Detailregeln, die der/die Pädagog:in erklärt</label><br>
+        <label><input type="radio" name="q3" value="c"> Ohne Regeln, damit es schnell geht</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <!-- ===== Freiwilligkeit (4–6) ===== -->
+      <h3>Prinzip: Freiwilligkeit</h3>
+
+      <div class="question" data-correct="c" data-explain-ok="Ja: Wahl zwischen Stationen fördert Freiwilligkeit." data-explain-err="Freiwilligkeit bedeutet: ohne Zwang, mit echter Auswahl.">
+        <h4>4) Welche Situation fördert Freiwilligkeit am meisten?</h4>
+        <label><input type="radio" name="q4" value="a"> Anwesenheitspflicht & Pflichtteilnahme an jeder Station</label><br>
+        <label><input type="radio" name="q4" value="b"> Teilnahme nur bei sportlicher Höchstleistung</label><br>
+        <label><input type="radio" name="q4" value="c"> Offene Bewegungslandschaft mit wählbaren Stationen</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Freiwilligkeit heißt, Tempo und Intensität dürfen selbst gewählt werden." data-explain-err="Hinweis: Druck oder starres Tempo wirkt gegen Freiwilligkeit.">
+        <h4>5) Ein Merkmal freiwilliger Teilnahme ist …</h4>
+        <label><input type="radio" name="q5" value="a"> eine feste Mindestanzahl an Runden ohne Ausnahmen.</label><br>
+        <label><input type="radio" name="q5" value="b"> selbst gewähltes Tempo und Pausen.</label><br>
+        <label><input type="radio" name="q5" value="c"> Benotung der Leistung zur Motivation.</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Ja: Alternative Beteiligung respektiert Freiwilligkeit und ermöglicht Teilhabe." data-explain-err="Zwang widerspricht dem Prinzip – biete alternative Beteiligungen an.">
+        <h4>6) Ein Kind möchte nicht mitlaufen. Was passt zur Freiwilligkeit?</h4>
+        <label><input type="radio" name="q6" value="a"> Alternative Aufgabe anbieten (z. B. zählen, anfeuern, Musik starten)</label><br>
+        <label><input type="radio" name="q6" value="b"> Teilnahme erzwingen – „Nur wer mitmacht, bekommt Sticker!“</label><br>
+        <label><input type="radio" name="q6" value="c"> Ignorieren, bis das Kind von selbst startet</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <!-- ===== Offenheit (7–9) ===== -->
+      <h3>Prinzip: Offenheit</h3>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Offene Aufgaben lassen mehrere Lösungen zu." data-explain-err="Offenheit = Spielräume, eigene Ideen zulassen, keine Einbahnstraße.">
+        <h4>7) Welche Aufgabenstellung ist <em>offen</em>?</h4>
+        <label><input type="radio" name="q7" value="a"> "Springe 10× exakt über das rote Seil – gleiches Tempo!"</label><br>
+        <label><input type="radio" name="q7" value="b"> "Nutze Seile, Stäbe, Reifen und erfinde einen eigenen Weg."</label><br>
+        <label><input type="radio" name="q7" value="c"> "Laufe im Gänsemarsch hinter der Fachkraft her."</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="c" data-explain-ok="Genau: Materialien frei kombinieren = Offenheit pur." data-explain-err="Hinweis: Vorgabearme Settings fördern Eigenideen.">
+        <h4>8) Was unterstützt Offenheit in der Bewegungslandschaft am stärksten?</h4>
+        <label><input type="radio" name="q8" value="a"> Nur eine festgelegte Reihenfolge</label><br>
+        <label><input type="radio" name="q8" value="b"> Strenge Zeitvorgaben je Station</label><br>
+        <label><input type="radio" name="q8" value="c"> Freie Materialwahl und Kombinationsmöglichkeiten</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Richtig: Kinder erklären ihre Wege – das passt zu Offenheit und fördert Sprache." data-explain-err="Tipp: Lass Kinder ihre Entscheidungen begründen – das stärkt Ownership.">
+        <h4>9) Wie dokumentierst du Offenheit lernförderlich?</h4>
+        <label><input type="radio" name="q9" value="a"> Kinder beschreiben/zeichnen ihren gewählten Weg.</label><br>
+        <label><input type="radio" name="q9" value="b"> Nur die Fachkraft bewertet stichpunktartig.</label><br>
+        <label><input type="radio" name="q9" value="c"> Keine Dokumentation – Offenheit braucht das nicht.</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <!-- ===== Erlebnisorientierung (10–12) ===== -->
+      <h3>Prinzip: Erlebnisorientierung</h3>
+
+      <div class="question" data-correct="c" data-explain-ok="Ja: Bewegungsgeschichten verknüpfen Sinneswahrnehmung, Emotion und Bewegung." data-explain-err="Erlebnisorientierung betont sinnliche, freudvolle Erfahrungen – nicht nur Technik.">
+        <h4>10) Was steht bei Erlebnisorientierung im Vordergrund?</h4>
+        <label><input type="radio" name="q10" value="a"> Fehlerfreie Technik nach starren Kriterien</label><br>
+        <label><input type="radio" name="q10" value="b"> Leistungsmessung durch Zeit & Punkte</label><br>
+        <label><input type="radio" name="q10" value="c"> Sinnlich-emotionale Erfahrung (z. B. Bewegungsgeschichte)</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Natur bietet vielseitige Erlebnisse (Geräusche, Untergrund, Wetter)." data-explain-err="Tipp: Setups wählen, die viele Sinne ansprechen.">
+        <h4>11) Welche Umgebung ist besonders erlebnisorientiert?</h4>
+        <label><input type="radio" name="q11" value="a"> Leere Halle ohne Materialien</label><br>
+        <label><input type="radio" name="q11" value="b"> Park/Wald mit Naturmaterialien</label><br>
+        <label><input type="radio" name="q11" value="c"> Sitzkreis mit Arbeitsblatt</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Ja: Musik, Licht, Requisiten – das macht Erlebnisse dicht und motivierend." data-explain-err="Erlebnisse entstehen durch Stimmung, Sinnesreize und Geschichten.">
+        <h4>12) Wie verstärkst du Erlebnisorientierung in der Turnhalle?</h4>
+        <label><input type="radio" name="q12" value="a"> Musik/Beleuchtung/Requisiten passend zur Geschichte nutzen</label><br>
+        <label><input type="radio" name="q12" value="b"> Nur zählen und Zeiten stoppen</label><br>
+        <label><input type="radio" name="q12" value="c"> Kinder zuschauen lassen, bis sie die Technik verstanden haben</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <!-- ===== Selbsttätigkeit (13–15) ===== -->
+      <h3>Prinzip: Selbsttätigkeit / Aktivität</h3>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Selber bauen/ausprobieren = hohe Aktivität und Ownership." data-explain-err="Selbsttätigkeit heißt handeln, nicht nur konsumieren.">
+        <h4>13) Was fördert Selbsttätigkeit am stärksten?</h4>
+        <label><input type="radio" name="q13" value="a"> Fachkraft zeigt lange vor – Kinder schauen zu</label><br>
+        <label><input type="radio" name="q13" value="b"> Kinder bauen selbst einen Parcours und testen ihn</label><br>
+        <label><input type="radio" name="q13" value="c"> Nur mündliche Beschreibung von Bewegungen</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="c" data-explain-ok="Genau: Stationenwahl und Schwierigkeitsgrad selbst bestimmen = aktiv & selbsttätig." data-explain-err="Selbsttätigkeit wächst mit Wahlmöglichkeiten und konkretem Tun.">
+        <h4>14) Welche Struktur ist selbsttätigkeitsförderlich?</h4>
+        <label><input type="radio" name="q14" value="a"> Strenge Reihenfolge – alle gleich</label><br>
+        <label><input type="radio" name="q14" value="b"> Nur eine Station, alle schauen nacheinander zu</label><br>
+        <label><input type="radio" name="q14" value="c"> Freie Stationenwahl & Level anpassbar</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Richtig: Kurze Impulse, dann Handeln lassen – das ist selbsttätigkeitsfreundlich." data-explain-err="Lange Erklärungen bremsen Aktivität – lieber kurz & aktiv anleiten.">
+        <h4>15) Wie leitest du selbsttätig an?</h4>
+        <label><input type="radio" name="q15" value="a"> Kurz erklären, vormachen, sofort ausprobieren lassen</label><br>
+        <label><input type="radio" name="q15" value="b"> 15 Minuten Theorie, dann eventuell Praxis</label><br>
+        <label><input type="radio" name="q15" value="c"> Nur ein Video zeigen – Praxis später</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <!-- ===== Entscheidungsmöglichkeiten (16–18) ===== -->
+      <h3>Prinzip: Entscheidungsmöglichkeiten</h3>
+
+      <div class="question" data-correct="c" data-explain-ok="Richtig: Rollenwahl gibt echte Entscheidungsmacht." data-explain-err="Entscheidungsmöglichkeiten bedeuten echte Mitbestimmung, nicht Scheinwahl.">
+        <h4>16) Wie gibst du Kindern <em>echte</em> Entscheidungsmöglichkeiten?</h4>
+        <label><input type="radio" name="q16" value="a"> Du lässt sie die Farbe der Hütchen wählen</label><br>
+        <label><input type="radio" name="q16" value="b"> Du bestimmst alles, Kinder klatschen mit</label><br>
+        <label><input type="radio" name="q16" value="c"> Kinder wählen Rolle (Läufer:in, Zähler:in, Materialmanager:in)</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="a" data-explain-ok="Genau: Levelwahl ist eine relevante Entscheidung und erhöht Selbstwirksamkeit." data-explain-err="Achte darauf, dass Entscheidungen eine echte Auswirkung auf das Tun haben.">
+        <h4>17) Welche Option stärkt Entscheidungskompetenz?</h4>
+        <label><input type="radio" name="q17" value="a"> Kinder wählen den Schwierigkeitsgrad der Station</label><br>
+        <label><input type="radio" name="q17" value="b"> Alle laufen dieselbe Strecke in derselben Zeit</label><br>
+        <label><input type="radio" name="q17" value="c"> Nur die Reihenfolge festlegen, sonst nichts</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="question" data-correct="b" data-explain-ok="Richtig: Ein kurzer Mitentscheidungsrat schafft Ownership und relevante Entscheidungen." data-explain-err="Mitbestimmung braucht Struktur – gib Raum für gemeinsame Entscheidungen.">
+        <h4>18) Wie baust du Entscheidungsmöglichkeiten strukturiert ein?</h4>
+        <label><input type="radio" name="q18" value="a"> Du fragst am Ende, ob es gefallen hat</label><br>
+        <label><input type="radio" name="q18" value="b"> Kurzer "Mitentscheidungsrat" vor Beginn (Ziele, Rollen, Regeln)</label><br>
+        <label><input type="radio" name="q18" value="c"> Du entscheidest alles vorab, damit es schneller geht</label>
+        <div class="explain" aria-live="polite"></div>
+      </div>
+
+      <div class="sticky-actions">
+        <div class="actions">
+          <button class="ghost" id="btn-reset" aria-label="Antworten zurücksetzen">Zurücksetzen</button>
+          <button class="primary" id="btn-check" aria-label="Quiz auswerten">Auswerten</button>
+        </div>
+      </div>
+
+      <div class="score" id="score" aria-live="polite" role="status"></div>
+
+      <div class="footer">
+        <p><b>Merksätze:</b> Kindgemäßheit – "passend statt überfordernd" · Freiwilligkeit – "ohne Zwang" · Offenheit – "Spielräume" · Erlebnis – "mit allen Sinnen" · Selbsttätigkeit – "selber tun" · Entscheidung – "mitbestimmen".</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    (function(){
+      const questions = Array.from(document.querySelectorAll('.question'));
+      const btnCheck = document.getElementById('btn-check');
+      const btnReset = document.getElementById('btn-reset');
+      const scoreEl = document.getElementById('score');
+
+      function getAnswer(q){
+        const checked = q.querySelector('input[type="radio"]:checked');
+        return checked ? checked.value : null;
+      }
+      function setState(q, state){
+        q.classList.remove('correct','incorrect');
+        if(state) q.classList.add(state);
+      }
+      function explain(q, ok){
+        const box = q.querySelector('.explain');
+        const msg = ok ? q.getAttribute('data-explain-ok') : q.getAttribute('data-explain-err');
+        box.textContent = msg || '';
+        box.classList.remove('ok','err');
+        box.classList.add(ok ? 'ok' : 'err');
+      }
+      function evaluate(){
+        let total = questions.length;
+        let answered = 0;
+        let correct = 0;
+        questions.forEach(q => {
+          const a = getAnswer(q);
+          const right = q.getAttribute('data-correct');
+          if(a){
+            answered++;
+            const ok = a === right;
+            setState(q, ok ? 'correct' : 'incorrect');
+            explain(q, ok);
+            if(ok) correct++;
+          } else {
+            setState(q, null);
+            q.querySelector('.explain').textContent = '';
+          }
+        });
+        scoreEl.innerHTML = `Beantwortet: <b>${answered}/${total}</b> · Richtig: <b>${correct}</b> · Quote: <b>${Math.round((correct/total)*100)}%</b>`;
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+      }
+      function resetAll(){
+        questions.forEach(q => {
+          q.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+          setState(q, null);
+          q.querySelector('.explain').textContent='';
+        });
+        scoreEl.textContent = '';
+        window.scrollTo({top: document.getElementById('top').offsetTop, behavior:'smooth'});
+      }
+      btnCheck.addEventListener('click', evaluate);
+      btnReset.addEventListener('click', resetAll);
+    })();
+  </script>
+</body>
+</html>

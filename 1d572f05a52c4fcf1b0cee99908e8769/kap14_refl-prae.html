@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapitel 14 – Reflexive Verben & Präpositionen</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; }
+        .container { text-align: center; width: 60%; margin-top: 20px; }
+        .exercise { margin-bottom: 18px; }
+        input { margin-left: 10px; padding: 4px; }
+        .feedback { margin-top: 10px; font-weight: bold; display: inline-block; margin-left: 10px; }
+        #scoreboard { margin-top: 20px; font-size: 18px; font-weight: bold; }
+        h2 { margin-top: 30px; }
+        .hint { font-size: 14px; color: #444; margin-bottom: 10px; }
+        .section { padding: 10px 0 0 0; border-top: 1px solid #ddd; margin-top: 20px; }
+        .sentence { line-height: 1.6; }
+        .small { font-size: 13px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kapitel 14 – Übungen</h1>
+        <p class="hint">Schreibe die Lösung genau (z.B. <b>mich</b>, <b>über</b>). Groß-/Kleinschreibung ist egal.</p>
+
+        <div class="section">
+            <h2>Übung 1: Reflexive Verben</h2>
+            <p class="small">Setze das richtige Reflexivpronomen ein: <b>mich / dich / sich / uns / euch</b>.</p>
+            <div id="exercises_reflexive"></div>
+        </div>
+
+        <div class="section">
+            <h2>Übung 2: Präpositionen</h2>
+            <p class="small">Ergänze die richtige Präposition: z.B. <b>über / an / für / auf / um / vor / in / mit</b>.</p>
+            <div id="exercises_preps"></div>
+        </div>
+
+        <div id="scoreboard">Gesamtpunktzahl: <span id="score">0</span></div>
+    </div>
+
+    <script>
+        // =========================
+        // ÜBUNG 1: Reflexive Verben
+        // =========================
+        const reflexive = [
+            { question: "Ich erinnere ___ an unsere Schulzeit.", answer: "mich" },           // sich erinnern
+            { question: "Du interessierst ___ für neue Leute.", answer: "dich" },           // sich interessieren
+            { question: "Er verabredet ___ mit einem Freund.", answer: "sich" },            // sich verabreden
+            { question: "Wir treffen ___ heute Abend.", answer: "uns" },                    // sich treffen
+            { question: "Ihr versteht ___ sehr gut.", answer: "euch" },                    // sich verstehen
+            { question: "Sie (Singular) freut ___ auf das Treffen.", answer: "sich" },      // sich freuen
+            { question: "Ich ärgere ___ manchmal schnell.", answer: "mich" },              // sich ärgern
+            { question: "Du fühlst ___ heute glücklich.", answer: "dich" },                // sich fühlen
+            { question: "Wir setzen ___ zusammen und reden.", answer: "uns" },              // sich zusammensetzen
+            { question: "Ihr verabschiedet ___ am Bahnhof.", answer: "euch" }               // sich verabschieden
+        ];
+
+        // =========================
+        // ÜBUNG 2: Präpositionen
+        // =========================
+        const preps = [
+            { question: "Wir sprechen ___ Freundschaft.", answer: "über" },                 // sprechen über
+            { question: "Ich denke oft ___ meine beste Freundin.", answer: "an" },          // denken an
+            { question: "Er wartet ___ den Zug.", answer: "auf" },                          // warten auf
+            { question: "Sie bedankt sich ___ deine Hilfe.", answer: "für" },               // sich bedanken für
+            { question: "Ich freue mich ___ das Wochenende.", answer: "auf" },              // sich freuen auf
+            { question: "Ich freue mich ___ dein Geschenk.", answer: "über" },              // sich freuen über
+            { question: "Er interessiert sich ___ Musik.", answer: "für" },                 // sich interessieren für
+            { question: "Sie ärgert sich ___ den Streit.", answer: "über" },                // sich ärgern über
+            { question: "Wir kümmern uns ___ unsere Freunde.", answer: "um" },              // sich kümmern um
+            { question: "Ich habe Angst ___ einem Gespräch.", answer: "vor" },              // Angst vor
+            { question: "Er ist stolz ___ seinen Erfolg.", answer: "auf" },                 // stolz auf
+            { question: "Sie ist verliebt ___ ihn.", answer: "in" },                        // verliebt in
+            { question: "Wir nehmen ___ einem Treffen teil.", answer: "an" },               // teilnehmen an
+            { question: "Ich treffe mich ___ meiner Freundin im Café.", answer: "mit" }     // sich treffen mit
+        ];
+
+        let attempts = {};
+        let totalScore = 0;
+
+        function createExercises(list, targetId, prefix) {
+            const container = document.getElementById(targetId);
+            list.forEach((item, index) => {
+                const key = `${prefix}${index}`;
+                attempts[key] = 0;
+
+                const div = document.createElement("div");
+                div.className = "exercise";
+                div.innerHTML = `
+                    <p class="sentence">${index + 1}. ${item.question}</p>
+                    <input type="text" id="${key}" data-key="${key}">
+                    <button onclick="checkAnswer('${prefix}', ${index})">Überprüfen</button>
+                    <span class="feedback" id="fb_${key}"></span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkAnswer(prefix, index) {
+            const list = prefix === "r" ? reflexive : preps;
+            const key = `${prefix}${index}`;
+
+            const input = document.getElementById(key);
+            const feedback = document.getElementById(`fb_${key}`);
+            const correctAnswer = list[index].answer;
+
+            if (input.value.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+                let points = attempts[key] === 0 ? 3 : attempts[key] === 1 ? 2 : attempts[key] === 2 ? 1 : 0;
+                totalScore += points;
+
+                feedback.textContent = `Richtig! (+${points} Punkte)`;
+                feedback.style.color = "green";
+                document.getElementById("score").textContent = totalScore;
+
+                // Optional: Feld sperren nach richtig
+                input.disabled = true;
+            } else {
+                attempts[key]++;
+
+                if (attempts[key] >= 3) {
+                    feedback.textContent = `Falsch. Richtig ist: ${correctAnswer} (0 Punkte)`;
+                } else {
+                    feedback.textContent = `Falsch. Versuch es noch einmal.`;
+                }
+                feedback.style.color = "red";
+            }
+        }
+
+        createExercises(reflexive, "exercises_reflexive", "r");
+        createExercises(preps, "exercises_preps", "p");
+    </script>
+</body>
+</html>
